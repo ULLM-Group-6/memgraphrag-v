@@ -1,0 +1,29 @@
+TREC-AToMiC/AToMiC-Images-v0.2 | gated=auto | license=['license:cc-by-sa-4.0'] | files=363 | total=174.26 GB
+BByrneLab/multi_task_multi_modal_knowledge_retrieval_benchmark_M2KR | gated=False | license=['license:mit'] | files=202 | total=40.78 GB
+derek-thomas/ScienceQA | gated=False | license=['license:cc-by-sa-4.0'] | files=9 | total=0.63 GB
+lmms-lab/ScienceQA ERR
+MMInstruction/M3IT | gated=False | license=['license:other'] | files=204 | total=384.18 GB
+TIGER-Lab/MMQA | ERROR Invalid username or password.
+uclanlp/MRAG-Bench | gated=False | license=['license:cc-by-4.0'] | files=30 | total=4.30 GB
+Salesforce/WebQA | ERROR Invalid username or password.
+ArkaAcharya/MMQA | ERROR Invalid username or password.
+liuhaotian/LLaVA-Instruct-150K | gated=False | license=['license:cc-by-4.0'] | files=8 | total=1.62 GB
+yubo2333/MMLongBench-Doc | gated=False | license=[] | files=138 | total=0.66 GB
+NTT-hil-insight/SlideVQA | gated=auto | license=[] | files=77 | total=10.90 GB
+vidore/syntheticDocQA_energy_test | gated=False | license=['license:mit'] | files=3 | total=0.27 GB
+PaulLerner/viquae_dataset | gated=False | license=[] | files=5 | total=0.01 GB
+PaulLerner/viquae_wikipedia | gated=False | license=[] | files=5 | total=3.19 GB
+lmms-lab/MMLongBench-Doc | ERROR Invalid username or password.
+Lin-Chen/MMStar | gated=False | license=[] | files=4 | total=0.10 GB
+MMDocIR/MMDocIR_Evaluation_Dataset | gated=False | license=['license:apache-2.0'] | files=11 | total=11.20 GB
+jeniakim/hotpotqa_small | ERROR Invalid username or password.
+lmms-lab/infoseek | not found/private
+lmms-lab/InfoSeek | not found/private
+lmms-lab/EVQA | not found/private
+HuggingFaceM4/InfoSeek | not found/private
+Lin-Chen/InfoSeek | not found/private
+ychenNLP/oven | gated=auto | license=['license:apache-2.0'] | files=21 | total=293.90 GB
+BByrneLab/InfoSeek | not found/private
+aburns4/WikiWeb2M | gated=False | license=['license:cc-by-sa-3.0'] | files=10 | total=6.73 GB
+VisualRAG/infoseek | not found/private
+tiange/Encyclopedic-VQA | not found/private

@@ -1,0 +1,541 @@
+[
+  {
+    "variant": "default",
+    "graphml_readable_on_this_platform": false,
+    "llm_calls": {
+      "ner": 8,
+      "triples": 8,
+      "schema": 17,
+      "conflict_detection": 1,
+      "conflict_resolution": 1,
+      "qa": 3
+    },
+    "graph_stats": {
+      "num_type_nodes": 6,
+      "num_passage_nodes": 8,
+      "num_entity_nodes": 14,
+      "num_edges": 66,
+      "num_entity_relation_edges": 26,
+      "num_passage_entity_edges": 20,
+      "num_entity_type_edges": 14,
+      "num_type_relation_edges": 6,
+      "num_entity_similarity_edges": 0
+    },
+    "conflict_summary": {
+      "num_facts": 15,
+      "num_detection_tasks": 1,
+      "num_candidate_edges": 2,
+      "num_conflict_items": 1,
+      "num_conflicting_facts": 2,
+      "prompt_tokens": 10,
+      "completion_tokens": 5,
+      "total_tokens": 15
+    },
+    "resolution_summary": {
+      "num_components": 1,
+      "actions_applied": {
+        "kept": 1,
+        "modified": 0,
+        "discarded": 1
+      },
+      "facts_before": 15,
+      "facts_after": 14
+    },
+    "schemas_after_filter": [
+      [
+        "<PERSON>",
+        "birth year",
+        "<DATE>"
+      ],
+      [
+        "<PERSON>",
+        "birthplace",
+        "<GPE>"
+      ],
+      [
+        "<PERSON>",
+        "profession",
+        "<PROFESSION>"
+      ],
+      [
+        "<GPE>",
+        "located in",
+        "<GPE>"
+      ],
+      [
+        "<ORG>",
+        "elected president",
+        "<PERSON>"
+      ],
+      [
+        "<PERSON>",
+        "president of",
+        "<ORG>"
+      ],
+      [
+        "<PERSON>",
+        "won",
+        "<AWARD>"
+      ],
+      [
+        "<GPE>",
+        "capital of",
+        "<GPE>"
+      ]
+    ],
+    "facts_after_pipeline": [
+      [
+        "isaac newton",
+        "birth year",
+        "1643"
+      ],
+      [
+        "isaac newton",
+        "birthplace",
+        "woolsthorpe"
+      ],
+      [
+        "isaac newton",
+        "profession",
+        "physicist"
+      ],
+      [
+        "woolsthorpe",
+        "located in",
+        "lincolnshire"
+      ],
+      [
+        "lincolnshire",
+        "located in",
+        "england"
+      ],
+      [
+        "albert einstein",
+        "birthplace",
+        "ulm"
+      ],
+      [
+        "albert einstein",
+        "profession",
+        "physicist"
+      ],
+      [
+        "ulm",
+        "located in",
+        "germany"
+      ],
+      [
+        "royal society",
+        "elected president",
+        "isaac newton"
+      ],
+      [
+        "isaac newton",
+        "president of",
+        "royal society"
+      ],
+      [
+        "marie curie",
+        "birthplace",
+        "warsaw"
+      ],
+      [
+        "marie curie",
+        "won",
+        "nobel prize in physics"
+      ],
+      [
+        "marie curie",
+        "profession",
+        "physicist"
+      ],
+      [
+        "warsaw",
+        "capital of",
+        "poland"
+      ]
+    ],
+    "entity_nodes": [
+      "1643",
+      "albert einstein",
+      "england",
+      "germany",
+      "isaac newton",
+      "lincolnshire",
+      "marie curie",
+      "nobel prize in physics",
+      "physicist",
+      "poland",
+      "royal society",
+      "ulm",
+      "warsaw",
+      "woolsthorpe"
+    ],
+    "ppr_reset_mass_by_layer_per_query": [
+      {
+        "passage": 0.1539,
+        "entity": 1.3889
+      },
+      {
+        "passage": 0.1854,
+        "entity": 2.534
+      },
+      {
+        "passage": 0.2404,
+        "entity": 1.5
+      }
+    ],
+    "retrieval": [
+      {
+        "query": "In which country is the birthplace of Albert Einstein?",
+        "gold_passages": [
+          3,
+          4
+        ],
+        "retrieved_passage_idx": [
+          3,
+          4,
+          7,
+          6,
+          0
+        ],
+        "hit@2": true
+      },
+      {
+        "query": "In what year was Isaac Newton born?",
+        "gold_passages": [
+          0
+        ],
+        "retrieved_passage_idx": [
+          0,
+          5,
+          2,
+          6,
+          3
+        ],
+        "hit@2": true
+      },
+      {
+        "query": "Which physicist was born in the capital of Poland?",
+        "gold_passages": [
+          6,
+          7
+        ],
+        "retrieved_passage_idx": [
+          7,
+          6,
+          3,
+          0,
+          1
+        ],
+        "hit@2": true
+      }
+    ],
+    "qa_answers": [
+      "stub-answer",
+      "stub-answer",
+      "stub-answer"
+    ],
+    "artifacts": {
+      "openie": "audit/logs/mock_memgraphrag/default/openie_results_ner_stub-llm.json",
+      "schema_memory": "audit/logs/mock_memgraphrag/default/initial_memory_with_schema.json",
+      "memory": "audit/logs/mock_memgraphrag/default/memory.json",
+      "memory_graph": {
+        "json": "audit/logs/mock_memgraphrag/default/graph_from_memory/memory_graph.json",
+        "graphml": "audit/logs/mock_memgraphrag/default/graph_from_memory/memory_graph.graphml"
+      },
+      "retrieval_graph": "audit/logs/mock_memgraphrag/default/stub-llm_stub-bow/graph.graphml"
+    }
+  },
+  {
+    "variant": "modified_case",
+    "graphml_readable_on_this_platform": false,
+    "llm_calls": {
+      "ner": 8,
+      "triples": 8,
+      "schema": 17,
+      "conflict_detection": 1,
+      "conflict_resolution": 1,
+      "qa": 3
+    },
+    "graph_stats": {
+      "num_type_nodes": 6,
+      "num_passage_nodes": 8,
+      "num_entity_nodes": 16,
+      "num_edges": 74,
+      "num_entity_relation_edges": 28,
+      "num_passage_entity_edges": 22,
+      "num_entity_type_edges": 16,
+      "num_type_relation_edges": 6,
+      "num_entity_similarity_edges": 2
+    },
+    "conflict_summary": {
+      "num_facts": 15,
+      "num_detection_tasks": 1,
+      "num_candidate_edges": 2,
+      "num_conflict_items": 1,
+      "num_conflicting_facts": 2,
+      "prompt_tokens": 10,
+      "completion_tokens": 5,
+      "total_tokens": 15
+    },
+    "resolution_summary": {
+      "num_components": 1,
+      "actions_applied": {
+        "kept": 1,
+        "modified": 1,
+        "discarded": 0
+      },
+      "facts_before": 15,
+      "facts_after": 15
+    },
+    "schemas_after_filter": [
+      [
+        "<PERSON>",
+        "birth year",
+        "<DATE>"
+      ],
+      [
+        "<PERSON>",
+        "birthplace",
+        "<GPE>"
+      ],
+      [
+        "<PERSON>",
+        "profession",
+        "<PROFESSION>"
+      ],
+      [
+        "<GPE>",
+        "located in",
+        "<GPE>"
+      ],
+      [
+        "<ORG>",
+        "elected president",
+        "<PERSON>"
+      ],
+      [
+        "<PERSON>",
+        "president of",
+        "<ORG>"
+      ],
+      [
+        "<PERSON>",
+        "won",
+        "<AWARD>"
+      ],
+      [
+        "<GPE>",
+        "capital of",
+        "<GPE>"
+      ]
+    ],
+    "facts_after_pipeline": [
+      [
+        "isaac newton",
+        "birth year",
+        "1643"
+      ],
+      [
+        "isaac newton",
+        "birthplace",
+        "woolsthorpe"
+      ],
+      [
+        "isaac newton",
+        "profession",
+        "physicist"
+      ],
+      [
+        "Isaac Newton",
+        "birth year (disputed)",
+        "1645"
+      ],
+      [
+        "woolsthorpe",
+        "located in",
+        "lincolnshire"
+      ],
+      [
+        "lincolnshire",
+        "located in",
+        "england"
+      ],
+      [
+        "albert einstein",
+        "birthplace",
+        "ulm"
+      ],
+      [
+        "albert einstein",
+        "profession",
+        "physicist"
+      ],
+      [
+        "ulm",
+        "located in",
+        "germany"
+      ],
+      [
+        "royal society",
+        "elected president",
+        "isaac newton"
+      ],
+      [
+        "isaac newton",
+        "president of",
+        "royal society"
+      ],
+      [
+        "marie curie",
+        "birthplace",
+        "warsaw"
+      ],
+      [
+        "marie curie",
+        "won",
+        "nobel prize in physics"
+      ],
+      [
+        "marie curie",
+        "profession",
+        "physicist"
+      ],
+      [
+        "warsaw",
+        "capital of",
+        "poland"
+      ]
+    ],
+    "entity_nodes": [
+      "1643",
+      "1645",
+      "Isaac Newton",
+      "albert einstein",
+      "england",
+      "germany",
+      "isaac newton",
+      "lincolnshire",
+      "marie curie",
+      "nobel prize in physics",
+      "physicist",
+      "poland",
+      "royal society",
+      "ulm",
+      "warsaw",
+      "woolsthorpe"
+    ],
+    "ppr_reset_mass_by_layer_per_query": [
+      {
+        "passage": 0.1539,
+        "entity": 1.3889
+      },
+      {
+        "passage": 0.1854,
+        "entity": 3.4469
+      },
+      {
+        "passage": 0.2404,
+        "entity": 1.5
+      }
+    ],
+    "retrieval": [
+      {
+        "query": "In which country is the birthplace of Albert Einstein?",
+        "gold_passages": [
+          3,
+          4
+        ],
+        "retrieved_passage_idx": [
+          3,
+          4,
+          7,
+          6,
+          0
+        ],
+        "hit@2": true
+      },
+      {
+        "query": "In what year was Isaac Newton born?",
+        "gold_passages": [
+          0
+        ],
+        "retrieved_passage_idx": [
+          0,
+          1,
+          5,
+          2,
+          6
+        ],
+        "hit@2": true
+      },
+      {
+        "query": "Which physicist was born in the capital of Poland?",
+        "gold_passages": [
+          6,
+          7
+        ],
+        "retrieved_passage_idx": [
+          7,
+          6,
+          3,
+          0,
+          1
+        ],
+        "hit@2": true
+      }
+    ],
+    "qa_answers": [
+      "stub-answer",
+      "stub-answer",
+      "stub-answer"
+    ],
+    "artifacts": {
+      "openie": "audit/logs/mock_memgraphrag/modified_case/openie_results_ner_stub-llm.json",
+      "schema_memory": "audit/logs/mock_memgraphrag/modified_case/initial_memory_with_schema.json",
+      "memory": "audit/logs/mock_memgraphrag/modified_case/memory.json",
+      "memory_graph": {
+        "json": "audit/logs/mock_memgraphrag/modified_case/graph_from_memory/memory_graph.json",
+        "graphml": "audit/logs/mock_memgraphrag/modified_case/graph_from_memory/memory_graph.graphml"
+      },
+      "retrieval_graph": "audit/logs/mock_memgraphrag/modified_case/stub-llm_stub-bow/graph.graphml"
+    }
+  },
+  {
+    "variant": "legacy_index()",
+    "index": "ok",
+    "graph": {
+      "v": 25,
+      "e": 56
+    },
+    "retrieve": "ok",
+    "retrieved_passage_idx": [
+      [
+        3,
+        4,
+        6,
+        7,
+        0
+      ],
+      [
+        0,
+        1,
+        5,
+        2,
+        6
+      ],
+      [
+        7,
+        6,
+        3,
+        0,
+        1
+      ]
+    ],
+    "llm_calls": {
+      "ner": 8,
+      "triples": 8
+    }
+  }
+]

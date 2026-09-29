@@ -1,0 +1,110 @@
+[
+  {
+    "variant": "showcase_labels",
+    "ner_labels_for_impala_doc": {
+      "Impala": "PERSON",
+      "Africa": "LOC",
+      "German": "NORP",
+      "Hinrich Lichtenstein": "PERSON",
+      "The International Union for Conservation of Nature": "ORG"
+    },
+    "sam3_prompts_for_kb_image(after label filter)": [
+      "africa",
+      "hinrich lichtenstein",
+      "impala",
+      "the international union for conservation of nature"
+    ],
+    "sam3_calls": {
+      "predict": 1,
+      "prompts": 4
+    },
+    "graph_info": {
+      "num_entity_nodes": 11,
+      "num_chunk_nodes": 5,
+      "num_image_nodes": 1,
+      "num_subimg": 1,
+      "num_total_nodes": 17,
+      "num_unique_fact_triples": 1,
+      "num_entity_entity_edges": 2,
+      "num_chunk_entity_edges": 12,
+      "num_chunk_image_edges": 1,
+      "num_image_entity_edges": 1,
+      "num_raw_total_edges": 16,
+      "num_final_graph_edges": 15
+    },
+    "graph_vcount": 17,
+    "graph_ecount": 15,
+    "subimg_to_entity_map": {
+      "subimg-26cc13c17362afd295d04c33d75889a1": [
+        "entity-39b5cba278ff2b17e9f349decc403a1b"
+      ]
+    },
+    "seed_mass_by_node_type": {
+      "image": 0.0916,
+      "chunk": 0.4004,
+      "entity": 0.508
+    },
+    "ranked_doc_ids": [
+      "Q132576",
+      "Q5368484",
+      "Q178185",
+      "Q1510231",
+      "Q173651"
+    ],
+    "gold": [
+      "Q132576"
+    ],
+    "gold_rank": 1
+  },
+  {
+    "variant": "correct_labels",
+    "ner_labels_for_impala_doc": {
+      "Africa": "LOC",
+      "German": "NORP",
+      "Hinrich Lichtenstein": "PERSON",
+      "The International Union for Conservation of Nature": "ORG"
+    },
+    "sam3_prompts_for_kb_image(after label filter)": [
+      "africa",
+      "hinrich lichtenstein",
+      "the international union for conservation of nature"
+    ],
+    "sam3_calls": {
+      "predict": 1,
+      "prompts": 3
+    },
+    "graph_info": {
+      "num_entity_nodes": 10,
+      "num_chunk_nodes": 5,
+      "num_image_nodes": 1,
+      "num_subimg": 0,
+      "num_total_nodes": 16,
+      "num_unique_fact_triples": 1,
+      "num_entity_entity_edges": 2,
+      "num_chunk_entity_edges": 11,
+      "num_chunk_image_edges": 1,
+      "num_image_entity_edges": 0,
+      "num_raw_total_edges": 14,
+      "num_final_graph_edges": 13
+    },
+    "graph_vcount": 16,
+    "graph_ecount": 13,
+    "subimg_to_entity_map": {},
+    "seed_mass_by_node_type": {
+      "image": 0.0986,
+      "chunk": 0.4308,
+      "entity": 0.4707
+    },
+    "ranked_doc_ids": [
+      "Q5368484",
+      "Q132576",
+      "Q178185",
+      "Q173651",
+      "Q1510231"
+    ],
+    "gold": [
+      "Q132576"
+    ],
+    "gold_rank": 2
+  }
+]

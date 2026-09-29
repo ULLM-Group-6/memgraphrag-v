@@ -1,0 +1,12 @@
+BAAI/EVA-CLIP-8B | gated=False | license=['license:apache-2.0'] | files=19 | total=95.87 GB | weights=95.87 GB
+facebook/sam3 | gated=manual | license=['license:other'] | files=12 | total=6.90 GB | weights=6.89 GB
+nvidia/NV-Embed-v2 | gated=False | license=['license:cc-by-nc-4.0'] | files=19 | total=15.70 GB | weights=15.70 GB
+BAAI/bge-large-en-v1.5 | gated=False | license=['license:mit'] | files=14 | total=4.02 GB | weights=2.68 GB
+openai/clip-vit-large-patch14 | gated=False | license=[] | files=13 | total=6.85 GB | weights=3.42 GB
+Qwen/Qwen2.5-VL-7B-Instruct | gated=False | license=['license:apache-2.0'] | files=16 | total=16.60 GB | weights=16.58 GB
+Qwen/Qwen2.5-VL-3B-Instruct | gated=False | license=[] | files=14 | total=7.52 GB | weights=7.51 GB
+spacy/en_core_web_trf | gated=False | license=['license:mit'] | files=27 | total=0.96 GB | weights=0.46 GB
+BAAI/EVA-CLIP-18B | gated=False | license=['license:apache-2.0'] | files=23 | total=145.21 GB | weights=145.21 GB
+QuanSun/EVA-CLIP | gated=False | license=['license:mit'] | files=25 | total=38.89 GB | weights=38.89 GB
+google/siglip2-so400m-patch14-384 | gated=False | license=['license:apache-2.0'] | files=9 | total=4.58 GB | weights=4.54 GB
+jinaai/jina-clip-v2 | gated=False | license=['license:cc-by-nc-4.0'] | files=21 | total=14.94 GB | weights=3.46 GB
