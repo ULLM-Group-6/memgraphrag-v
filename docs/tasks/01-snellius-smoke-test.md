@@ -43,6 +43,8 @@ huggingface-cli download BAAI/bge-large-en-v1.5 --include "*.json" "*.safetensor
 
 Build a tiny corpus (first 10 HotpotQA questions and their context passages). The corpus is a plain `.txt`; `code/index.py` re-chunks it into 256-token windows.
 
+> For the smoke test this is fine. For evaluation, do **not** go through `index.py`: it slides windows across document boundaries and drops document IDs. Index one passage per chunk from `dataset/*/*_corpus.json` instead (methodology audit A13).
+
 ```bash
 mkdir -p smoke
 python - <<'EOF'
@@ -80,6 +82,18 @@ Run both inside a job (`sbatch` with `--partition=gpu_mig --gpus=1 --time=00:30:
 - [ ] Exact module names, Python and torch versions that worked
 - [ ] Wall-clock time and number of LLM calls/tokens for indexing (the code logs token counts per stage)
 - [ ] Counts from `outputs/smoke/`: facts before/after conflict resolution, schemas kept, node/edge counts
+- [ ] **Schema-type histogram (decides H3; see [methodology audit A5](../audit/methodology-audit-2026-10-03.md#2-findings-and-proposed-changes)).** MemGraphRAG's schema prompt suggests the 18 OntoNotes NER labels. Record whether the LLM also produces finer types (animal, species, building…):
+  ```bash
+  python - <<'PY'
+  import json, collections
+  m = json.load(open("outputs/smoke/initial_memory_with_schema.json"))
+  c = collections.Counter()
+  for s in m["schema_layer"]:
+      h, _, t = s["content"]; c[h] += s.get("frequency", 1); c[t] += s.get("frequency", 1)
+  print(len(c), "distinct types"); print(c.most_common(40))
+  PY
+  ```
+  HotpotQA has few visual entities, so repeat this on ~50 M2KR E-VQA passages as soon as the data builder exists.
 - [ ] Whether the answers in `results/smoke/qa.json` look right (the runner computes **no** metrics; eyeball containment of the gold `answer`)
 - [ ] Anything that contradicts the audit — open an issue
 

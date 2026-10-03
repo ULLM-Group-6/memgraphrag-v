@@ -26,10 +26,10 @@ Full claim tables: [audit §2.1 and §2.2](../audit/audit-report.md#2-paper-vs-c
 | M5 | Modified triples are not re-normalised → duplicate entity nodes | ~756 | |
 | M6 | Schema layer is never embedded or retrieved (paper Stage I) | `src/Memory.py:42` | |
 | M7 | Type nodes get zero PPR seed mass (paper Eq. 7 missing) | ~1891-1892 | |
-| M8 | No IDF term in passage seeds (paper Eq. 8 missing) | ~2160-2166 | |
+| M8 | No IDF term in passage seeds (paper Eq. 8 missing) | ~2160-2166 | ➕ an upstream issue (#6, 28 Jul 2026, unanswered) asks the same question; still re-check in code |
 | M9 | No Str-Acc / LLM-Acc; QA runner computes no metrics | `src/evaluation/`, `code/retrieval_dataset_test.py` | |
-| M10 | G-Novel dataset not bundled; corpora re-chunked into 256-token windows (gold passage boundaries lost) | `dataset/`, `code/index.py` | |
-| M11 | Which LLM, embedder and hyper-parameters produced the paper's main table? Are they reproducible from the repo? | paper §5 / appendix | |
+| M10 | G-Novel dataset not bundled; corpora re-chunked into 256-token windows (gold passage boundaries lost) | `dataset/`, `code/index.py` | ❌ partly: per-passage `dataset/*/*_corpus.json` with titles exist, so boundaries are lost only via `index.py` (3 Oct audit C4). G-Novel absence confirmed by upstream issue #7 |
+| M11 | Which LLM, embedder and hyper-parameters produced the paper's main table? Are they reproducible from the repo? | paper §5 / appendix | ➕ NV-Embed-v2, top-k 5, gpt-4o-mini (index, answer, judge), temperature 0, 1,000 validation questions per dataset ([findings §3.4](../audit/research-findings-2026-10-03.md#34-what-mg-rag-and-memgraphrag-evaluated-on-q8)); repo defaults differ (bge, top-k 10) |
 
 ## MG²-RAG checklist
 
@@ -42,14 +42,14 @@ Full claim tables: [audit §2.1 and §2.2](../audit/audit-report.md#2-paper-vs-c
 | G5 | Seed aggregation deviates from Eq. 2/3 (doc-frequency division, sum not mean for objects) | ~885-1008 | |
 | G6 | PPR is CuPy-only, no CPU path | ~1487-1622 | |
 | G7 | No loaders for InfoSeek/ScienceQA/CrisisMMD; no metrics | `examples/`, `prompts/templates/` | |
-| G8 | How big is each benchmark KB in the paper, and how were the 5k-document subsets built? (App. A.2) | paper | |
+| G8 | How big is each benchmark KB in the paper, and how were the 5k-document subsets built? (App. A.2) | paper | ➕ 100k random documents from the ≈2M-page E-VQA KB; 5k subsets "ensuring inclusion of the necessary evidence"; Table 2 vs Table 6 use different KB sizes ([findings §3.4](../audit/research-findings-2026-10-03.md#34-what-mg-rag-and-memgraphrag-evaluated-on-q8)) |
 | G9 | Which numbers in the paper could we realistically reproduce on a MIG slice? | paper Table 1 / runtimes | |
 
 ## Explore beyond the checklist
 
 - Write down each paper's **exact** equations for seeds and PPR in one notation. We need this for our Method section.
 - For MemGraphRAG: find a question type where conflict resolution *should* matter. Does any bundled dataset contain real conflicts?
-- For MG²-RAG: which of its ablations show the biggest gain from region-level (SAM3) evidence vs whole-image evidence? That tells us how much ontology-guided grounding can plausibly add.
+- For MG²-RAG: which of its ablations show the biggest gain from region-level (SAM3) evidence vs whole-image evidence? That tells us how much ontology-guided grounding can plausibly add. *Partial answer (3 Oct):* there is no encoder ablation; "w/o MNF" (no text-entity ↔ region alignment) drops E-VQA (5k) R@1 57.8 → 43.8 and BEM 60.24 → 55.38 (MG² Table 6). See [findings §4.3](../audit/research-findings-2026-10-03.md#43-textimage-matching-and-encoders-q11).
 - Note any claim in either paper without an ablation or error bars.
 
 Output: `docs/papers/memgraphrag.md` and `docs/papers/mg2rag.md` (summary, equations, what's verified, open questions).

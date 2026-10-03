@@ -4,15 +4,15 @@ Extending [MemGraphRAG](https://arxiv.org/abs/2606.00610) to natively index and 
 
 2AMM20 Research Topics in Data Mining (TU/e) group project · 9-page ACM paper due **23 Oct 2026**.
 
-**Status (29 Sep 2026):** research and planning only — no code yet. Both upstream codebases have been audited with stubbed models; nothing has been run on real models or Snellius yet.
+**Status (3 Oct 2026):** research and planning only — no code yet. Both upstream codebases have been audited with stubbed models. A [methodology audit](docs/audit/methodology-audit-2026-10-03.md) (3 Oct, pending group review) proposes changes to data, retrieval and hypotheses. The outcome of the 2 Oct Snellius gate is not recorded here yet.
 
 ## The idea in one paragraph
 
-Both base systems are forks of HippoRAG: they build a graph of entities and passages and rank passages with Personalized PageRank (PPR) from *seed* nodes matched to the question. We keep MemGraphRAG's text pipeline (schema/fact/passage memory with conflict resolution) unchanged, then attach image nodes and SAM3 object crops to its entity nodes. Which entities get grounded in images is decided by MemGraphRAG's **schema types** (e.g. animals, buildings) rather than MG²-RAG's six named-entity labels — this is our main contribution. At query time, CLIP matches between the question and images become extra PPR seeds (`s = normalise(s_text + λ·s_visual)`). The main baseline is captioning every image and indexing captions as text. Details: [docs/method.md](docs/method.md).
+Both base systems are forks of HippoRAG: they build a graph of entities and passages and rank passages with Personalized PageRank (PPR) from *seed* nodes matched to the question. We keep MemGraphRAG's text pipeline (schema/fact/passage memory with conflict resolution) unchanged, then attach image nodes and SAM3 object crops to its entity nodes. Our question is **which entities to ground**: entity *types* from MemGraphRAG's LLM-built memory (mapped to short noun phrases for SAM3) versus MG²-RAG's six named-entity labels — this controlled comparison is our main contribution. (MemGraphRAG's schema prompt is seeded with the same OntoNotes labels as spaCy, so we measure what types it really produces; see the audit.) At query time, CLIP matches of the query image become extra PPR seeds, combined with the text seeds after normalising each channel (`s = (1−λ)·ŝ_text + λ·ŝ_visual`). The main baselines are generic and entity-aware captioning of every image (query and knowledge base) indexed as text. Details: [docs/method.md](docs/method.md).
 
 ## Getting started
 
-1. Read [docs/method.md](docs/method.md) (15 min), then skim the summary of the [audit report](docs/audit/audit-report.md) ([PDF](docs/audit/audit-report.pdf)).
+1. Read [docs/method.md](docs/method.md) (15 min), then the verdict and decisions of the [3 Oct methodology audit](docs/audit/methodology-audit-2026-10-03.md), then skim the summary of the original [audit report](docs/audit/audit-report.md) ([PDF](docs/audit/audit-report.pdf)).
 2. Pick a workstream:
 
 | # | Workstream | Guide | Needs |
@@ -30,8 +30,10 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 docs/
 ├── method.md                 proposed method, evaluation, timeline, caveats
 ├── audit/
-│   ├── audit-report.md       full paper-vs-code audit of both repos (with evidence tags)
-│   ├── audit-report.pdf      same, typeset
+│   ├── audit-report.md       full paper-vs-code audit of both repos (28 Sep; errata at top)
+│   ├── audit-report.pdf      same, typeset (without errata)
+│   ├── methodology-audit-2026-10-03.md   proposed changes + decisions for the group
+│   ├── research-findings-2026-10-03.md   related work, datasets, models, prices (primary sources)
 │   └── evidence/             stub-run summaries, HF model/dataset sizes, LLM cost estimate
 └── tasks/                    one guide per workstream (see table above)
 ```
@@ -40,8 +42,8 @@ docs/
 
 | | Paper | Code | Licence |
 |---|---|---|---|
-| MemGraphRAG | [arXiv 2606.00610](https://arxiv.org/abs/2606.00610) | [XMUDeepLIT/MemGraphRAG](https://github.com/XMUDeepLIT/MemGraphRAG) | MIT |
-| MG²-RAG | [arXiv 2604.04969](https://arxiv.org/abs/2604.04969) | [Daboolu/MG2-RAG](https://github.com/Daboolu/MG2-RAG) | MIT (vendored SAM3 has its own licence) |
+| MemGraphRAG | KDD 2026 · [arXiv 2606.00610](https://arxiv.org/abs/2606.00610) | [XMUDeepLIT/MemGraphRAG](https://github.com/XMUDeepLIT/MemGraphRAG) | MIT |
+| MG²-RAG | ECCV 2026 · [arXiv 2604.04969](https://arxiv.org/abs/2604.04969) | [Daboolu/MG2-RAG](https://github.com/Daboolu/MG2-RAG) | MIT (its vendored SAM3 copy lacks SAM's licence file; the SAM License requires acknowledging SAM in publications) |
 
 ## Ground rules
 

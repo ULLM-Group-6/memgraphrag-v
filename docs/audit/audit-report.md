@@ -7,6 +7,19 @@
 > - Line numbers refer to the upstream repos as of the audit: [XMUDeepLIT/MemGraphRAG](https://github.com/XMUDeepLIT/MemGraphRAG) and [Daboolu/MG2-RAG](https://github.com/Daboolu/MG2-RAG). Check them against the commit you clone.
 > - "You" in the text is the project lead who commissioned the audit.
 
+> **Errata (3 Oct 2026).** The [methodology audit](methodology-audit-2026-10-03.md) and [research findings](research-findings-2026-10-03.md) correct the following. The body below is left as written on 28 Sep; the PDF has not been regenerated.
+> - **§1.4, §3.3 item 9, §6, §7 (image data):**
+>   - *Query* images for E-VQA and InfoSeek are available **ungated** in `BByrneLab/M2KR_Images`: E-VQA iNat zip 8.92 GB, readable per file; GLDv2 tar 2.79 GB; InfoSeek val tar 8.96 GB. OVEN and AToMiC are `gated=auto`, not manual.
+>   - M2KR's *knowledge-base* passages contain **no images**. KB images must come from MuKA's Wikimedia URL lists or the official E-VQA KB.
+> - **§6, §7 ("use E-VQA two-hop items"):** M2KR's E-VQA test split has no two-hop items (1,000 templated + 2,750 automatic). Two-hop items exist only in the official E-VQA `test.csv`.
+> - **§2.1 Datasets row, §6 (gold passage boundaries lost):** they are lost only through `code/index.py`'s splitter. Per-passage `dataset/*/*_corpus.json` files with titles ship with the repo, so indexing one passage per chunk keeps gold IDs.
+> - **§2.1 NV-Embed/BGE row:** the BGE claim is confirmed (CLS pooling and a query instruction per the model card) and upgraded to [V-read]. `BGE.encode()` also silently drops the instruction kwarg.
+> - **§3.2, §7 (EVA-CLIP-8B ≈16 GB VRAM fp16):** 8.1B parameters → ≈16.2 GB for weights alone; plan for ≥18–20 GB [I].
+> - **§5 Option A (ontology-guided grounding):**
+>   - MemGraphRAG's schema prompt suggests the same 18 OntoNotes labels as spaCy, so the gain over NER-label filtering is unproven.
+>   - SAM3 expects short generic noun phrases, not entity names.
+> - **Upstream venues:** MG²-RAG is ECCV 2026; MemGraphRAG is KDD 2026.
+
 
 **Evidence legend.**
 Every claim carries a tag.

@@ -6,6 +6,22 @@
 
 > The seed list below was written from memory during the audit and **has not been checked**. Verify every title, venue and year against the actual paper before citing. Add arXiv IDs as you verify them.
 
+## Status (3 Oct 2026)
+
+A first pass is in [research findings §2](../audit/research-findings-2026-10-03.md#2-novelty-assessment-and-related-work):
+- a ≈40-paper table with verdicts;
+- forward citations via Semantic Scholar;
+- the threat analysis.
+
+Main outcome: **MG²-RAG (ECCV 2026) and HVM-GraphRAG (2607.24861) narrow our novelty.** The defensible claim is the grounding-selection study (methodology audit A7, D2).
+
+Still to do:
+1. Google Scholar forward citations; Semantic Scholar lags.
+2. Re-read the *method sections* of mKG-RAG, MMGraphRAG, RAG-Anything, HVM-GraphRAG and CEMMKG. They were summarised from abstracts or HTML only.
+3. Check whether CrossModalQA (2609.05518) and RETINA (2511.22843) released data. Both would be better-fitting benchmarks.
+4. Check the licences of MMQA and MuKA's image lists.
+5. Move the verified table into `docs/related-work.md` in the format below.
+
 ## Seed list (unverified)
 
 | Area | Works to look up |
