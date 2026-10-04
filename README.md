@@ -4,6 +4,8 @@ Extending [MemGraphRAG](https://arxiv.org/abs/2606.00610) to natively index and 
 
 2AMM20 Research Topics in Data Mining (TU/e) group project · 9-page ACM paper due **23 Oct 2026**.
 
+**Final methodology (4 Oct 2026, for ratification at the group call): [docs/final-methodology.md](docs/final-methodology.md).** It says what to follow and what changed; it overrides the docs below where they differ.
+
 **Status (3 Oct 2026):** research and planning only — no code yet. Both upstream codebases have been audited with stubbed models. A [methodology audit](docs/audit/methodology-audit-2026-10-03.md) (3 Oct, pending group review) proposes changes to data, retrieval and hypotheses. The outcome of the 2 Oct Snellius gate is not recorded here yet.
 
 ## The idea in one paragraph
@@ -12,7 +14,7 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 
 ## Getting started
 
-1. Read [docs/method.md](docs/method.md) (15 min), then the verdict and decisions of the [3 Oct methodology audit](docs/audit/methodology-audit-2026-10-03.md), then skim the summary of the original [audit report](docs/audit/audit-report.md) ([PDF](docs/audit/audit-report.pdf)).
+1. Read [docs/final-methodology.md](docs/final-methodology.md) first. For background, read [docs/method.md](docs/method.md) (15 min), then the verdict and decisions of the [3 Oct methodology audit](docs/audit/methodology-audit-2026-10-03.md), then skim the summary of the original [audit report](docs/audit/audit-report.md) ([PDF](docs/audit/audit-report.pdf)).
 2. Pick a workstream:
 
 | # | Workstream | Guide | Needs |
@@ -28,12 +30,16 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 
 ```
 docs/
-├── method.md                 proposed method, evaluation, timeline, caveats
+├── final-methodology.md      what we follow (4 Oct): data, method, hypotheses, gates, changes
+├── method.md                 background: proposed method and caveats (3 Oct)
 ├── audit/
 │   ├── audit-report.md       full paper-vs-code audit of both repos (28 Sep; errata at top)
 │   ├── audit-report.pdf      same, typeset (without errata)
 │   ├── methodology-audit-2026-10-03.md   proposed changes + decisions for the group
 │   ├── research-findings-2026-10-03.md   related work, datasets, models, prices (primary sources)
+│   ├── consistency-check-2026-10-04.md  docs vs each other and vs code
+│   ├── novelty-recheck-2026-10-04.md    method sections of the closest papers; papers since 1 Sep
+│   ├── data-licences-2026-10-04.md      MMQA, MuKA/Wikimedia, CrossModalQA, RETINA, WebQA
 │   └── evidence/             stub-run summaries, HF model/dataset sizes, LLM cost estimate
 └── tasks/                    one guide per workstream (see table above)
 ```

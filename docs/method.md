@@ -1,5 +1,7 @@
 # Proposed method: MemGraphRAG-V
 
+**Superseded where they differ by [final-methodology.md](final-methodology.md) (4 Oct 2026).** Kept as background.
+
 **Status:** proposal, revised 3 Oct 2026 after the [methodology audit](audit/methodology-audit-2026-10-03.md) (pending group review). Not yet validated on real models. Challenge it: see [tasks/03-plan-probing.md](tasks/03-plan-probing.md).
 
 We extend MemGraphRAG with images by adding a visual layer *after* text indexing (late fusion). The question we study is **which entities to ground**. SAM3 object crops are chosen using entity *types* from MemGraphRAG's LLM-built memory, rather than MG²-RAG's named-entity labels. We then ask whether native visual evidence, entering retrieval as extra Personalized PageRank (PPR) seeds, beats captioning images into text. The paper is due **23 Oct 2026**.
