@@ -10,9 +10,10 @@
   - [data licences and releases](audit/data-licences-2026-10-04.md).
 - Tags as elsewhere: **[V-run]**, **[V-read]**, **[I]**.
 
-**Unknown going into the call:**
-- The outcome of the 2 Oct Snellius smoke test is unknown.
-- SAM3 access has been requested and is pending.
+**Status going into the call (updated 4 Oct):**
+- **G1 passed.** MemGraphRAG runs end to end on Snellius with Qwen2.5-7B (≈ 16 GB). With the team's patch and sampling override, every stage completed: OpenIE, schema extraction, memory graph, retrieval and QA.
+- **G3 passed.** SAM3 access has been granted on Hugging Face.
+- **Everything runs on Snellius.** The only possible external cost is an optional gpt-4o-mini judge (≈ $1–3); see §6.4.
 
 Section 7 lists what the call must confirm.
 
@@ -55,12 +56,13 @@ Native-vs-caption is not a new idea: 2511.16654, 2607.16604 and mKG-RAG's Table 
 | 11 | **Statistics** | "Bootstrap CIs on every comparison" | One primary metric and one primary contrast per hypothesis, using a paired bootstrap and McNemar, with Holm correction. Minimum detectable effect ≈ 5 pp is stated up front. | Prevents fishing. A λ effect of ~1 pt (MG² Table 8) is below what n ≈ 500 can detect. |
 | 12 | **Leakage controls** | "with and without query captions" | Additionally: perceptual-hash dedupe of query vs KB images; drop Bing and placeholder KB images; no Wikipedia image captions; H2 judged on retrieval; QA run with equal evidence modality for all systems. | GLDv2 and MuKA images are both mostly Wikimedia, so near-duplicates are possible. MuKA contains 20 Bing thumbnails on E-VQA [V-run]. |
 | 13 | **Models** | "Same MLLM for every system" | A role → model table that holds for every system (§4.6). VRAM test of Qwen3-VL-8B on the MIG slice by 7 Oct. | Indexing, answering and judging use different models; the 8B fit on ½ A100 is unmeasured. |
-| 14 | **Cost** | 4 indexes, $40–140 | Recounted per corpus variant (§6). Caption variants pay only for the caption passages (cache hits for the rest). KBs are capped. A budget cap is for the call to decide. | The run table needs 7–9 indexes, not 4. |
+| 14 | **Cost** | 4 indexes, $40–140 with gpt-4o-mini | **All models run on Snellius.** The budget is GPU hours, not dollars (§6.4). Caption variants only index the caption passages (the rest are cache hits). KBs are capped. | The run table needs 7–9 indexes, not 4. The smoke test ran on self-hosted Qwen2.5-7B. |
 | 15 | **Claim wording** | "which entities to ground" | "which entities to **localise** (text-prompted concept segmentation)"; native-vs-caption is a secondary analysis; HVM-GraphRAG named in the contrast. | Novelty re-check: HVM-GraphRAG already uses entity types to limit VLM extraction from images. |
 | 16 | **Citations** | — | MG²-RAG with its ECCV LNCS DOI `10.1007/978-3-032-37167-6_32`. Add 2511.16654, KBMR (2608.21450), "Signal or Noise?" (2609.35304), PILAR (2609.32895). | Novelty re-check §2–3. |
 | 17 | **Fusion vs MG²-RAG** | Audit A4: "MG²-RAG also weights branches, then normalises" | MG²-RAG sums the weighted branches and normalises the **total**. We normalise **each channel**. State this as a difference. | `MMGraphRAG.py:994-1007` [V-read]. |
 | 18 | **Datasets ruled out** | CrossModalQA and RETINA as "candidates" | Not usable: CrossModalQA is unreleased; RETINA's HF dataset returns 401. WebQA is not used (51 GB of images, test only via EvalAI). | Data-licence check [V-run]. |
 | 19 | **Timeline** | Two competing tables (method.md, audit §6); 2 Oct gate unrecorded | One table with dated gates G1–G6, a pre-committed minimal paper and an extended drop order (§6). | No code and no owners yet. The H3 go/no-go needed data that arrived only after it was due. |
+| 20 | **Indexing LLM** | gpt-4o-mini | **Qwen2.5-7B**, self-hosted on Snellius, the same model for every MemGraphRAG variant. G2's histogram must use its output. | This is what ran in the smoke test; it removes API costs. It extracts less than gpt-4o-mini, which is one more reason never to compare with the paper's numbers. |
 
 ### 2b. Adopted from the 3 Oct audit (vs the 29 Sep plan)
 
@@ -144,7 +146,7 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 ### 4.1 Indexing (per corpus)
 
 1. Our loader passes one passage per chunk to `index_with_memory`. Never use `code/index.py`.
-2. Run MemGraphRAG as released: OpenIE → schema → ontology filter (default `percentile`) → conflict detection and resolution → memory graph. gpt-4o-mini, temperature 0.
+2. Run MemGraphRAG as released: OpenIE → schema → ontology filter (default `percentile`) → conflict detection and resolution → memory graph. Qwen2.5-7B (self-hosted, via the team's patch), temperature 0.
 3. Add one **image node** per KB image, with an edge to every passage of its page. This step is identical for every arm.
 4. Run grounding for the H3 arm being evaluated (§4.4).
 5. Embed images and crops with SigLIP2-so400m, stored apart from the bge text vectors.
@@ -234,12 +236,12 @@ H2's primary result is the retrieval metric, so a gain cannot come from feeding 
 
 | Role | Model | Note |
 |---|---|---|
-| Indexing LLM (all MemGraphRAG variants) | gpt-4o-mini, temperature 0 | Avoid gpt-4.1-nano (shuts down 23 Oct) |
+| Indexing LLM (all MemGraphRAG variants) | Qwen2.5-7B, self-hosted, temperature 0 | Runs as a separate job from Qwen3-VL (the two don't fit on one MIG slice together). Use one version (precision, quantisation) for every system. |
 | Text embedder | `bge-large-en-v1.5`, released wrapper (mean pooling, instruction dropped) | D6: keep as released and state it |
 | Visual encoder | SigLIP2-so400m, also inside MG²-RAG | D3; EVA-CLIP-8B not used |
-| Segmenter | SAM3 via transformers | D8: if not approved by **6 Oct**, OWLv2 with the same noun phrases |
+| Segmenter | SAM3 via transformers, weights downloaded once with the approved HF token and run on Snellius | Access granted (G3). Do not use HF hosted inference: it is paid and sends images off-site. OWLv2 only as a backup |
 | Captioner and answerer | Qwen3-VL-8B | D4: Qwen3-VL-4B if the 7 Oct VRAM test on the MIG slice fails |
-| Judge | gpt-4o-mini | containment + LLM judge; BEM if TensorFlow installs on Snellius |
+| Judge | Containment (primary, no model) + LLM judge: Qwen2.5-7B on Snellius, or gpt-4o-mini (≈ $1–3 for ≈ 25k calls) | The judge must differ from the answerer (Qwen3-VL), because a model grading its own answers tends to be lenient. BEM if TensorFlow installs on Snellius |
 | NER (NER arm; MG²-RAG text side) | spaCy `en_core_web_trf` | |
 
 MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
@@ -279,9 +281,9 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
 
 | Gate | Date | Test | If it fails |
 |---|---|---|---|
-| G1 | **6 Oct** | A real MemGraphRAG index + QA run on Snellius (task 01) | Everyone helps unblock it on 6–7 Oct; slip all dates by the delay and cut via the drop order |
+| G1 | ✅ passed | A real MemGraphRAG index + QA run on Snellius (task 01): done with Qwen2.5-7B | — Record wall-clock time, chunk count and tokens in task 01's log; §6.4 depends on them |
 | G2 | 7 Oct | **Schema-type histogram on 50 E-VQA passages** (hand-built from the parquet; schema extraction only; no images needed) | Mostly OntoNotes labels → D7 fires: the type-guided arm uses fine-grained types |
-| G3 | 6 Oct | SAM3 access approved | Switch to OWLv2 (prototype the noun-phrase prompts with it now) |
+| G3 | ✅ passed | SAM3 access approved | — (OWLv2 stays as a backup only if SAM3 fails technically) |
 | G4 | 7 Oct | MMQA SigLIP2 / Qwen3-VL-Embedding text→image check (§3.2) | MMQA only for H3 precision and H4 |
 | G5 | 7 Oct | Qwen3-VL-8B + KV cache + images fit on the MIG slice | Qwen3-VL-4B |
 | G6 | **11 Oct** | Visual layer runs end-to-end on E-VQA dev | Switch to the minimal paper (§6.3) |
@@ -291,7 +293,7 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
 | Dates | Work |
 |---|---|
 | 4 Oct | Call: ratify, assign owners, record the smoke-test status |
-| 4–7 Oct | G1–G5; type → noun-phrase list draft; OWLv2 prototype |
+| 4–7 Oct | G2, G4, G5; type → noun-phrase list draft; SAM3 prototype on a few E-VQA images; measure indexing throughput (§6.4) |
 | 5–8 Oct | Data builders: E-VQA (MuKA images, dedupe, page grouping) and MMQA subset; per-passage loader; metrics and statistics scripts |
 | 5–11 Oct | Visual layer: dispatch, per-channel fusion, image nodes, grounding arms, crop seeds |
 | 8–12 Oct | Caption indexing starts **8 Oct**; dense SigLIP2 and zero-shot (8–10 Oct); MG²-RAG with SigLIP2 (9–12 Oct) |
@@ -309,17 +311,40 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
 - **Drop order:** λ sweep → InfoSeek → MG²-RAG on MMQA → w/o-memory ablation → fine-grained arm (only if D7 did not fire) → MG²-RAG on E-VQA.
 - **Never drop:** caption baselines, H3 grounding precision, H4.
 
-### 6.4 LLM budget (indexing only) [I]
+### 6.4 Compute budget [I]
+
+Everything runs on Snellius. The budget is **GPU hours**, not dollars.
+
+**Partitions (course guide):**
+- `int3`: free, 1/7 A100, for testing only;
+- `gpu_mig` with the course reservation: free (TU/e pays), ½ A100;
+- `gpu_mig` without the reservation: 64 credits/h;
+- `gpu_a100`: 128 credits/h.
+
+Check the group's balance with `accinfo`.
+
+**Indexes to build (Qwen2.5-7B):**
 
 | Index | Count | Note |
 |---|---|---|
-| Base multimodal KB (shared by ours, H3 arms, text-only, λ = 0) | 2 (E-VQA, MMQA) | Grounding adds no LLM calls; ≈ half HotpotQA size each |
-| + generic captions, + entity-aware captions | 4 | Captions are separate passages, so only they miss the SQLite cache |
+| Base multimodal KB (shared by ours, H3 arms, text-only, λ = 0) | 2 (E-VQA, MMQA) | ≈ HotpotQA size each (≈ 5,400 E-VQA passages); grounding adds no LLM calls |
+| + generic captions, + entity-aware captions | 4 | Only the caption passages miss the SQLite cache |
 | w/o memory (`index()`) | 1 (E-VQA) | |
 | Fine-grained types | +1 call per chunk on the 2 base KBs | Only if D7 fires |
 | HotpotQA regression | 1 | 200 questions |
 
-A full HotpotQA-size index was estimated at $13–37 with gpt-4o-mini. At ≤ 2,000 pages per KB and caption-only increments, the total is very roughly **$40–90**. This is unverified until G1 gives real token counts. The Batch API (half price) needs a wrapper, because MemGraphRAG calls the LLM synchronously. Snellius credits are needed for MG²-RAG and Qwen3-VL captioning of ~4–5k images; owners should estimate these.
+**Size of the work:** a HotpotQA-size index was estimated at 66k–142k LLM calls and 60–180M input tokens (`audit/evidence/indexing_cost_estimate.json`). On ½ A100, the 7B weights (~15 of ~20 GB) leave little room for batching. A rough guess, not measured, is 5–15 GPU-hours per base index, and a few dozen GPU-hours in total. This is feasible on the free reservation, but it is the critical path.
+
+**To keep it safe:**
+1. **Measure.** Take the smoke test's wall-clock time and chunk count from task 01's log, and replace this estimate by 7 Oct.
+2. **Use a quantised Qwen2.5-7B** (AWQ or FP8) to free memory for batching. Use the same version for every system.
+3. **Turn on vLLM prefix caching.** Every call shares a 200–700-token fixed instruction.
+4. **Run Qwen2.5-7B (indexing) and Qwen3-VL-8B (captions, answers) as separate jobs and phases.** They don't fit on one slice together.
+5. **If indexing falls behind, run only the base indexes on `gpu_a100`.** For example, 10 h = 1,280 credits.
+6. **Download data, images and weights once from the login node** into scratch or project space. Check whether compute nodes have internet access before a job depends on it.
+7. **Respect Wikimedia's download limits.** Use a descriptive User-Agent, at most 2 parallel connections, and back off on 429. MuKA images take time, not money.
+
+**External costs:** none required. If the judge is gpt-4o-mini, ≈ 25k short calls ≈ $1–3.
 
 ---
 
@@ -334,21 +359,22 @@ A full HotpotQA-size index was estimated at $13–37 with gpt-4o-mini. At ≤ 2,
 - [ ] D5: no Eqs. 7–8.
 - [ ] D6: BGE wrapper as released.
 - [ ] D7: G2 histogram rule.
-- [ ] D8: OWLv2 if SAM3 is not approved by 6 Oct.
+- [x] D8: resolved; SAM3 access granted (OWLv2 is a backup only).
 - [ ] New: H3's primary outcome is grounding precision (2a #1).
 - [ ] New: H4 on MMQA TextQ with a −3 pp margin (2a #9).
 - [ ] New: grounding adds no edges (2a #4).
 
 **Decide:**
 
-- [ ] Budget cap for LLM calls. Proposed: $100, with Batch API or self-hosting if the G1 counts exceed it. The old target was < $50.
+- [ ] Compute plan: free MIG reservation by default. How many `gpu_a100` credits may we spend on indexing if it falls behind? Check `accinfo` first.
+- [ ] Judge: local Qwen2.5-7B ($0) or gpt-4o-mini (≈ $1–3).
 - [ ] The G4 threshold for MMQA, as proposed in §3.2.
 - [ ] Use of MMQA without a stated licence (internal research use, no redistribution).
 - [ ] An owner per workstream: smoke test / G2; data builders; visual layer; baselines (captions, dense, zero-shot, MG²-RAG); metrics and statistics; annotation; writing.
 
 **Find out:**
 
-- [ ] The 2 Oct smoke-test outcome: who ran it, and what happened? Record it in [task 01's log](tasks/01-snellius-smoke-test.md#log).
-- [ ] SAM3 access: who requested it, and when?
+- [x] Smoke test: passed with Qwen2.5-7B. Still to do: record the patch, the sampling override, wall-clock time, chunk count and the schema-type output in [task 01's log](tasks/01-snellius-smoke-test.md#log).
+- [x] SAM3 access: granted.
 
 After the call, merge PR #1 together with this document. Then update the README status line, and mark method.md as background, superseded by this document where they differ.
