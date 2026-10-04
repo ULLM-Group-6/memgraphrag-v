@@ -13,7 +13,8 @@
 **Status going into the call (updated 4 Oct):**
 - **G1 passed.** MemGraphRAG runs end to end on Snellius with Qwen2.5-7B (≈ 16 GB). With the team's patch and sampling override, every stage completed: OpenIE, schema extraction, memory graph, retrieval and QA.
 - **G3 passed.** SAM3 access has been granted on Hugging Face.
-- **Everything runs on Snellius.** The only possible external cost is an optional gpt-4o-mini judge (≈ $1–3); see §6.4.
+- **Everything runs on Snellius, on free and paid partitions.** All groups bill to one shared credit account, so paid A100/H100 time is planned for indexing and the final runs, within a cap agreed at the call (§6.4). The only possible external cost is an optional gpt-4o-mini judge (≈ $1–3).
+- **Same models across systems, not the papers' models.** Every system we compare uses the same models, so differences between systems come from the method. Where our models differ from the papers', §4.8 lists each difference and the reason.
 
 Section 7 lists what the call must confirm.
 
@@ -50,19 +51,22 @@ Native-vs-caption is not a new idea: 2511.16654, 2607.16604 and mKG-RAG's Table 
 | 5 | **Grounding candidates** | "Take candidates from the schema memory *before* the ontology filter" | Candidates are entities that **have a node in the final graph**. Their types are read from the pre-filter `initial_memory_with_schema.json`. Report how many visual-typed entities the filter removed. | Entity nodes are created only from facts that survive filtering (`MemGraphRAG.py:831-841`), so pre-filter entities may have no node to seed [V-read]. |
 | 6 | **KB unit** | "Gold + distractor pages", passage IDs and MuKA keys used interchangeably | Chunk = one M2KR passage. **Page = `passage_id` minus its section suffix** (`WikiWeb_<title>_<n>`). Primary recall is at page level. KB capped at ≤ 2,000 pages per dataset. | Checked on the M2KR passages today [V-run]. Without this, doc-ID recall is ambiguous. |
 | 7 | **Dev splits** | "A small dev split" (MMQA only defined) | E-VQA: 50 questions from M2KR `EVQA_data/valid`, with gold pages disjoint from the test KB. MMQA: 50 from train. λ, k and the fact threshold are tuned per dataset on dev. | The `valid` split exists [V-run]. The fact threshold had three different defaults (0.6 CLI / 0.2 function / 0.4 smoke guide). |
-| 8 | **MMQA role** | Primary home for H1–H3, "images show several entities" | **Secondary, gated (G4).** It has no query image, so the visual query is the question text through SigLIP2. Table questions are skipped. Image gold maps to the same title's passages. | No query image; profile images only; PPR ranks passages only. CLIP text→image is weak on KB-VQA (MG² Table 2). |
+| 8 | **MMQA role** | Primary home for H1–H3, "images show several entities" | **Secondary, gated (G4).** It has no query image, so the visual query is the question text through the visual encoder's text tower. Table questions are skipped. Image gold maps to the same title's passages. | No query image; profile images only; PPR ranks passages only. CLIP text→image is weak on KB-VQA (MG² Table 2). |
 | 9 | **H4** | Text-only questions (HotpotQA), modified vs unmodified graph | **MMQA text-only questions over the multimodal KB**, full system vs unmodified MemGraphRAG, non-inferiority margin −3 pp R@5. HotpotQA becomes a bit-identity check. | On HotpotQA there are no images, so H4 could not fail. |
 | 10 | **H1 wording** | "beats best *non-graph* visual retrieval", but lists MG²-RAG (a graph method) | "Beats dense CLIP retrieval and MG²-RAG". The baselines that apply are listed per dataset (§5). | MMQA has no image→image baseline. |
 | 11 | **Statistics** | "Bootstrap CIs on every comparison" | One primary metric and one primary contrast per hypothesis, using a paired bootstrap and McNemar, with Holm correction. Minimum detectable effect ≈ 5 pp is stated up front. | Prevents fishing. A λ effect of ~1 pt (MG² Table 8) is below what n ≈ 500 can detect. |
 | 12 | **Leakage controls** | "with and without query captions" | Additionally: perceptual-hash dedupe of query vs KB images; drop Bing and placeholder KB images; no Wikipedia image captions; H2 judged on retrieval; QA run with equal evidence modality for all systems. | GLDv2 and MuKA images are both mostly Wikimedia, so near-duplicates are possible. MuKA contains 20 Bing thumbnails on E-VQA [V-run]. |
-| 13 | **Models** | "Same MLLM for every system" | A role → model table that holds for every system (§4.6). VRAM test of Qwen3-VL-8B on the MIG slice by 7 Oct. | Indexing, answering and judging use different models; the 8B fit on ½ A100 is unmeasured. |
-| 14 | **Cost** | 4 indexes, $40–140 with gpt-4o-mini | **All models run on Snellius.** The budget is GPU hours, not dollars (§6.4). Caption variants only index the caption passages (the rest are cache hits). KBs are capped. | The run table needs 7–9 indexes, not 4. The smoke test ran on self-hosted Qwen2.5-7B. |
+| 13 | **Models** | "Same MLLM for every system" | A role → model table that holds for every system (§4.6). Qwen3-VL-8B for every system; if it does not fit the free MIG slice (G5), it runs on a paid full A100. No 4B fallback. | Indexing, answering and judging use different models. Paid partitions are available (#22). |
+| 14 | **Cost** | 4 indexes, $40–140 with gpt-4o-mini | **All models run on Snellius.** The budget is GPU hours and credits, not dollars (§6.4). Caption variants only index the caption passages (the rest are cache hits). KBs are capped. | The run table needs 7–9 indexes, not 4. The smoke test ran on self-hosted Qwen2.5-7B. |
 | 15 | **Claim wording** | "which entities to ground" | "which entities to **localise** (text-prompted concept segmentation)"; native-vs-caption is a secondary analysis; HVM-GraphRAG named in the contrast. | Novelty re-check: HVM-GraphRAG already uses entity types to limit VLM extraction from images. |
 | 16 | **Citations** | — | MG²-RAG with its ECCV LNCS DOI `10.1007/978-3-032-37167-6_32`. Add 2511.16654, KBMR (2608.21450), "Signal or Noise?" (2609.35304), PILAR (2609.32895). | Novelty re-check §2–3. |
 | 17 | **Fusion vs MG²-RAG** | Audit A4: "MG²-RAG also weights branches, then normalises" | MG²-RAG sums the weighted branches and normalises the **total**. We normalise **each channel**. State this as a difference. | `MMGraphRAG.py:994-1007` [V-read]. |
 | 18 | **Datasets ruled out** | CrossModalQA and RETINA as "candidates" | Not usable: CrossModalQA is unreleased; RETINA's HF dataset returns 401. WebQA is not used (51 GB of images, test only via EvalAI). | Data-licence check [V-run]. |
 | 19 | **Timeline** | Two competing tables (method.md, audit §6); 2 Oct gate unrecorded | One table with dated gates G1–G6, a pre-committed minimal paper and an extended drop order (§6). | No code and no owners yet. The H3 go/no-go needed data that arrived only after it was due. |
 | 20 | **Indexing LLM** | gpt-4o-mini | **Qwen2.5-7B**, self-hosted on Snellius, the same model for every MemGraphRAG variant. G2's histogram must use its output. | This is what ran in the smoke test; it removes API costs. It extracts less than gpt-4o-mini, which is one more reason never to compare with the paper's numbers. |
+| 21 | **Visual encoder** (audit D3) | SigLIP2 everywhere, including MG²-RAG | SigLIP2 for development and dev tuning. **EVA-CLIP-8B for the final runs of every system** (ours, MG²-RAG, dense baselines); λ, k and the fact threshold are re-checked on dev with EVA-CLIP-8B. If the G5 fit test fails, SigLIP2 everywhere. | D3 assumed only the free ½-A100 slice. Groups can use paid credits, and EVA-CLIP-8B is MG²-RAG's own encoder, so our main baseline runs as published. That removes the "you weakened the baseline" objection. |
+| 22 | **Compute** | Free MIG reservation; `gpu_a100` only if indexing falls behind | Base indexes and the EVA-CLIP-8B final runs are planned on `gpu_a100`/`gpu_h100` from the start, within a credit cap agreed at the call. Development stays on the free slice. | Indexing is the critical path, and credits are available on the shared account. |
+| 23 | **Differences from the papers' setups** | Not listed | A table of every difference from the two papers' setups (§4.8), plus an optional small gpt-4o-mini check. | Our comparisons are controlled (same models across systems), not a replication. Readers need to see what differs and why. |
 
 ### 2b. Adopted from the 3 Oct audit (vs the 29 Sep plan)
 
@@ -83,7 +87,7 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 | Crops | Optional region nodes | Not nodes; a crop match seeds its entity (A16) |
 | λ = 0 | "text-only" | Renamed "visual graph, no visual seeds" (A10) |
 | Naming | "MemGraphRAG" | "MemGraphRAG (released code; Eqs. 7–8 not implemented)"; legacy path "w/o memory (≈ HippoRAG 2 pipeline)" (A17, D5) |
-| Encoder facts | 77-token CLIP limit | SigLIP2 truncates at 64 tokens (A12) |
+| Encoder facts | 77-token CLIP limit | SigLIP2 truncates text at 64 tokens, EVA-CLIP-8B at 77 (A12) |
 | SAM3 | Vendored copy | transformers `Sam3Model`; acknowledge SAM in the paper (A20) |
 
 ---
@@ -116,9 +120,9 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 - **Text-only questions for H4:** 300 TextQ questions.
 - **KB:** the gold and context documents of the selected questions, ≤ 2,000 documents. One passage per text paragraph; one image node per entity image.
 - **Gold:** text gold = document ID. Image gold = the passage(s) with the same Wikipedia title, because PPR ranks passages only.
-- **Visual query:** the question text, encoded with SigLIP2 (64 tokens).
+- **Visual query:** the question text, encoded with the visual encoder's text tower (SigLIP2: 64 tokens; EVA-CLIP-8B: 77).
 - **Gate G4 (by 7 Oct):**
-  - On 100 dev image questions, measure SigLIP2 text→image R@5 over the MMQA KB images; also try `Qwen3-VL-Embedding-2B` (32k context).
+  - On 100 dev image questions, measure SigLIP2 and EVA-CLIP-8B text→image R@5 over the MMQA KB images; also try `Qwen3-VL-Embedding-2B` (32k context).
   - If neither beats the bge text-only passage retrieval's R@5 on the same questions, MMQA is used **only** for H3 grounding precision and H4. Otherwise it also serves H1 and H2.
 - **Licence:**
   - None stated by AllenAI. Third-party "Apache-2.0" mirrors carry no authority.
@@ -149,7 +153,7 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 2. Run MemGraphRAG as released: OpenIE → schema → ontology filter (default `percentile`) → conflict detection and resolution → memory graph. Qwen2.5-7B (self-hosted, via the team's patch), temperature 0.
 3. Add one **image node** per KB image, with an edge to every passage of its page. This step is identical for every arm.
 4. Run grounding for the H3 arm being evaluated (§4.4).
-5. Embed images and crops with SigLIP2-so400m, stored apart from the bge text vectors.
+5. Embed images and crops with the visual encoder (SigLIP2-so400m during development, EVA-CLIP-8B for the final runs; §4.6), stored apart from the bge text vectors.
 
 ### 4.2 Retrieval (per question)
 
@@ -177,7 +181,7 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 
 | H | Claim | Primary contrast (metric) | Data | Secondary |
 |---|---|---|---|---|
-| H1 | Visual seeds through the graph beat dense CLIP retrieval and MG²-RAG | Ours (full) vs dense SigLIP2 image→image (page R@5) | E-VQA (+ MMQA if G4 passes, vs SigLIP2 text→image) | vs MG²-RAG (same encoder); vs text-only MemGraphRAG (sanity) |
+| H1 | Visual seeds through the graph beat dense CLIP retrieval and MG²-RAG | Ours (full) vs dense CLIP image→image, same encoder (page R@5) | E-VQA (+ MMQA if G4 passes, vs CLIP text→image) | vs MG²-RAG (same encoder); vs text-only MemGraphRAG (sanity) |
 | H2 | Native visual evidence beats captions | Ours vs entity-aware caption MemGraphRAG (page R@5) | E-VQA (+ MMQA if G4 passes) | vs generic captions; each with and without query-image captions; QA accuracy |
 | H3 | Type-guided selection localises the right entities | Type-guided vs NER-label arm (**grounding precision**) | E-VQA and MMQA, per dataset | Coverage; page R@5 across all four arms |
 | H4 | The visual layer does not hurt text questions | Full system vs unmodified MemGraphRAG on MMQA TextQ (R@5, non-inferiority, margin −3 pp) | MMQA TextQ | HotpotQA bit-identity check |
@@ -219,9 +223,9 @@ These were written into method.md on 3 Oct but not yet ratified. They are part o
 | Caption MemGraphRAG: generic captions of query + KB images | H2 baseline | ✓ | KB images only (no query image) |
 | Caption MemGraphRAG: entity-aware captions | H2 baseline (strong) | ✓ | KB images only |
 | Text-only MemGraphRAG (released code) | sanity / H4 | ✓ | ✓ |
-| Dense SigLIP2: image→image, image→text | H1 baseline | ✓ | text→image only |
+| Dense CLIP (same encoder as ours): image→image, image→text | H1 baseline | ✓ | text→image only |
 | Zero-shot MLLM (no retrieval) | floor | ✓ | ✓ |
-| MG²-RAG with SigLIP2 | H1 baseline | ✓ | optional (dropped early) |
+| MG²-RAG (same encoder as ours) | H1 baseline | ✓ | optional (dropped early) |
 | H3 arms: none / all / NER-label / type-guided | H3 | ✓ | ✓ |
 | Visual graph, no visual seeds (λ = 0) | ablation | ✓ | ✓ |
 | w/o memory (legacy `index()`, ≈ HippoRAG 2 pipeline) | ablation | ✓ | — |
@@ -238,9 +242,9 @@ H2's primary result is the retrieval metric, so a gain cannot come from feeding 
 |---|---|---|
 | Indexing LLM (all MemGraphRAG variants) | Qwen2.5-7B, self-hosted, temperature 0 | Runs as a separate job from Qwen3-VL (the two don't fit on one MIG slice together). Use one version (precision, quantisation) for every system. |
 | Text embedder | `bge-large-en-v1.5`, released wrapper (mean pooling, instruction dropped) | D6: keep as released and state it |
-| Visual encoder | SigLIP2-so400m, also inside MG²-RAG | D3; EVA-CLIP-8B not used |
+| Visual encoder | SigLIP2-so400m for development; **EVA-CLIP-8B for the final runs**, for every system including MG²-RAG | D3 revised (2a #21). EVA-CLIP-8B needs a full A100 (≈ 16 GB fp16 weights, plus SAM3 on the same device). Falls back to SigLIP2 everywhere if G5 fails. |
 | Segmenter | SAM3 via transformers, weights downloaded once with the approved HF token and run on Snellius | Access granted (G3). Do not use HF hosted inference: it is paid and sends images off-site. OWLv2 only as a backup |
-| Captioner and answerer | Qwen3-VL-8B | D4: Qwen3-VL-4B if the 7 Oct VRAM test on the MIG slice fails |
+| Captioner and answerer | Qwen3-VL-8B | D4: on the free MIG slice if it fits (G5), otherwise on a paid full A100 |
 | Judge | Containment (primary, no model) + LLM judge: Qwen2.5-7B on Snellius, or gpt-4o-mini (≈ $1–3 for ≈ 25k calls) | The judge must differ from the answerer (Qwen3-VL), because a model grading its own answers tends to be lenient. BEM if TensorFlow installs on Snellius |
 | NER (NER arm; MG²-RAG text side) | spaCy `en_core_web_trf` | |
 
@@ -261,6 +265,24 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
   - Holm correction across the four primary contrasts.
 - **Power:** with n ≈ 500, the minimum detectable effect is ≈ 5 pp [I]. Report smaller differences as "not detectable", not as "no effect". λ and k sweeps are descriptive only.
 - **Comparability:** never put our numbers in a table with either paper's published numbers. Every baseline is re-run on our subsets.
+
+### 4.8 Differences from the papers' setups
+
+Our hypotheses compare systems that **we run ourselves with the same models and data**. Any difference between systems therefore comes from the method, not the models. This is a controlled comparison, not a replication. Absolute numbers are not comparable with the papers (§4.7). The paper must include this table.
+
+| Component | MemGraphRAG paper | MG²-RAG paper | Ours (every system) | Why |
+|---|---|---|---|---|
+| Indexing LLM | gpt-4o-mini | — (spaCy NER, no LLM indexing) | Qwen2.5-7B, self-hosted | No API cost or key needed; verified end to end on Snellius (G1) |
+| Text embedder | NV-Embed-v2 | EVA-CLIP-8B text tower | `bge-large-en-v1.5`, released wrapper | The released MemGraphRAG repo's default (D6). CLIP text towers are too short for passages (64–77 tokens) |
+| Visual encoder | — | EVA-CLIP-8B | EVA-CLIP-8B (final runs); SigLIP2 (development) | Same as the paper in the final runs (2a #21) |
+| Generator | gpt-4o-mini | Qwen2.5-VL-7B (Table 3) | Qwen3-VL-8B | Must read images; newer and Apache-2.0; the same for every system |
+| Judge / metric | Str-Acc + gpt-4o-mini LLM-Acc | BEM (E-VQA), VQA accuracy (InfoSeek) | Containment + LLM judge; BEM if it installs; retrieval R@5 is primary | The judge must differ from the answerer |
+| Hyperparameters | top-k 5 (repo default 10) | Tuned per task (Table 7; repo ships the InfoSeek column only) | λ, k and the fact threshold tuned per dataset on dev | The papers' values do not transfer to our KBs |
+| Data | HotpotQA, 2Wiki, MuSiQue (1,000 validation questions each) | Full E-VQA test with a 100k-document KB; 5.8k InfoSeek | 500 E-VQA test questions with a ≤ 2,000-page KB; MMQA dev | Compute and time; see §3 |
+
+**Remaining risk.** A 7B indexing model extracts fewer facts than gpt-4o-mini. The dense fallback then fires more often, which could make visual seeds look more or less useful than with a stronger extractor. So how the systems rank could depend on the indexing model.
+
+**Optional fidelity check (needs group approval for the API spend).** Re-index the KB of 100 E-VQA test questions with gpt-4o-mini, at about one eighth of a HotpotQA-size index, so ≈ $2–5 [I, scaled from `audit/evidence/indexing_cost_estimate.json`]. Then check that H1's direction (ours vs dense CLIP vs text-only) is the same as with Qwen2.5-7B. Report the result as a robustness check, not as a hypothesis test.
 
 ---
 
@@ -284,8 +306,8 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
 | G1 | ✅ passed | A real MemGraphRAG index + QA run on Snellius (task 01): done with Qwen2.5-7B | — Record wall-clock time, chunk count and tokens in task 01's log; §6.4 depends on them |
 | G2 | 7 Oct | **Schema-type histogram on 50 E-VQA passages** (hand-built from the parquet; schema extraction only; no images needed) | Mostly OntoNotes labels → D7 fires: the type-guided arm uses fine-grained types |
 | G3 | ✅ passed | SAM3 access approved | — (OWLv2 stays as a backup only if SAM3 fails technically) |
-| G4 | 7 Oct | MMQA SigLIP2 / Qwen3-VL-Embedding text→image check (§3.2) | MMQA only for H3 precision and H4 |
-| G5 | 7 Oct | Qwen3-VL-8B + KV cache + images fit on the MIG slice | Qwen3-VL-4B |
+| G4 | 7 Oct | MMQA SigLIP2 / EVA-CLIP-8B / Qwen3-VL-Embedding text→image check (§3.2) | MMQA only for H3 precision and H4 |
+| G5 | 7 Oct | (a) Qwen3-VL-8B + KV cache + images fit on the free MIG slice. (b) EVA-CLIP-8B + SAM3 run together on one full A100, timed on 100 images | (a) Answer on a paid full A100. (b) SigLIP2 everywhere for the final runs |
 | G6 | **11 Oct** | Visual layer runs end-to-end on E-VQA dev | Switch to the minimal paper (§6.3) |
 
 ### 6.2 Timeline (replaces method.md and audit §6)
@@ -293,35 +315,39 @@ MemGraphRAG's Eqs. 7–8 stay unimplemented (D5).
 | Dates | Work |
 |---|---|
 | 4 Oct | Call: ratify, assign owners, record the smoke-test status |
-| 4–7 Oct | G2, G4, G5; type → noun-phrase list draft; SAM3 prototype on a few E-VQA images; measure indexing throughput (§6.4) |
+| 4–7 Oct | G2, G4, G5 (incl. the EVA-CLIP-8B timing); type → noun-phrase list draft; SAM3 prototype on a few E-VQA images; measure indexing throughput (§6.4) |
 | 5–8 Oct | Data builders: E-VQA (MuKA images, dedupe, page grouping) and MMQA subset; per-passage loader; metrics and statistics scripts |
 | 5–11 Oct | Visual layer: dispatch, per-channel fusion, image nodes, grounding arms, crop seeds |
-| 8–12 Oct | Caption indexing starts **8 Oct**; dense SigLIP2 and zero-shot (8–10 Oct); MG²-RAG with SigLIP2 (9–12 Oct) |
+| 8–12 Oct | Base and caption indexing on paid partitions from **8 Oct**; dense CLIP and zero-shot (8–10 Oct); MG²-RAG (9–12 Oct). Development uses SigLIP2 |
 | 9–12 Oct | Grounding-precision annotation (2 annotators) |
-| 12–16 Oct | Main runs and ablations; λ, k and threshold on dev. **Results freeze 16 Oct.** |
+| 12–16 Oct | EVA-CLIP-8B embedding of KB images, crops and queries; λ, k and threshold re-checked on dev; main runs and ablations with EVA-CLIP-8B. **Results freeze 16 Oct.** |
 | 5–22 Oct | Writing (background and method from 5 Oct) |
 | 23 Oct | Submission (9-page ACM) |
 
 ### 6.3 Cuts
 
 - **Minimal paper** (if G6 fails): E-VQA only, with
-  - H1 vs dense SigLIP2,
+  - H1 vs dense CLIP,
   - H2 vs both caption baselines,
   - H3 as grounding precision and coverage only.
-- **Drop order:** λ sweep → InfoSeek → MG²-RAG on MMQA → w/o-memory ablation → fine-grained arm (only if D7 did not fire) → MG²-RAG on E-VQA.
+- **Drop order:** λ sweep → EVA-CLIP-8B final runs (report SigLIP2 instead) → InfoSeek → MG²-RAG on MMQA → w/o-memory ablation → fine-grained arm (only if D7 did not fire) → MG²-RAG on E-VQA.
 - **Never drop:** caption baselines, H3 grounding precision, H4.
 
 ### 6.4 Compute budget [I]
 
-Everything runs on Snellius. The budget is **GPU hours**, not dollars.
+Everything runs on Snellius. All groups bill to **one shared credit account**, so paid time is allowed but must stay within a cap the group agrees. The budget is **GPU hours and credits**, not dollars.
 
 **Partitions (course guide):**
 - `int3`: free, 1/7 A100, for testing only;
 - `gpu_mig` with the course reservation: free (TU/e pays), ½ A100;
 - `gpu_mig` without the reservation: 64 credits/h;
-- `gpu_a100`: 128 credits/h.
+- `gpu_a100`: 128 credits/h;
+- `gpu_h100`: 192 credits/h. Use it only if a job runs more than 1.5× faster than on an A100.
 
-Check the group's balance with `accinfo`.
+**Plan:**
+- **Free slice:** development, unit runs, dev tuning with SigLIP2, and Qwen3-VL-8B captioning and answering if it fits (G5a).
+- **Paid full GPUs:** the base indexes (from 8 Oct), EVA-CLIP-8B embedding and the final runs (12–16 Oct), and answering if G5a fails.
+- **Before each paid batch, check `accinfo`.** Other groups draw from the same pool.
 
 **Indexes to build (Qwen2.5-7B):**
 
@@ -333,18 +359,20 @@ Check the group's balance with `accinfo`.
 | Fine-grained types | +1 call per chunk on the 2 base KBs | Only if D7 fires |
 | HotpotQA regression | 1 | 200 questions |
 
-**Size of the work:** a HotpotQA-size index was estimated at 66k–142k LLM calls and 60–180M input tokens (`audit/evidence/indexing_cost_estimate.json`). On ½ A100, the 7B weights (~15 of ~20 GB) leave little room for batching. A rough guess, not measured, is 5–15 GPU-hours per base index, and a few dozen GPU-hours in total. This is feasible on the free reservation, but it is the critical path.
+**Size of the work:** a HotpotQA-size index was estimated at 66k–142k LLM calls and 60–180M input tokens (`audit/evidence/indexing_cost_estimate.json`). On ½ A100, the 7B weights (~15 of ~20 GB) leave little room for batching. A rough guess, not measured, is 5–15 GPU-hours per base index on ½ A100, and fewer on a full A100 with batching. Indexing is the critical path, which is why the base indexes go on paid GPUs.
+
+**Proposed credit cap: 5,000 credits (≈ 39 A100-hours).** Expected use is 2,000–5,000 [I, unmeasured]: about 20–30 A100-hours of indexing, a few hours of EVA-CLIP-8B embedding, and up to ~10 hours of final QA. Replace these numbers with measured ones by 7 Oct.
 
 **To keep it safe:**
-1. **Measure.** Take the smoke test's wall-clock time and chunk count from task 01's log, and replace this estimate by 7 Oct.
+1. **Measure.** Take the smoke test's wall-clock time and chunk count from task 01's log, and time EVA-CLIP-8B on 100 images (G5b). Replace these estimates by 7 Oct.
 2. **Use a quantised Qwen2.5-7B** (AWQ or FP8) to free memory for batching. Use the same version for every system.
 3. **Turn on vLLM prefix caching.** Every call shares a 200–700-token fixed instruction.
 4. **Run Qwen2.5-7B (indexing) and Qwen3-VL-8B (captions, answers) as separate jobs and phases.** They don't fit on one slice together.
-5. **If indexing falls behind, run only the base indexes on `gpu_a100`.** For example, 10 h = 1,280 credits.
+5. **Track credits per job.** Log partition, hours and credits for every paid job in task 01's log, so we can stop before the cap. For scale: 10 h on `gpu_a100` = 1,280 credits.
 6. **Download data, images and weights once from the login node** into scratch or project space. Check whether compute nodes have internet access before a job depends on it.
 7. **Respect Wikimedia's download limits.** Use a descriptive User-Agent, at most 2 parallel connections, and back off on 429. MuKA images take time, not money.
 
-**External costs:** none required. If the judge is gpt-4o-mini, ≈ 25k short calls ≈ $1–3.
+**External costs:** none required. Optional: a gpt-4o-mini judge (≈ 25k short calls ≈ $1–3) and the gpt-4o-mini fidelity check (≈ $2–5, §4.8). Both need group approval.
 
 ---
 
@@ -354,8 +382,8 @@ Check the group's balance with `accinfo`.
 
 - [ ] D1: E-VQA primary + MMQA secondary, gated by G4; InfoSeek optional.
 - [ ] D2: claim as worded in §1.
-- [ ] D3: SigLIP2 everywhere, including MG²-RAG.
-- [ ] D4: Qwen3-VL-8B (4B fallback) as captioner and answerer for every system.
+- [ ] D3 (revised): SigLIP2 for development; EVA-CLIP-8B for the final runs of every system, including MG²-RAG (2a #21).
+- [ ] D4: Qwen3-VL-8B as captioner and answerer for every system (on a paid full A100 if it doesn't fit the free slice).
 - [ ] D5: no Eqs. 7–8.
 - [ ] D6: BGE wrapper as released.
 - [ ] D7: G2 histogram rule.
@@ -363,10 +391,12 @@ Check the group's balance with `accinfo`.
 - [ ] New: H3's primary outcome is grounding precision (2a #1).
 - [ ] New: H4 on MMQA TextQ with a −3 pp margin (2a #9).
 - [ ] New: grounding adds no edges (2a #4).
+- [ ] New: framing as a controlled comparison, not a replication, with the differences table in the paper (§4.8).
 
 **Decide:**
 
-- [ ] Compute plan: free MIG reservation by default. How many `gpu_a100` credits may we spend on indexing if it falls behind? Check `accinfo` first.
+- [ ] Credit cap on the shared account: proposed 5,000 credits (§6.4). Check `accinfo` first. Who submits and logs paid jobs?
+- [ ] Optional gpt-4o-mini fidelity check (≈ $2–5, §4.8): yes or no, and whose API key.
 - [ ] Judge: local Qwen2.5-7B ($0) or gpt-4o-mini (≈ $1–3).
 - [ ] The G4 threshold for MMQA, as proposed in §3.2.
 - [ ] Use of MMQA without a stated licence (internal research use, no redistribution).
