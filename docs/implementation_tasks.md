@@ -1,0 +1,34 @@
+- **Days 1–2, 6–7 October — agree on interfaces and verify the components.**
+    
+    - **[01 — First] Freeze shared interfaces:** manifest schemas, stable IDs, artifact locations, retrieval-output format and configuration structure.
+    - **[02 — Parallel with setup] Resolve remaining settings:** reader, judge, text encoder, PPR restart probability, image settings, generation limits, context budgets and supplementary scoring rules.
+    - **[03 — Parallel] Select and validate the benchmark:** inspect real questions, images, gold document IDs, official scoring and distractor availability.
+    - **[04 — Parallel] Run a real MemGraphRAG smoke test:** index a small text sample, retrieve evidence and document required fixes. Pin the upstream version.
+    - **[05 — Parallel] Verify EVA CLIP and SAM3:** encode real images/questions and test grounding, including unsuccessful detections. Confirm usable masks, confidence scores and crops.
+    - **[06 — After 01; parallel] Implement retrieval interfaces against a small test graph:** image-node registration, seed inputs and structured evidence outputs.
+    - **[07 — After 01–02; parallel] Verify reader and captioning calls:** confirm actual image inputs, answer generation and cacheable, question-independent descriptions.
+    - **[08 — After initial smoke tests] Estimate runtime and cost:** measure component throughput, project the complete experiment workload and set GPU scheduling, API concurrency and spending limits.
+- **Days 2–4, 7–9 October — prepare data and reusable components.**
+    
+    - **[09 — After 03] Build corpus manifests (schemas of metadata describing the documents, text passages and images):** validate document/passage/image IDs, files and passage–image mappings; include fixed distractors and report missing gold evidence.
+	    - Does every image file exist?
+	    - Does every referenced passage ID exist?
+	    - Are IDs unique?
+    - **[10 — After 09] Freeze development/test splits:** use official splits where suitable; otherwise group dependent questions before splitting. Save question lists, grouping rules, seed and hashes.
+    - **[11 — After 04 and the validated text manifest] Build the text index:** cache extraction and memory outputs, export final entity/passage mappings, preserve the unaugmented graph and support resuming interrupted indexing.
+    - **[12 — After 05 and the image manifest; parallel with 11] Finish the SigLIP2 adapter (==STILL WAITING TO BE CONFIRMED BY SURUCHI==):** normalized encoding, revision-aware caching, deterministic ranking and explicit failure/truncation logging. Precompute whole-image embeddings.
+    - **[13 — After 01 and 05; parallel with 11] Implement SAM3 preprocessing:** accept existing entity IDs, deduplicate prompts, apply the `0.5` threshold and export detections, masks, crops and mappings. Production processing must wait for final text entities.
+    - **[14 — After 07 and the image manifest; parallel with 11–13] Generate cached corpus descriptions:** use the frozen prompt and 256-token limit; record model revision, token usage and failures.
+    - **[15 — After 01 and 03; parallel] Implement evaluation:** official QA scorer, Document-ID Recall@5, image-evidence recall where available, containment accuracy and the fixed judge LLM.
+    - **[16 — After 06; parallel] Implement direct retrieval D:** use cached SigLIP2 (**OR EVA CLIP**) vectors, maximum image score per document, five unique documents and one selected image per document.
+    - **[17 — After 01 and 07; parallel] Build the shared reader adapter:** load whole images, attach source IDs, enforce text budgets and save actual inputs. Support native-image and caption conditions.
+- **Days 4–6, 9–11 October — integrate indexing, grounding and retrieval.**
+    
+    - **[18 — After 11 and 13] Run production SAM3 grounding:** use final associated entities, inspect an initial batch, then process the corpus. Preserve images with zero detections.
+    - **[19 — After 18, batch by batch] Generate and embed crops:** retain parent-image/entity mappings and frozen masking behaviour; reuse the same SigLIP2 adapter (**==OR JUST USE THE ONE WITH EVA CLIP==**).
+    - **[20 — After 09 and 11; parallel with 18] Build the image–passage graph:** add image nodes and deduplicated edges of weight `1.0`; preserve original graph structure and weights.
+    - **[21 — After 18 and 20] Add grounded image–entity edges:** use maximum retained confidence per pair. Confirm that repeated detections do not accumulate weights and crops are **not graph vertices**.
+    - **[22 — After 11 and 14; parallel with grounding] Build caption baseline C:** index descriptions with source text in a separate index, using the same applicable text settings and fixes.
+    - **[23 — After 06 and 12; develop alongside grounding] Implement seed construction:** top-20 candidates, score sanitation, crop-to-entity maximum aggregation, independent normalization and text/visual fusion. Validate production crop seeds after 19.
+    - **[24 — After 21 and 23] Integrate CPU PPR:** rank image nodes, return five unique documents and implement the shared logged fallback.
+    - **[25 — After 16–17 and 24] Run a small complete development batch:** question → retrieval → actual evidence → reader → scorer. Manually inspect evidence and prompts.
