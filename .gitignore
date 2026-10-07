@@ -1,0 +1,7 @@
+
+# EVA-CLIP smoke-test artifacts
+.venv-eva/
+external/MG2-RAG/
+checkpoints/eva-smoke/
+outputs/
+eva-clip-smoke.zip
