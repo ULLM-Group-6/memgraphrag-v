@@ -11,6 +11,7 @@ dataset:
   split_seed: 42
   n_dev: 100
   n_test: 400
+  distractor_set: null    # [03]/[09] source and rule of the fixed distractors
 
 upstream:
   memgraphrag_repo: https://github.com/XMUDeepLIT/MemGraphRAG
@@ -20,7 +21,9 @@ upstream:
 
 text_index:
   llm: null               # [02]
-  text_encoder: null      # [02]
+  text_encoder: null      # [02] also used by the dense-passage fallback
+  chunking: null          # [04]/[11] e.g. one benchmark passage per chunk
+  upstream_settings: null # [04]/[11] upstream BaseConfig used for indexing, minus machine paths
 
 visual_encoder:
   name: google/siglip2-so400m-patch14-384  # or EVA-CLIP, pending [05]/[12]
@@ -41,6 +44,9 @@ retrieval:
   ppr_restart_alpha: null # [02]
   n_docs: 5
   text_budget_tokens: 256
+  text_budget_tokenizer: null  # [02] tokenizer for the 256-token budgets
+  fallback_top_k: null    # [02] passages from upstream dense_passage_retrieval
+  diagnostics_top_n: 100  # candidates and PPR ranks kept in diagnostics.jsonl
 
 caption:
   description_max_tokens: 256

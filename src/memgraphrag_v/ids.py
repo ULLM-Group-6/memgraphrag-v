@@ -66,7 +66,9 @@ def crop_id(image_id: str, entity_id: str, rank: int) -> str:
     """ID of a saved crop record. Crops are never graph vertices.
 
     ``rank`` is the 0-based position of the detection among those kept for this
-    (image, entity) pair, ordered by confidence descending (ties: box order).
+    (image, entity) pair (confidence >= threshold), ordered by confidence
+    descending (ties: box order). It is assigned before MG²'s 10 px crop
+    filter, so the saved crops of a pair can skip ranks.
     """
     check_native_id(image_id)
     if not is_hash_id(entity_id, ENTITY_PREFIX):

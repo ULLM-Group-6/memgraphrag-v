@@ -27,6 +27,9 @@ def test_require_frozen_lists_open_settings():
     missing = cfg.unresolved()
     assert "retrieval.ppr_restart_alpha" in missing
     assert "reader.model" in missing
+    for name in ["text_index.chunking", "text_index.upstream_settings", "retrieval.fallback_top_k",
+                 "retrieval.text_budget_tokenizer", "dataset.distractor_set"]:
+        assert name in missing
     assert "artifacts_root" not in missing
     with pytest.raises(ValueError, match="ppr_restart_alpha"):
         cfg.require_frozen()
@@ -34,7 +37,8 @@ def test_require_frozen_lists_open_settings():
 
 def test_fully_set_config_is_frozen():
     data = yaml.safe_load(DEFAULT.read_text(encoding="utf-8"))
-    fill = {"ppr_restart_alpha": 0.5, "beta": 0.5, "max_new_tokens": 512}
+    fill = {"ppr_restart_alpha": 0.5, "beta": 0.5, "max_new_tokens": 512, "fallback_top_k": 50,
+            "upstream_settings": {"linking_top_k": 5}}
     for section in data.values():
         if isinstance(section, dict):
             for key, value in section.items():

@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
@@ -29,6 +30,7 @@ class DatasetConfig(_Section):
     split_seed: int = 42
     n_dev: int = 100
     n_test: int = 400
+    distractor_set: str | None = None  # [03]/[09] source and rule of the fixed distractors
 
 
 class UpstreamConfig(_Section):
@@ -40,7 +42,12 @@ class UpstreamConfig(_Section):
 
 class TextIndexConfig(_Section):
     llm: str | None = None  # [02]
-    text_encoder: str | None = None  # [02]
+    text_encoder: str | None = None  # [02]; also used by the dense-passage fallback
+    chunking: str | None = None  # [04]/[11] e.g. one benchmark passage per chunk, no re-splitting
+    upstream_settings: dict[str, Any] | None = None
+    """[04]/[11] The upstream BaseConfig used for indexing, minus machine paths:
+    extraction, ontology filtering, conflict resolution, linking_top_k,
+    passage_node_weight and so on."""
 
 
 class VisualEncoderConfig(_Section):
@@ -65,6 +72,10 @@ class RetrievalConfig(_Section):
     ppr_restart_alpha: float | None = Field(default=None, gt=0.0, lt=1.0)  # [02]
     n_docs: int = Field(default=MAX_DOCS, ge=1, le=MAX_DOCS)
     text_budget_tokens: int = 256
+    text_budget_tokenizer: str | None = None  # [02] tokenizer the 256-token budgets are counted with
+    fallback_top_k: int | None = Field(default=None, ge=1)  # [02] passages from upstream dense_passage_retrieval
+    diagnostics_top_n: int = Field(default=100, ge=1)
+    """Candidates and PPR ranks kept per question in diagnostics.jsonl."""
 
 
 class CaptionConfig(_Section):

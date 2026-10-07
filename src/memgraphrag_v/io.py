@@ -12,12 +12,22 @@ import json
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, TypeVar
+from typing import TYPE_CHECKING, Iterable, TypeVar
 
 from pydantic import BaseModel
 
 from . import SCHEMA_VERSION
-from .schemas import CropRecord, GroundingRecord, ImageRecord, PassageRecord, QuestionRecord
+from .schemas import (
+    CropRecord,
+    DescriptionRecord,
+    GroundingRecord,
+    ImageRecord,
+    PassageRecord,
+    QuestionRecord,
+)
+
+if TYPE_CHECKING:
+    from .config import ExperimentConfig
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -129,6 +139,7 @@ def validate_manifests(
     passage_doc = {p.passage_id: p.doc_id for p in passages}
     image_ids = {i.image_id for i in images}
     doc_ids = set(passage_doc.values()) | {i.doc_id for i in images}
+    cross_doc = _check_duplicate_text(report, passages)
 
     for image in images:
         for pid in image.passage_ids:
@@ -141,6 +152,12 @@ def validate_manifests(
                 )
         if not image.passage_ids:
             report.warnings.append(f"image {image.image_id}: no associated passages")
+        shared = [pid for pid in image.passage_ids if pid in cross_doc]
+        if shared:
+            report.warnings.append(
+                f"image {image.image_id}: passages {shared} share a chunk node with other "
+                f"documents, so its image–passage edges reach those documents too"
+            )
 
     for crop in crops:
         if crop.image_id not in image_ids:
@@ -162,13 +179,39 @@ def validate_manifests(
         files = [(f"image {i.image_id}", i.path) for i in images]
         for c in crops:
             files.append((f"crop {c.crop_id}", c.path))
-            if c.mask_path:
-                files.append((f"crop {c.crop_id} mask", c.mask_path))
+            files.append((f"crop {c.crop_id} mask", c.mask_path))
+        for g in grounding or []:
+            for d in g.detections:
+                if d.crop_id is None:  # masks of saved crops are listed above
+                    files.append((f"detection {g.image_id}/{g.entity_id}#{d.rank} mask", d.mask_path))
         for label, rel in files:
             if not (root / rel).is_file():
                 report.errors.append(f"{label}: missing file {rel}")
 
     return report
+
+
+def _check_duplicate_text(report: ManifestReport, passages: list[PassageRecord]) -> set[str]:
+    """Upstream chunk IDs hash the passage text, so identical passages become one
+    graph node whose score is credited to each of them. Returns the passage IDs
+    whose shared node spans more than one document."""
+    by_text: dict[str, list[PassageRecord]] = {}
+    for p in passages:
+        by_text.setdefault(p.text, []).append(p)
+    cross_doc: set[str] = set()
+    for group in by_text.values():
+        if len(group) < 2:
+            continue
+        pids = [p.passage_id for p in group]
+        docs = sorted({p.doc_id for p in group})
+        where = f" across docs {docs}" if len(docs) > 1 else ""
+        report.warnings.append(
+            f"passages {pids} have identical text{where}: they share one chunk node, "
+            f"whose score is credited to each passage"
+        )
+        if len(docs) > 1:
+            cross_doc.update(pids)
+    return cross_doc
 
 
 def _check_grounding(
@@ -177,32 +220,59 @@ def _check_grounding(
     crops: list[CropRecord],
     image_ids: set[str],
 ) -> None:
-    """Each (image, entity) is prompted once, and its crops agree with the attempt."""
+    """Each (image, entity) is prompted once, and every saved crop matches
+    exactly one kept detection."""
     pair_counts = Counter((g.image_id, g.entity_id) for g in grounding)
     for pair, n in sorted(pair_counts.items()):
         if n > 1:
             report.errors.append(f"grounding: {pair} prompted more than once")
-    attempts = {(g.image_id, g.entity_id): g for g in grounding}
     for g in grounding:
         if g.image_id not in image_ids:
             report.errors.append(f"grounding: unknown image {g.image_id}")
 
-    crops_by_pair: dict[tuple[str, str], list[CropRecord]] = {}
+    detections = {
+        d.crop_id: (g, d) for g in grounding for d in g.detections if d.crop_id is not None
+    }
+    crop_ids = {c.crop_id for c in crops}
     for c in crops:
-        crops_by_pair.setdefault((c.image_id, c.entity_id), []).append(c)
-    for pair, pair_crops in crops_by_pair.items():
-        g = attempts.get(pair)
-        if g is None or g.n_kept == 0:
-            report.errors.append(f"crops of {pair} have no grounding attempt with kept detections")
+        found = detections.get(c.crop_id)
+        if found is None:
+            report.errors.append(f"crop {c.crop_id}: no matching detection in the grounding attempts")
             continue
-        if len(pair_crops) != g.n_crops:
-            report.errors.append(f"{pair}: {len(pair_crops)} crops but n_crops={g.n_crops}")
-        for c in pair_crops:
-            if not g.threshold <= c.confidence <= g.max_confidence + 1e-9:
-                report.errors.append(
-                    f"crop {c.crop_id}: confidence {c.confidence} outside "
-                    f"[threshold {g.threshold}, max {g.max_confidence}]"
-                )
-    for pair, g in attempts.items():
-        if g.n_crops and pair not in crops_by_pair:
-            report.errors.append(f"{pair}: n_crops={g.n_crops} but no crops in the manifest")
+        g, d = found
+        if (c.image_id, c.entity_id) != (g.image_id, g.entity_id):
+            report.errors.append(f"crop {c.crop_id}: image/entity differ from its detection")
+        if c.confidence != d.confidence or tuple(c.bbox) != tuple(d.bbox):
+            report.errors.append(f"crop {c.crop_id}: confidence or bbox differ from its detection")
+    for crop_id, (g, d) in detections.items():
+        if crop_id not in crop_ids:
+            report.errors.append(
+                f"({g.image_id}, {g.entity_id}) detection {d.rank}: crop {crop_id} "
+                f"is not in the crop manifest"
+            )
+
+
+def check_config_consistency(
+    config: ExperimentConfig,
+    grounding: list[GroundingRecord] | None = None,
+    descriptions: list[DescriptionRecord] | None = None,
+) -> ManifestReport:
+    """Check that cached grounding and descriptions were made with the settings
+    the experiment config pins (SAM3 threshold; reader VLM and caption prompt)."""
+    report = ManifestReport()
+    thresholds = sorted({g.threshold for g in grounding or []})
+    if any(t != config.sam3.threshold for t in thresholds):
+        report.errors.append(
+            f"grounding thresholds {thresholds} differ from sam3.threshold {config.sam3.threshold}"
+        )
+    expected = {
+        "model": config.reader.model,
+        "model_revision": config.reader.revision,
+        "max_tokens": config.caption.description_max_tokens,
+        "prompt_version": config.caption.prompt_version,
+    }
+    for name, want in expected.items():
+        found = sorted({str(getattr(d, name)) for d in descriptions or []})
+        if found and found != [str(want)]:
+            report.errors.append(f"descriptions: {name} {found} differs from the config ({want})")
+    return report

@@ -23,7 +23,7 @@ def corpus():
         CropRecord(
             crop_id=ids.crop_id("d1#img000", ENTITY, 0), image_id="d1#img000", entity_id=ENTITY,
             prompt="Eiffel Tower", bbox=(1, 2, 30, 40), confidence=0.9,
-            path="grounding/sam3/crops/a.png",
+            path="grounding/sam3/crops/a.png", mask_path="grounding/sam3/masks/a.png",
         )
     ]
     return passages, images, questions, crops

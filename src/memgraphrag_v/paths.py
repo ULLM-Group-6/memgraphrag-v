@@ -94,6 +94,11 @@ class ArtifactLayout:
         return self.root / "index" / "caption"
 
     @property
+    def caption_chunk_map(self) -> Path:
+        """Chunk -> passage/image description map of the caption index ([22])."""
+        return self.caption_index_dir / "exports" / "chunk_map.jsonl"
+
+    @property
     def descriptions(self) -> Path:
         """Cached question-independent image descriptions ([14])."""
         return self.root / "descriptions" / "descriptions.jsonl"
@@ -133,6 +138,10 @@ class ArtifactLayout:
 
     def retrieval_output(self, run_id: str) -> Path:
         return self.run_dir(run_id) / "retrieval.jsonl"
+
+    def diagnostics_output(self, run_id: str) -> Path:
+        """Candidates, seeds and PPR rankings for the error analysis (§7)."""
+        return self.run_dir(run_id) / "diagnostics.jsonl"
 
     def reader_output(self, run_id: str) -> Path:
         return self.run_dir(run_id) / "reader.jsonl"

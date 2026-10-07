@@ -29,10 +29,10 @@ def test_layout_is_under_root_and_distinct(tmp_path):
     paths = [
         layout.text_manifest, layout.image_manifest, layout.crop_manifest, layout.question_manifest,
         layout.images_dir, layout.splits, layout.memgraphrag_dir, layout.passage_map, layout.entities,
-        layout.caption_index_dir, layout.descriptions, layout.grounding_attempts, layout.crops_dir,
-        layout.masks_dir, layout.graph_dir,
+        layout.caption_index_dir, layout.caption_chunk_map, layout.descriptions,
+        layout.grounding_attempts, layout.crops_dir, layout.masks_dir, layout.graph_dir,
         layout.embeddings_dir("google/siglip2-so400m-patch14-384", "crop"),
-        layout.run_config("run-1"), layout.retrieval_output("run-1"),
+        layout.run_config("run-1"), layout.retrieval_output("run-1"), layout.diagnostics_output("run-1"),
         layout.reader_output("run-1"), layout.scores_output("run-1"),
     ]
     assert all(tmp_path in p.parents for p in paths)
