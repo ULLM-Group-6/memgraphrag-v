@@ -1,0 +1,22 @@
+diff --git a/code/src/MemGraphRAG.py b/code/src/MemGraphRAG.py
+index d868c5f..acb57aa 100644
+--- a/code/src/MemGraphRAG.py
++++ b/code/src/MemGraphRAG.py
+@@ -325,7 +325,16 @@ class MemGraphRAG:
+         except json.JSONDecodeError:
+             match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+             candidate = match.group(0) if match else cleaned
+-            return json.loads(fix_broken_generated_json(candidate))
++            try:
++                return json.loads(fix_broken_generated_json(candidate))
++            except json.JSONDecodeError:
++                import json_repair
++                with open(os.path.expanduser("~/snellius-work/bad_json.log"), "a", encoding="utf-8") as _f:
++                    _f.write(repr(str(response)[:1500]) + "\n---\n")
++                repaired = json_repair.loads(candidate)
++                if not isinstance(repaired, dict):
++                    raise
++                return repaired
+ 
+     @staticmethod
+     def _memory_infer_result(result: Any) -> Tuple[str, Dict[str, Any]]:

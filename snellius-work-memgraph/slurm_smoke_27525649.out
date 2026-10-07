@@ -1,0 +1,57 @@
+== import test (from code/)
+import OK
+== GPU memory visible to this job
+total GiB: 19.6
+vLLM gpu-memory-utilization: 0.85
+== starting vLLM
+server up after ~65s
+== test request
+{"id":"chatcmpl-a516374468b743da","object":"chat.completion","created":1791085986,"model":"qwen2.5-7b-instruct","choices":[{"index":0,"message":{"role":"assistant","content":"OK.","refusal":null,"annotations":null,"audio":null,"function_call":null,"reasoning":null},"logprobs":null,"finish_reason":"stop","stop_reason":null,"token_ids":null,"routed_experts":null}],"service_tier":null,"system_fingerprint":"vllm-0.30.0-nohash","usage":{"prompt_tokens":32,"total_tokens":35,"completion_tokens":3,"prompt_tokens_details":null,"completion_tokens_details":null},"prompt_logprobs":null,"prompt_token_ids":null,"prompt_text":null,"kv_transfer_params":null,"ec_transfer_params":null,"metrics":null}
+== indexing
+Sun Oct  4 05:53:07 CEST 2026
+Building two-layer memory (no schema) from 28 docs...
+Built memory structure:
+  Schema layer: 0 unique ontologies (expected 0)
+  Fact layer:   530 unique triples
+  Passage layer: 28 unique chunks
+INDEXING FAILED
+(APIServer pid=610453) INFO:     127.0.0.1:47760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47754 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47846 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47916 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47754 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47846 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47916 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47754 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47846 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47916 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47754 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47846 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47916 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47754 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47846 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=610453) INFO:     127.0.0.1:47852 - "POST /v1/chat/completions HTTP/1.1" 200 OK
