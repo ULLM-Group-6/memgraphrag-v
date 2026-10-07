@@ -1,0 +1,6 @@
+{
+  "eva_repo": "BAAI/EVA-CLIP-8B",
+  "eva_revision": "0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9",
+  "processor_repo": "openai/clip-vit-large-patch14",
+  "processor_revision": "32bd64288804d66eefd0ccbe215aa642df71cc41"
+}
