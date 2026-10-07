@@ -41,7 +41,7 @@ retrieval:
   visual_mix: 0.5         # ŝ_visual = 0.5 ŝ_image + 0.5 ŝ_crop-entity
   beta_grid: [0.25, 0.5, 0.75]
   beta: null              # tuned on dev Recall@5 before test
-  ppr_restart_alpha: null # [02]
+  ppr_restart_alpha: null # [02] restart α; upstream's igraph damping must be 1 - α
   n_docs: 5
   text_budget_tokens: 256
   text_budget_tokenizer: null  # [02] tokenizer for the 256-token budgets

@@ -63,6 +63,14 @@ def test_save_load_round_trip(tmp_path):
     assert ExperimentConfig.load(tmp_path / "run" / "config.yaml") == cfg
 
 
+def test_upstream_damping_is_one_minus_alpha():
+    ok = {"retrieval": {"ppr_restart_alpha": 0.15}, "text_index": {"upstream_settings": {"damping": 0.85}}}
+    ExperimentConfig.model_validate(ok)
+    bad = {"retrieval": {"ppr_restart_alpha": 0.15}, "text_index": {"upstream_settings": {"damping": 0.15}}}
+    with pytest.raises(ValidationError, match="damping"):
+        ExperimentConfig.model_validate(bad)
+
+
 def test_unknown_keys_and_bad_values_rejected():
     with pytest.raises(ValidationError):
         ExperimentConfig.model_validate({"retrieval": {"top_k": 20}})

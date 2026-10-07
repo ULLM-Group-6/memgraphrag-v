@@ -9,11 +9,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .schemas import MAX_DOCS
 
@@ -70,6 +71,8 @@ class RetrievalConfig(_Section):
     beta_grid: list[float] = Field(default_factory=lambda: [0.25, 0.5, 0.75])
     beta: float | None = Field(default=None, ge=0.0, le=1.0)  # tuned on dev
     ppr_restart_alpha: float | None = Field(default=None, gt=0.0, lt=1.0)  # [02]
+    """Restart probability α of method.md §5.3. Upstream passes igraph's
+    ``damping`` (probability of following an edge), so damping = 1 − α."""
     n_docs: int = Field(default=MAX_DOCS, ge=1, le=MAX_DOCS)
     text_budget_tokens: int = 256
     text_budget_tokenizer: str | None = None  # [02] tokenizer the 256-token budgets are counted with
@@ -121,6 +124,18 @@ class ExperimentConfig(_Section):
     evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
     artifacts_root: str | None = None
     """Leave null in committed configs; MGRV_ARTIFACTS supplies it per machine."""
+
+    @model_validator(mode="after")
+    def _damping_matches_alpha(self) -> ExperimentConfig:
+        # Upstream's run_ppr hands `damping` to igraph's personalized_pagerank,
+        # where it is the edge-following probability, i.e. 1 − α.
+        alpha = self.retrieval.ppr_restart_alpha
+        damping = (self.text_index.upstream_settings or {}).get("damping")
+        if alpha is not None and damping is not None and not math.isclose(damping, 1 - alpha):
+            raise ValueError(
+                f"upstream damping {damping} must equal 1 - ppr_restart_alpha ({1 - alpha})"
+            )
+        return self
 
     @classmethod
     def load(cls, path: str | Path) -> ExperimentConfig:
