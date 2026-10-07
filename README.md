@@ -27,8 +27,13 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 ## Repo map
 
 ```
+src/memgraphrag_v/            shared interfaces: IDs, record schemas, JSONL I/O, artifact layout, config
+configs/default.yaml          experiment config; null = still to be decided
+tests/                        pytest suite (`pip install -e ".[dev]" && pytest -q`)
 docs/
 ├── method.md                 proposed method, evaluation, timeline, caveats
+├── implementation_tasks.md   timeline tasks [01]–[25] (tracked on the project board)
+├── interfaces.md             the shared-interface contract: IDs, manifests, retrieval output, layout, Snellius setup
 ├── audit/
 │   ├── audit-report.md       full paper-vs-code audit of both repos (with evidence tags)
 │   ├── audit-report.pdf      same, typeset

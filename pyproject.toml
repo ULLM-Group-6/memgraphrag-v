@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memgraphrag-v"
+version = "0.1.0"
+description = "Shared interfaces for MemGraphRAG-V: manifests, IDs, artifact layout, retrieval output and config."
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.5,<3",
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

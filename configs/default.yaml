@@ -1,0 +1,67 @@
+# MemGraphRAG-V experiment configuration (schema: src/memgraphrag_v/config.py).
+# null = not decided yet; the task that resolves it is noted. A test evaluation
+# refuses to start while any null remains (ExperimentConfig.require_frozen()).
+# Do not put machine paths here: set MGRV_ARTIFACTS instead.
+
+dataset:
+  name: null              # [03]
+  revision: null          # [03]
+  corpus_sha256: null     # [09]
+  split_sha256: null      # [10]
+  split_seed: 42
+  n_dev: 100
+  n_test: 400
+
+upstream:
+  memgraphrag_repo: https://github.com/XMUDeepLIT/MemGraphRAG
+  memgraphrag_commit: null  # [04]
+  mg2_repo: https://github.com/Daboolu/MG2-RAG
+  mg2_commit: null        # [13] SAM3 wrapper and crop code
+
+text_index:
+  llm: null               # [02]
+  text_encoder: null      # [02]
+
+visual_encoder:
+  name: google/siglip2-so400m-patch14-384  # or EVA-CLIP, pending [05]/[12]
+  model_revision: null    # [12]
+  processor_revision: null  # [12]
+
+sam3:
+  checkpoint: null        # [05]
+  revision: null          # [05]
+  threshold: 0.5
+  crop_preprocessing: null  # [13] masking/background treatment
+
+retrieval:
+  top_k_candidates: 20
+  visual_mix: 0.5         # ŝ_visual = 0.5 ŝ_image + 0.5 ŝ_crop-entity
+  beta_grid: [0.25, 0.5, 0.75]
+  beta: null              # tuned on dev Recall@5 before test
+  ppr_restart_alpha: null # [02]
+  n_docs: 5
+  text_budget_tokens: 256
+
+caption:
+  description_max_tokens: 256
+  prompt_version: null    # [07]
+
+reader:
+  model: null             # [02]
+  revision: null          # [02]
+  prompt_version: null    # [17]
+  max_new_tokens: null    # [02]
+  temperature: 0.0
+  image_settings: null    # [02]
+
+judge:
+  model: null             # [02]
+  rubric_version: null    # [02]
+
+evaluation:
+  recall_k: 5
+  bootstrap_resamples: 2000
+  bootstrap_seed: 42
+  scorer_version: null    # [03]/[15]
+
+artifacts_root: null      # per machine via MGRV_ARTIFACTS
