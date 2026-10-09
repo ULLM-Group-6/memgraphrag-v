@@ -5,14 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "memgraphrag-v"
 version = "0.1.0"
-description = "Shared interfaces for MemGraphRAG-V: manifests, IDs, artifact layout, retrieval output and config."
+description = "MemGraphRAG-V: manifests, retrieval output, config and EVA-CLIP embeddings."
 requires-python = ">=3.10"
 dependencies = [
+    "numpy>=1.24",
+    "pillow>=10",
     "pydantic>=2.5,<3",
     "pyyaml>=6",
 ]
 
 [project.optional-dependencies]
+# GPU node only. transformers is pinned to the version EVA-CLIP-8B was smoke-tested with.
+eva = ["torch>=2.1", "transformers==4.49.0"]
 dev = ["pytest>=7"]
 
 [tool.setuptools.packages.find]

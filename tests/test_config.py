@@ -1,78 +1,62 @@
 from pathlib import Path
 
 import pytest
-import yaml
 from pydantic import ValidationError
 
 from memgraphrag_v.config import ExperimentConfig
+from memgraphrag_v.paths import Artifacts
 
-DEFAULT = Path(__file__).resolve().parents[1] / "configs" / "default.yaml"
-
-
-def test_default_yaml_matches_model_defaults():
-    assert ExperimentConfig.load(DEFAULT) == ExperimentConfig()
+DEFAULT = Path(__file__).parents[1] / "configs" / "default.yaml"
 
 
-def test_known_method_values():
-    cfg = ExperimentConfig.load(DEFAULT)
-    assert cfg.sam3.threshold == 0.5
-    assert cfg.retrieval.top_k_candidates == 20
-    assert cfg.retrieval.beta_grid == [0.25, 0.5, 0.75]
-    assert cfg.retrieval.n_docs == 5
-    assert cfg.evaluation.bootstrap_resamples == 2000
+def test_default_config_loads():
+    config = ExperimentConfig.load(DEFAULT)
+    assert config.visual_encoder.name == "BAAI/EVA-CLIP-8B"
+    assert config.retrieval.n_docs == 5
 
 
-def test_require_frozen_lists_open_settings():
-    cfg = ExperimentConfig.load(DEFAULT)
-    missing = cfg.unresolved()
-    assert "retrieval.ppr_restart_alpha" in missing
-    assert "reader.model" in missing
-    for name in ["text_index.chunking", "text_index.upstream_settings", "retrieval.fallback_top_k",
-                 "retrieval.text_budget_tokenizer", "dataset.distractor_set"]:
-        assert name in missing
-    assert "artifacts_root" not in missing
-    with pytest.raises(ValueError, match="ppr_restart_alpha"):
-        cfg.require_frozen()
+def test_unresolved_lists_open_settings():
+    config = ExperimentConfig.load(DEFAULT)
+    assert config.unresolved() == ["sam3.threshold", "retrieval.beta"]
+    with pytest.raises(ValueError, match="not frozen"):
+        config.require_frozen()
 
 
-def test_fully_set_config_is_frozen():
-    data = yaml.safe_load(DEFAULT.read_text(encoding="utf-8"))
-    fill = {"ppr_restart_alpha": 0.5, "beta": 0.5, "max_new_tokens": 512, "fallback_top_k": 50,
-            "upstream_settings": {"linking_top_k": 5}}
-    for section in data.values():
-        if isinstance(section, dict):
-            for key, value in section.items():
-                if value is None:
-                    section[key] = fill.get(key, "x")
-    ExperimentConfig.model_validate(data).require_frozen()
+def test_frozen_config_passes():
+    config = ExperimentConfig.load(DEFAULT)
+    config = config.model_copy(update={
+        "sam3": config.sam3.model_copy(update={"threshold": 0.5}),
+        "retrieval": config.retrieval.model_copy(update={"beta": 0.5}),
+    })
+    config.require_frozen()
 
 
-def test_hash_ignores_key_order_and_machine():
-    a = ExperimentConfig.load(DEFAULT)
-    data = yaml.safe_load(DEFAULT.read_text(encoding="utf-8"))
-    reordered = dict(reversed(list(data.items())))
-    reordered["artifacts_root"] = "/scratch-shared/u/mgrv"
-    assert ExperimentConfig.model_validate(reordered).config_hash() == a.config_hash()
-    changed = a.model_copy(update={"retrieval": a.retrieval.model_copy(update={"beta": 0.5})})
-    assert changed.config_hash() != a.config_hash()
+def test_hash_ignores_machine_and_round_trips(tmp_path):
+    config = ExperimentConfig.load(DEFAULT)
+    local = config.model_copy(update={"artifacts_root": "/scratch-shared/me/mgrv"})
+    assert local.config_hash() == config.config_hash()
+    config.save(tmp_path / "config.yaml")
+    assert ExperimentConfig.load(tmp_path / "config.yaml").config_hash() == config.config_hash()
 
 
-def test_save_load_round_trip(tmp_path):
-    cfg = ExperimentConfig.load(DEFAULT)
-    cfg.save(tmp_path / "run" / "config.yaml")
-    assert ExperimentConfig.load(tmp_path / "run" / "config.yaml") == cfg
-
-
-def test_upstream_damping_is_one_minus_alpha():
-    ok = {"retrieval": {"ppr_restart_alpha": 0.15}, "text_index": {"upstream_settings": {"damping": 0.85}}}
-    ExperimentConfig.model_validate(ok)
-    bad = {"retrieval": {"ppr_restart_alpha": 0.15}, "text_index": {"upstream_settings": {"damping": 0.15}}}
-    with pytest.raises(ValidationError, match="damping"):
-        ExperimentConfig.model_validate(bad)
-
-
-def test_unknown_keys_and_bad_values_rejected():
+def test_unknown_key_rejected():
     with pytest.raises(ValidationError):
         ExperimentConfig.model_validate({"retrieval": {"top_k": 20}})
-    with pytest.raises(ValidationError):
-        ExperimentConfig.model_validate({"retrieval": {"n_docs": 6}})
+
+
+def test_artifacts_from_env(tmp_path, monkeypatch, image):
+    monkeypatch.setenv("MGRV_ARTIFACTS", str(tmp_path))
+    artifacts = Artifacts.from_env()
+    assert artifacts.image_manifest == tmp_path / "manifests" / "image_manifest.jsonl"
+    assert artifacts.image_path(image) == tmp_path / "corpus" / "images" / "obama.jpg"
+    assert artifacts.embeddings_dir("BAAI/EVA-CLIP-8B", "image") == tmp_path / "embeddings" / "eva-clip-8b" / "image"
+    with pytest.raises(ValueError):
+        artifacts.embeddings_dir("BAAI/EVA-CLIP-8B", "images")
+    with pytest.raises(ValueError):
+        artifacts.run_dir("../escape")
+
+
+def test_artifacts_root_required(monkeypatch):
+    monkeypatch.delenv("MGRV_ARTIFACTS", raising=False)
+    with pytest.raises(RuntimeError):
+        Artifacts.from_env()

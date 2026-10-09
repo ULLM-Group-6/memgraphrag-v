@@ -1,73 +1,31 @@
 # MemGraphRAG-V experiment configuration (schema: src/memgraphrag_v/config.py).
-# null = not decided yet; the task that resolves it is noted. A test evaluation
-# refuses to start while any null remains (ExperimentConfig.require_frozen()).
+# null = not decided yet. A test evaluation refuses to start while any null
+# remains (ExperimentConfig.require_frozen()).
 # Do not put machine paths here: set MGRV_ARTIFACTS instead.
 
 dataset:
-  name: null              # [03]
-  revision: null          # [03]
-  corpus_sha256: null     # [09]
-  split_sha256: null      # [10]
+  name: mmqa
   split_seed: 42
   n_dev: 100
   n_test: 400
-  distractor_set: null    # [03]/[09] source and rule of the fixed distractors
 
-upstream:
-  memgraphrag_repo: https://github.com/XMUDeepLIT/MemGraphRAG
-  memgraphrag_commit: null  # [04]
-  mg2_repo: https://github.com/Daboolu/MG2-RAG
-  mg2_commit: null        # [13] SAM3 wrapper and crop code
-
-text_index:
-  llm: null               # [02]
-  text_encoder: null      # [02] also used by the dense-passage fallback
-  chunking: null          # [04]/[11] e.g. one benchmark passage per chunk
-  upstream_settings: null # [04]/[11] upstream BaseConfig used for indexing, minus machine paths
-
-visual_encoder:
-  name: google/siglip2-so400m-patch14-384  # or EVA-CLIP, pending [05]/[12]
-  model_revision: null    # [12]
-  processor_revision: null  # [12]
+visual_encoder:              # MG2's EVA-CLIP, smoke-tested on an A100
+  name: BAAI/EVA-CLIP-8B
+  revision: 0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9
+  processor: openai/clip-vit-large-patch14
+  processor_revision: 32bd64288804d66eefd0ccbe215aa642df71cc41
+  batch_size: 16
+  max_text_tokens: 77
 
 sam3:
-  checkpoint: null        # [05]
-  revision: null          # [05]
-  threshold: 0.5
-  crop_preprocessing: null  # [13] masking/background treatment
+  threshold: null            # to be defined (plan task 4)
 
 retrieval:
   top_k_candidates: 20
-  visual_mix: 0.5         # ŝ_visual = 0.5 ŝ_image + 0.5 ŝ_crop-entity
+  visual_mix: 0.5            # visual seeds = 0.5 image + 0.5 crop-entity
   beta_grid: [0.25, 0.5, 0.75]
-  beta: null              # tuned on dev Recall@5 before test
-  ppr_restart_alpha: null # [02] restart α; upstream's igraph damping must be 1 - α
+  beta: null                 # tuned on dev Recall@5, frozen before test
   n_docs: 5
   text_budget_tokens: 256
-  text_budget_tokenizer: null  # [02] tokenizer for the 256-token budgets
-  fallback_top_k: null    # [02] passages from upstream dense_passage_retrieval
-  diagnostics_top_n: 100  # candidates and PPR ranks kept in diagnostics.jsonl
 
-caption:
-  description_max_tokens: 256
-  prompt_version: null    # [07]
-
-reader:
-  model: null             # [02]
-  revision: null          # [02]
-  prompt_version: null    # [17]
-  max_new_tokens: null    # [02]
-  temperature: 0.0
-  image_settings: null    # [02]
-
-judge:
-  model: null             # [02]
-  rubric_version: null    # [02]
-
-evaluation:
-  recall_k: 5
-  bootstrap_resamples: 2000
-  bootstrap_seed: 42
-  scorer_version: null    # [03]/[15]
-
-artifacts_root: null      # per machine via MGRV_ARTIFACTS
+artifacts_root: null         # per machine via MGRV_ARTIFACTS
