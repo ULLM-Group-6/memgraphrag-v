@@ -79,7 +79,8 @@ def main():
 
     for name, a, b in [("images", our_images, mg2_images), ("texts", our_texts, mg2_texts)]:
         diff = float(np.max(np.abs(a - b)))
-        cosine = float(np.min(np.sum(a * b, axis=1)))
+        # MG2 normalises in fp16, so its norms are only ~1; divide them out.
+        cosine = float(np.min(np.sum(a * b, axis=1) / (np.linalg.norm(a, axis=1) * np.linalg.norm(b, axis=1))))
         print(f"{name}: max |diff| = {diff:.2e}, min cosine = {cosine:.6f}")
         if diff > args.atol:
             raise SystemExit(f"{name}: our vectors differ from MG2's by {diff:.2e} > {args.atol}")
