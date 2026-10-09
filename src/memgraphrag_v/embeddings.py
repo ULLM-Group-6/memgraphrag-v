@@ -122,6 +122,9 @@ class EmbeddingSet:
         rows = read_jsonl(directory / "rows.jsonl", EmbeddingRow)
         return cls(meta, rows, np.load(directory / "vectors.npy"))
 
+    def __contains__(self, item_id: str) -> bool:
+        return item_id in self._by_id
+
     def row_for(self, item_id: str) -> EmbeddingRow:
         return self._by_id[item_id]
 
@@ -130,6 +133,10 @@ class EmbeddingSet:
         if r.row is None:
             raise KeyError(f"{item_id} has no vector ({r.error})")
         return self.vectors[r.row]
+
+    def scores(self, query: np.ndarray) -> dict[str, float]:
+        """Cosine similarity of every embedded item to ``query``, by item_id."""
+        return {r.item_id: float(s) for r, s in zip(self._embedded, self.vectors @ query)}
 
     def top_k(self, query: np.ndarray, k: int) -> list[tuple[EmbeddingRow, float]]:
         """The k most similar items, best first; ties broken by item_id."""

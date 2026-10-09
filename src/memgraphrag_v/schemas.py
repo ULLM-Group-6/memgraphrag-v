@@ -99,7 +99,9 @@ class Evidence(Record):
     image_id: Id | None = None
     """The document's highest-scoring image; None for text-only systems."""
     passage_ids: list[Id] = Field(default_factory=list)
-    """Passages whose text goes to the reader, in source order."""
+    """The evidence's associated passages, in source order, untrimmed. The
+    reader input keeps only their first ``retrieval.text_budget_tokens``
+    tokens, cut in one place for every system."""
 
 
 class RetrievalResult(Record):

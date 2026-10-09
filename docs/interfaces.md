@@ -16,7 +16,7 @@ $MGRV_ARTIFACTS/
 ├── corpus/images/        MMQA final_dataset_images/; ImageRecord.path is relative to this
 ├── models/               EVA-CLIP-8B/, clip-vit-large-patch14/ (scripts/download_eva_clip.py)
 ├── embeddings/eva-clip-8b/{image,query,crop}/   vectors.npy, rows.jsonl, meta.json
-└── runs/<run_id>/retrieval.jsonl
+└── runs/<run_id>/        retrieval.jsonl, config.yaml
 ```
 
 ## Manifests (plan task 1): `schemas.py`
@@ -58,6 +58,16 @@ Because rows carry `doc_id` and `entity_id`, direct retrieval (image → documen
 
 Whole images and questions are embedded on a GPU node with `scripts/embed_eva_clip.sbatch`. SAM3 crops are embedded from Python with `embed_files(items, "crop", ...)`, using `EmbedItem`s that the SAM3 step builds.
 
+## Whole-image retrieval (plan task 3): `image_retrieval.py`
+
+- **`image_passage_edges(images, image_set)`** gives the graph edges `(image_id, passage_id, 1.0)` from each image to its document's passages. Images without a vector are left out, so PPR can never select an image the reader cannot see.
+- **`select_documents(image_scores, images, n_docs=5)`** scores each document by its best image and returns the top documents as `Evidence`, each with that image and its passages. Both D (cosine scores) and G (PPR image-node scores) use it, so they pick documents the same way.
+- **`retrieve_direct(...)`** is system D: the question's EVA-CLIP vector against every whole-image vector. `python -m memgraphrag_v.image_retrieval --run-id <id> [--split dev]` writes `runs/<id>/retrieval.jsonl` and `config.yaml`, and prints how often the gold document is ranked first and in the top 5 (a sanity check, not the evaluation).
+
+The attached passages are not trimmed here: see `passage_ids` under *Retrieval output* for where the 256-token cut belongs.
+
+**Dummy dataset.** `python -m memgraphrag_v.dummy <root>` writes a synthetic corpus in Misha's format: twelve documents "<Colour> <shape>", each with one picture and the question "Which picture shows a red circle?", plus edge cases (a document with two pictures, a picture without passages, a text-only document and an unreadable image). `tests/test_image_retrieval.py` runs embedding and retrieval on it with a colour-matching stand-in encoder; `scripts/dummy_image_retrieval.sbatch` runs it with the real EVA-CLIP on Snellius.
+
 ## Retrieval output (plan tasks 3 and 5)
 
 `runs/<run_id>/retrieval.jsonl` holds one `RetrievalResult` per question and system:
@@ -70,7 +80,7 @@ Whole images and questions are embedded on a GPU node with `scripts/embed_eva_cl
 
 - `route` ∈ {graph, direct, fallback}, so fallbacks are always logged.
 - `evidence` holds at most five documents, each listed once, best first with scores that never increase. `image_id` is the document's single selected image, or null for text-only systems.
-- `passage_ids` lists the passages whose text goes to the reader, in source order.
+- `passage_ids` lists the evidence's associated passages in source order, **untrimmed**. For an image that is every paragraph of its Wikipedia page. The reader input keeps only the first `retrieval.text_budget_tokens` (256) tokens of them. That cut happens once, in the shared reader-input step, for every system, so D and G get the same text budget. It is still to be built (reader/logging work), using the reader's tokenizer.
 
 ## Configuration: `config.py`, `configs/default.yaml`
 
@@ -85,7 +95,9 @@ python -m venv .venv-eva && source .venv-eva/bin/activate
 pip install -e ".[eva,dev]" huggingface_hub && pytest -q
 export MGRV_ARTIFACTS=/scratch-shared/$USER/mgrv
 python scripts/download_eva_clip.py                     # login node, about 30 GB
-sbatch scripts/embed_eva_clip.sbatch --limit 20         # smoke run, then without --limit
+sbatch scripts/dummy_image_retrieval.sbatch             # end-to-end test on the dummy dataset
+sbatch scripts/embed_eva_clip.sbatch --limit 20         # MMQA smoke run, then without --limit
+python -m memgraphrag_v.image_retrieval --run-id d-dev --split dev
 ```
 
 To run the parity check against MG2, use a GPU job that runs `python scripts/check_eva_parity.py --mg2 <MG2-RAG checkout>` (MG2 commit `91f0eed`).
