@@ -1,7 +1,10 @@
 """Check that our EvaClip adapter gives the same vectors as MG2's EvaClipModel.
 
 Encodes MG2's impala demo images and a few texts with both, on one GPU, and
-fails if any vector differs by more than --atol. Run inside a GPU job:
+fails if any vector differs by more than --atol. MG2's adapter imports a few
+packages ours does not need, so install them first:
+    pip install rich openai tenacity
+Then, inside a GPU job:
     python scripts/check_eva_parity.py --mg2 external/MG2-RAG
 """
 
@@ -26,7 +29,7 @@ TEXTS = [
 ]
 
 
-def load_mg2_encoder(repo: Path, checkpoint: Path, processor: Path):
+def import_mg2(repo: Path):
     # Skip MG2's package initializer, which imports its graph, SAM3 and CuPy
     # modules; load only the unmodified EVA adapter and its helpers.
     package = types.ModuleType("mg2_parity")
@@ -34,6 +37,11 @@ def load_mg2_encoder(repo: Path, checkpoint: Path, processor: Path):
     sys.modules[package.__name__] = package
     config_utils = importlib.import_module("mg2_parity.utils.config_utils")
     eva_clip = importlib.import_module("mg2_parity.embedding_model.eva_clip")
+    return config_utils, eva_clip
+
+
+def load_mg2_encoder(mg2, checkpoint: Path, processor: Path):
+    config_utils, eva_clip = mg2
     config = config_utils.BaseConfig(
         multimodal_embedding_model_name=str(checkpoint),
         clip_image_processor_name=str(processor),
@@ -51,6 +59,7 @@ def main():
     parser.add_argument("--atol", type=float, default=5e-3)
     args = parser.parse_args()
 
+    mg2 = import_mg2(args.mg2)  # before loading any model, so a missing package fails fast
     enc = ExperimentConfig.load(args.config).visual_encoder
     models = Artifacts.from_env().models_dir
     checkpoint = models / enc.name.rsplit("/", 1)[-1]
@@ -64,7 +73,7 @@ def main():
     del ours  # free the GPU before loading the second copy of the 8B model
     torch.cuda.empty_cache()
 
-    theirs = load_mg2_encoder(args.mg2, checkpoint, processor)
+    theirs = load_mg2_encoder(mg2, checkpoint, processor)
     mg2_images = theirs.batch_encode(images=images)
     mg2_texts = theirs.batch_encode(texts=TEXTS)
 
