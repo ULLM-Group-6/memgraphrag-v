@@ -37,4 +37,4 @@ nvidia-smi
 srun python -u -m memgraphrag_v.embeddings image
 srun python -u -m memgraphrag_v.embeddings query
 python -u -m memgraphrag_v.image_retrieval --run-id dummy-direct
-head -n 3 "$DUMMY/runs/dummy-direct/retrieval.jsonl"
+python -u scripts/show_retrieval.py --run-id dummy-direct

@@ -62,7 +62,7 @@ Whole images and questions are embedded on a GPU node with `scripts/embed_eva_cl
 
 - **`image_passage_edges(images, image_set)`** gives the graph edges `(image_id, passage_id, 1.0)` from each image to its document's passages. Images without a vector are left out, so PPR can never select an image the reader cannot see.
 - **`select_documents(image_scores, images, n_docs=5)`** scores each document by its best image and returns the top documents as `Evidence`, each with that image and its passages. Both D (cosine scores) and G (PPR image-node scores) use it, so they pick documents the same way.
-- **`retrieve_direct(...)`** is system D: the question's EVA-CLIP vector against every whole-image vector. `python -m memgraphrag_v.image_retrieval --run-id <id> [--split dev]` writes `runs/<id>/retrieval.jsonl` and `config.yaml`, and prints how often the gold document is ranked first and in the top 5 (a sanity check, not the evaluation).
+- **`retrieve_direct(...)`** is system D: the question's EVA-CLIP vector against every whole-image vector. `python -m memgraphrag_v.image_retrieval --run-id <id> [--split dev]` writes `runs/<id>/retrieval.jsonl` and `config.yaml`, and prints how often the gold document is ranked first and in the top 5 (a sanity check, not the evaluation). `python scripts/show_retrieval.py --run-id <id>` turns a run into `runs/<id>/report.html`: each question with its retrieved documents' thumbnails, scores and first passage, gold document outlined.
 
 The attached passages are not trimmed here: see `passage_ids` under *Retrieval output* for where the 256-token cut belongs.
 
@@ -98,6 +98,7 @@ python scripts/download_eva_clip.py                     # login node, about 30 G
 sbatch scripts/dummy_image_retrieval.sbatch             # end-to-end test on the dummy dataset
 sbatch scripts/embed_eva_clip.sbatch --limit 20         # MMQA smoke run, then without --limit
 python -m memgraphrag_v.image_retrieval --run-id d-dev --split dev
+python scripts/show_retrieval.py --run-id d-dev           # runs/d-dev/report.html
 ```
 
 To run the parity check against MG2, use a GPU job that runs `python scripts/check_eva_parity.py --mg2 <MG2-RAG checkout>` (MG2 commit `91f0eed`).
