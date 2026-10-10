@@ -1,0 +1,77 @@
+== import test (from code/)
+import OK
+== GPU memory visible to this job
+total GiB: 19.6
+vLLM gpu-memory-utilization: 0.85
+== starting vLLM
+server up after ~85s
+== test request
+{"id":"chatcmpl-9ad56f30b26274b9","object":"chat.completion","created":1791116987,"model":"qwen2.5-7b-instruct","choices":[{"index":0,"message":{"role":"assistant","content":"OK.","refusal":null,"annotations":null,"audio":null,"function_call":null,"reasoning":null},"logprobs":null,"finish_reason":"stop","stop_reason":null,"token_ids":null,"routed_experts":null}],"service_tier":null,"system_fingerprint":"vllm-0.30.0-nohash","usage":{"prompt_tokens":32,"total_tokens":35,"completion_tokens":3,"prompt_tokens_details":null,"completion_tokens_details":null},"prompt_logprobs":null,"prompt_token_ids":null,"prompt_text":null,"kv_transfer_params":null,"ec_transfer_params":null,"metrics":null}
+== indexing
+Sun Oct  4 14:29:47 CEST 2026
+Building two-layer memory (no schema) from 28 docs...
+Built memory structure:
+  Schema layer: 0 unique ontologies (expected 0)
+  Fact layer:   527 unique triples
+  Passage layer: 28 unique chunks
+Saving memory structure to: /home/scur0466/snellius-work/tiny/outputs2/initial_memory_with_schema.json
+Saved.
+Saving memory structure to: /home/scur0466/snellius-work/tiny/outputs2/memory.json
+Saved.
+Index completed in 273.21s
+Memory: /home/scur0466/snellius-work/tiny/outputs2/memory.json
+Memory graph: /home/scur0466/snellius-work/tiny/outputs2/graph_from_memory/memory_graph.json
+Graph stats: {'num_type_nodes': 59, 'num_passage_nodes': 28, 'num_entity_nodes': 583, 'num_edges': 2866, 'num_entity_relation_edges': 1026, 'num_passage_entity_edges': 645, 'num_entity_type_edges': 636, 'num_type_relation_edges': 138, 'num_entity_similarity_edges': 421}
+Sun Oct  4 14:34:25 CEST 2026
+== retrieval + QA
+Loading memory structure from: /home/scur0466/snellius-work/tiny/outputs2/memory.json
+Loaded: 417 schemas, 521 facts, 28 passages
+{
+  "questions_path": "/home/scur0466/snellius-work/tiny/questions.json",
+  "save_dir": "/home/scur0466/snellius-work/tiny/outputs2",
+  "num_questions": 5,
+  "question_type": "all",
+  "retrieval_seconds": 0.8513,
+  "qa_seconds": 5.0316,
+  "total_seconds": 5.8829,
+  "seconds_per_question": 1.1766,
+  "prompt_tokens": 18633,
+  "completion_tokens": 397,
+  "total_tokens": 19030
+}
+Sun Oct  4 14:34:39 CEST 2026
+== outputs
+/home/scur0466/snellius-work/tiny/outputs2
+/home/scur0466/snellius-work/tiny/outputs2/graph_from_memory
+/home/scur0466/snellius-work/tiny/outputs2/graph_from_memory/memory_graph.graphml
+/home/scur0466/snellius-work/tiny/outputs2/graph_from_memory/memory_graph.json
+/home/scur0466/snellius-work/tiny/outputs2/llm_cache
+/home/scur0466/snellius-work/tiny/outputs2/llm_cache/qwen2.5-7b-instruct_cache.sqlite
+/home/scur0466/snellius-work/tiny/outputs2/llm_cache/qwen2.5-7b-instruct_cache.sqlite.lock
+/home/scur0466/snellius-work/tiny/outputs2/initial_memory_with_schema.json
+/home/scur0466/snellius-work/tiny/outputs2/openie_results_ner_qwen2.5-7b-instruct.json
+/home/scur0466/snellius-work/tiny/outputs2/memory.json
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/entity_embeddings
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/graph.graphml
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/sample_qa_prompts.json
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/fact_embeddings
+/home/scur0466/snellius-work/tiny/outputs2/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/chunk_embeddings
+keys: ['summary', 'config', 'solutions', 'answers', 'metadata', 'results']
+answers [
+ "The \"Newcomers\" mentioned in the text is the 2000 American family drama film. One of the stars of this film is Christopher McCoy, who plays Sam Docherty, a boy who moves to Vermont with his family.\n\nAnswer: Christopher McCoy is known for playing Sam Docherty in \"The Newcomers,\" a 2000 American family drama film.",
+ "The story \"The Adventure of the Seven Clocks\" is written by Adrian Conan Doyle and John Dickson Carr. However, it's important to note that \"Adrian Conan Doyle\" is not a real author; it's a pseudonym used by John Dickson Carr. The story is part of the Sherlock Holmes series, which was originally created by Sir Arthur Conan Doyle.\n\nAnswer: The fictional private detective in \"The Adventure of the Seven Clocks\" is Sherlock Holmes, written by Sir Arthur Conan Doyle and John Dickson Carr (under the pseudonym Adrian Conan Doyle).",
+ "The Distribution of Industry Act 1950 was passed by the British Parliament under Clement Attlee's Labour government. Clement Attlee served as Prime Minister from 1945 to 1951.\nAnswer: Clement Attlee.",
+ "The passage mentions that Mary, Queen of Scots was imprisoned in Loch Leven Castle in 1567 and escaped with the help of her gaoler's family. This directly answers the question about who helped the recently abdicated queen escape her imprisonment.\nAnswer: The gaoler's family helped Mary, Queen of Scots escape from her imprisonment.",
+ "To determine the county in which Raymond Robertsen was born, I need to identify the location of his birth from the given information. The text states: \"Raymond Robertson (born 12 September 1974 in Hammerfest) is a Norwegian politician for the Conservative Party.\" Hammerfest is mentioned as a municipality in Finnmark County, Norway. \n\nAnswer: Finnmark County."
+]
+solutions [
+ {
+  "question": "what is one of the stars of  The Newcomers known for",
+  "answer": "Christopher McCoy is known for playing Sam Docherty in \"The Newcomers,\" a 2000 American family drama film.",
+  "gold_answers": null,
+  "docs": [
+   "4:2010. nan love track nan love track ( kannada : \u0ca8\u0ca8 ) is a 2016 indian kannada language romance film directed by kathir, who is best known for his successful tamil films such as \" kadhal desam \" ( 1996 ) and \" kadhalar dhinam \" ( 1999 ) and \" idhayam \" ( 1991 ), making his debut in kannada cinema. the film stars newcomers rakshith gowda and nidhi kushalappa in the lead roles. the newcomers ( film ) the newcomers is a 2000 american family drama film directed by james allen bradley and starring christopher mccoy, kate bosworth, paul dano and chris evans. christopher mccoy plays sam docherty, a boy who moves to vermont with his family, hoping to make a fresh start away from the city. it was filmed in vermont, and released by artist view entertainment and mti home video. sandra dee sandra dee ( born alexandra zuck ; april 23, 1942 \u2013 february 20, 2005 ) was an american actress. dee began her career as a child model, working in commercials before transitioning to film in her teenage years. best known for her portrayal of ingenues, dee earned a golden globe award as one of the year's most promising newcomers",
+   "5:film in her teenage years. best known for her portrayal of ingenues, dee earned a golden globe award as one of the year's most promising newcomers for her performance in robert wise's \" until they sail \" ( 1958 ). she became a teenage star for her subsequent performances in \" imitation of life \" and \" gidget \" ( both 1959 ), which made her a household name. dan kavanagh dan kavanagh is a british rock drummer best known for his work with jamie lenman and godsized. in may 2014 he was listed as one of the top 10 british drumming newcomers by rhythm, who called him a \" hard hitting rock fiend juggling two intense gigs \". he has since become a contributor to rhythm. mickey spillane's mike hammer mickey spillane's mike hammer is the title used for two syndicated television series that followed the adventures of fictional private detective mike hammer. the gritty, crime fighting detective \u2014 created by american crime author mickey spillane \u2014 has also inspired several feature films and television films. hazell ( tv series ) hazell is a british television series that ran from 1978 \u2013
+GOLD: ['superhero roles as the Marvel Comics', 'Sir Arthur Conan Doyle', '1945 to 1951', "the Queen's gaoler", 'Finnmark county,']
+== done
