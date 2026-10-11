@@ -1,21 +1,15 @@
-Datasets used in base paper:
-MG²-RAG (Multimodal) evaluates its framework on four datasets:
-
-InfoSeek: Multimodal knowledge retrieval and VQA.
-E-VQA: Encyclopedic visual question answering.
-ScienceQA: Multimodal reasoning.
-CrisisMMD: Multimodal disaster classification.
-
-MemGraphRAG (Text-only) evaluates its multi-agent architecture on five text benchmarks:
-
-HotpotQA: Multi-hop reasoning.
-2WikiMultiHopQA: Multi-hop reasoning.
-MuSiQue: Multi-hop questions via single-hop question composition.
-G-Medical: Domain-specific graph evaluation on medical texts.
-G-Novel: Domain-specific graph evaluation on narrative texts.
-
-Benchmark Datasets that will be used in our experiments:
-1. InfoSeek (multimodal): https://github.com/open-vision-language/infoseek?utm_source=chatgpt.com for wikipedia corpus and
-   https://huggingface.co/datasets/reonokiy/vsp-infoseek?utm_source=chatgpt.com for image and caption dataset
-3. E-VQA (multimodal):
-4. HotpotQA and MuSiQue(text only): This will be for checking if our architecture performs comparable to the baseline of MemGraphRAG 
+text_manifest.jsonl Actual caption text is stored in this file eg {
+  "doc_id": "Center (gridiron football) - Wikipedia",
+  "passage_id": "txt_d5df4c700dba11ecb1e81171463288e9_9",
+  "text": "The center is the innermost lineman ...",
+  "source_url": "https://en.wikipedia.org/wiki/Center_(American_football)"
+}
+image_manifest.jsonl to identify image nodes and their metadata. eg {
+  "doc_id": "Bandol rose",
+  "passage_id": "cap_30388563", ID of the associated caption passage.
+  "text": "Caption text for the image...",
+  "source_url": "https://commons.wikimedia.org/..."
+}
+images_to_download.jsonl to download the corpus images, then process those local image files.
+build_qa.json to inspect the graph-building questions and their evidence.
+test_qa.json only for evaluation
