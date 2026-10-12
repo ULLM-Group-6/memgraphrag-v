@@ -14,7 +14,7 @@ from conftest import IMAGE_ROW, QUESTION_ROW
 
 
 def test_builder_rows_parse(passage, image, question):
-    assert passage.doc_id == "Barack Obama"  # Wikipedia titles contain spaces
+    assert passage.doc_id == "Beale Street"  # titles contain spaces
     assert image.passage_ids == [passage.passage_id]
     assert question.split == "dev"
 
@@ -27,6 +27,11 @@ def test_unknown_field_rejected():
 def test_empty_id_rejected():
     with pytest.raises(ValidationError):
         ImageRecord(**{**IMAGE_ROW, "image_id": ""})
+
+
+def test_modalities_are_checked():
+    with pytest.raises(ValidationError):
+        QuestionRecord(**{**QUESTION_ROW, "modalities": ["video"]})
 
 
 def test_split_must_be_dev_or_test():

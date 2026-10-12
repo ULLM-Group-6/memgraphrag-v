@@ -5,35 +5,36 @@ import pytest
 
 from memgraphrag_v.schemas import ImageRecord, PassageRecord, QuestionRecord
 
-# Rows in the exact shape build_mmqa_manifest.py writes.
+# Rows in the shape webqa.py writes (from Misha's WebQA builder).
 PASSAGE_ROW = {
-    "doc_id": "Barack Obama",
-    "passage_id": "0a1b2c3d4e5f60718293a4b5c6d7e8f9",
-    "text": "Barack Obama is an American politician.",
-    "source_url": "https://en.wikipedia.org/wiki/Barack_Obama",
+    "doc_id": "Beale Street",
+    "passage_id": "cap_30193116",
+    "text": "Memphis, TN, Beale St. April 4, 2008",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Memphis_Beale_St.jpg",
 }
 IMAGE_ROW = {
-    "image_id": "f0e1d2c3b4a5968778695a4b3c2d1e0f",
-    "doc_id": "Barack Obama",
-    "path": "obama.jpg",
-    "source_url": None,
-    "passage_ids": ["0a1b2c3d4e5f60718293a4b5c6d7e8f9"],
-    "width": 300,
-    "height": 400,
+    "image_id": "30193116",
+    "doc_id": "Beale Street",
+    "path": "30193116.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Memphis_Beale_St.jpg/960px-Memphis_Beale_St.jpg",
+    "commons_url": "https://commons.wikimedia.org/wiki/File:Memphis_Beale_St.jpg",
+    "passage_ids": ["cap_30193116"],
+    "width": 960,
+    "height": 640,
     "ok": True,
 }
 QUESTION_ROW = {
-    "qid": "abc123",
-    "question": "What colour is the tie Barack Obama wears in his portrait?",
-    "answers": ["blue"],
-    "gold_doc_ids": ["Barack Obama"],
-    "gold_image_ids": ["f0e1d2c3b4a5968778695a4b3c2d1e0f"],
+    "qid": "d5bc0d5a0dba11ecb1e81171463288e9",
+    "question": "Does Beale St have fewer than four light-up neon signs?",
+    "answers": ["No, Beale St has more than four light-up neon signs."],
+    "gold_doc_ids": ["Beale Street"],
+    "gold_image_ids": ["30193116"],
     "gold_passage_ids": [],
-    "distractor_image_ids": [],
-    "distractor_passage_ids": ["0a1b2c3d4e5f60718293a4b5c6d7e8f9"],
-    "q_type": "ImageQ",
+    "distractor_image_ids": ["30242216"],
+    "distractor_passage_ids": ["txt_d5bc0d5a0dba11ecb1e81171463288e9_15"],
+    "q_type": "YesNo",
+    "topic": "streets",
     "modalities": ["image"],
-    "rephrasing_confidence": None,
     "split": "dev",
     "group_id": 0,
 }

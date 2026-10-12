@@ -1,10 +1,11 @@
 """Records that retrieval reads and writes.
 
-The manifest records mirror the files written by Misha's MMQA builder
-(``build_mmqa_manifest.py``) field for field, so they are read without any
-conversion step. Records are frozen and reject unknown fields, so a producer
-that drifts from this contract fails on read instead of corrupting a later
-stage. Files are JSON Lines (see ``io.py``).
+The manifests are built from Misha's WebQA subset (``subsetcheck4.py`` on the
+``dataset`` branch) by ``webqa.py``: passages are copied as they are, images
+gain the local file and whether it opens, and questions are normalised.
+Records are frozen and reject unknown fields, so a producer that drifts from
+this contract fails on read instead of corrupting a later stage. Files are
+JSON Lines (see ``io.py``).
 
 Records that only graph construction needs (entity export, passage-chunk map,
 SAM3 detections) are added with those tasks.
@@ -21,7 +22,7 @@ MAX_DOCS = 5
 """Documents returned per question, each with at most one whole image."""
 
 Id = Annotated[str, Field(min_length=1)]
-"""A dataset ID. MMQA doc IDs are Wikipedia titles, so spaces are allowed."""
+"""A dataset ID. WebQA doc IDs are page or file titles, so spaces are allowed."""
 
 
 class Record(BaseModel):
@@ -32,10 +33,12 @@ class Record(BaseModel):
 
 
 class PassageRecord(Record):
-    """manifests/text_manifest.jsonl: one Wikipedia paragraph."""
+    """manifests/text_manifest.jsonl: one WebQA source text, either an image
+    caption (passage_id ``cap_<image_id>``) or a text snippet
+    (``txt_<snippet_id>``)."""
 
     doc_id: Id
-    """Wikipedia page title."""
+    """Title of the source page; shared by every source from that page."""
     passage_id: Id
     text: str
     source_url: str | None = None
@@ -46,20 +49,26 @@ class ImageRecord(Record):
 
     image_id: Id
     doc_id: Id
+    """Title of the image's page. Several images can share one (e.g. a
+    Wikipedia article with many pictures)."""
     path: str
     """Relative to the corpus images directory (``Artifacts.images_dir``)."""
     source_url: str | None = None
+    """Where the file was downloaded from."""
+    commons_url: str | None = None
+    """The page the image belongs to."""
     passage_ids: list[Id]
-    """Passages of the same document; edges to them get weight 1."""
+    """The image's caption; edges to these get weight 1."""
     width: int | None = None
     height: int | None = None
     ok: bool
-    """False when the builder could not open the file."""
+    """False when the file is missing or cannot be opened."""
 
 
 class QuestionRecord(Record):
     """manifests/questions.jsonl. Gold and distractor fields are labels:
-    retrieval reads only ``qid`` and ``question``."""
+    retrieval reads only ``qid`` and ``question``. Gold documents are the
+    titles of the gold images and snippets."""
 
     qid: Id
     question: str
@@ -70,11 +79,17 @@ class QuestionRecord(Record):
     distractor_image_ids: list[Id]
     distractor_passage_ids: list[Id]
     q_type: str | None = None
-    modalities: list[str]
-    rephrasing_confidence: float | None = None
+    """WebQA's Qcate: YesNo, Others, number, choose, color, shape or text."""
+    topic: str | None = None
+    modalities: list[Literal["image", "text"]]
+    """Modalities of the gold evidence."""
     split: Literal["dev", "test"]
+    """dev: the graph-building questions; test: the held-out questions."""
     group_id: int
-    """Questions sharing a gold document share a group (kept in one split)."""
+    """Questions linked by a shared gold image or snippet, directly or
+    through other questions, share a group; the bootstrap resamples groups.
+    Groups can span splits, because test evidence is drawn from the corpus
+    the dev questions built."""
 
 
 class CaptionRecord(Record):

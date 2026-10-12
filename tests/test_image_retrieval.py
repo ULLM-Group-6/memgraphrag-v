@@ -108,6 +108,7 @@ def test_cli_writes_a_valid_run(dummy, capsys):
     image_retrieval.main(["--config", str(CONFIG), "--run-id", "dummy-d", "--split", "dev"])
     results = read_jsonl(artifacts.run_dir("dummy-d") / "retrieval.jsonl", RetrievalResult)
     summary = json.loads(capsys.readouterr().out)
-    assert len(results) == summary["questions"] == 6
+    assert len(results) == summary["questions"] == summary["questions_with_gold_image"] == 6
     assert summary["gold_doc_in_top_5"] == 6
+    assert summary["image_recall_at_5"] == 1.0
     assert (artifacts.run_dir("dummy-d") / "config.yaml").exists()

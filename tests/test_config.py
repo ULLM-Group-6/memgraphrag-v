@@ -48,7 +48,7 @@ def test_artifacts_from_env(tmp_path, monkeypatch, image):
     monkeypatch.setenv("MGRV_ARTIFACTS", str(tmp_path))
     artifacts = Artifacts.from_env()
     assert artifacts.image_manifest == tmp_path / "manifests" / "image_manifest.jsonl"
-    assert artifacts.image_path(image) == tmp_path / "corpus" / "images" / "obama.jpg"
+    assert artifacts.image_path(image) == tmp_path / "corpus" / "images" / "30193116.jpg"
     assert artifacts.embeddings_dir("BAAI/EVA-CLIP-8B", "image") == tmp_path / "embeddings" / "eva-clip-8b" / "image"
     with pytest.raises(ValueError):
         artifacts.embeddings_dir("BAAI/EVA-CLIP-8B", "images")
