@@ -1,0 +1,141 @@
+{
+  "mg2_commit": "91f0eed6fc5f4383f0bae746d12850f05e381e77",
+  "checkpoint": "/gpfs/home2/scur0465/memgraphrag-v/checkpoints/sam3/sam3.pt",
+  "sam3_module": "/gpfs/home2/scur0465/memgraphrag-v/external/MG2-RAG/sam3/__init__.py",
+  "image": "/gpfs/home2/scur0465/memgraphrag-v/external/MG2-RAG/examples/data/impala_demo/kb_image.jpg",
+  "torch_version": "2.7.0+cu126",
+  "cuda_version": "12.6",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "load_seconds": 11.686753974994645,
+  "peak_allocated_gib": 4.226414680480957,
+  "threshold": 0.5,
+  "prompt_batch_size": 1,
+  "runs": [
+    {
+      "run": "first",
+      "prompts": [
+        "impala",
+        "airplane"
+      ],
+      "detections": 6,
+      "saved_crops": 6,
+      "inference_seconds": 1.7892744669807144,
+      "detections_per_prompt": {
+        "impala": 6,
+        "airplane": 0
+      },
+      "crop_entity_mappings": [
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_0_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5218124389648438,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_1_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5637253522872925,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_2_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5206360220909119,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_3_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5608694553375244,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_4_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5030066967010498,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/first/obj_5_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.6964104771614075,
+          "image_id": "smoke_image"
+        }
+      ]
+    },
+    {
+      "run": "repeat",
+      "prompts": [
+        "impala",
+        "airplane"
+      ],
+      "detections": 6,
+      "saved_crops": 6,
+      "inference_seconds": 0.34454234899021685,
+      "detections_per_prompt": {
+        "impala": 6,
+        "airplane": 0
+      },
+      "crop_entity_mappings": [
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_0_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5218124389648438,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_1_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5637253522872925,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_2_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5206360220909119,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_3_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5608694553375244,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_4_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.5030066967010498,
+          "image_id": "smoke_image"
+        },
+        {
+          "crop_path": "/gpfs/home2/scur0465/memgraphrag-v/outputs/sam3_smoke_20261007_191343/grounding/smoke_passage/repeat/obj_5_impala.png",
+          "entity_id": "smoke_entity_000",
+          "prompt": "impala",
+          "score": 0.6964104771614075,
+          "image_id": "smoke_image"
+        }
+      ]
+    },
+    {
+      "run": "empty",
+      "prompts": [],
+      "detections": 0,
+      "saved_crops": 0,
+      "inference_seconds": 0.00025385600747540593,
+      "detections_per_prompt": {},
+      "crop_entity_mappings": []
+    }
+  ],
+  "status": "structural checks passed; visual inspection still required"
+}
