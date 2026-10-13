@@ -1,0 +1,2 @@
+You are offline and the cache for model files in Transformers v4.22.0 has been updated while your local cache seems to be the one of a previous version. It is very likely that all your calls to any `from_pretrained()` method will fail. Remove the offline mode and enable internet connection to have your cache be updated automatically, then you can go back to offline mode.
+0it [00:00, ?it/s]0it [00:00, ?it/s]

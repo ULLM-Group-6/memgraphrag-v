@@ -1,0 +1,31 @@
+# MemGraphRAG-V experiment configuration (schema: src/memgraphrag_v/config.py).
+# null = not decided yet. A test evaluation refuses to start while any null
+# remains (ExperimentConfig.require_frozen()).
+# Do not put machine paths here: set MGRV_ARTIFACTS instead.
+
+dataset:
+  name: mmqa
+  split_seed: 42
+  n_dev: 100
+  n_test: 400
+
+visual_encoder:              # MG2's EVA-CLIP, smoke-tested on an A100
+  name: BAAI/EVA-CLIP-8B
+  revision: 0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9
+  processor: openai/clip-vit-large-patch14
+  processor_revision: 32bd64288804d66eefd0ccbe215aa642df71cc41
+  batch_size: 16
+  max_text_tokens: 77
+
+sam3:
+  threshold: null            # to be defined (plan task 4)
+
+retrieval:
+  top_k_candidates: 20
+  visual_mix: 0.5            # visual seeds = 0.5 image + 0.5 crop-entity
+  beta_grid: [0.25, 0.5, 0.75]
+  beta: null                 # tuned on dev Recall@5, frozen before test
+  n_docs: 5
+  text_budget_tokens: 256
+
+artifacts_root: null         # per machine via MGRV_ARTIFACTS

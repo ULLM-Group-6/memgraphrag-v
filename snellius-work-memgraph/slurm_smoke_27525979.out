@@ -1,0 +1,57 @@
+== import test (from code/)
+import OK
+== GPU memory visible to this job
+total GiB: 19.6
+vLLM gpu-memory-utilization: 0.85
+== starting vLLM
+server up after ~45s
+== test request
+{"id":"chatcmpl-b8509ff7c5a86b84","object":"chat.completion","created":1791087923,"model":"qwen2.5-7b-instruct","choices":[{"index":0,"message":{"role":"assistant","content":"OK.","refusal":null,"annotations":null,"audio":null,"function_call":null,"reasoning":null},"logprobs":null,"finish_reason":"stop","stop_reason":null,"token_ids":null,"routed_experts":null}],"service_tier":null,"system_fingerprint":"vllm-0.30.0-nohash","usage":{"prompt_tokens":32,"total_tokens":35,"completion_tokens":3,"prompt_tokens_details":null,"completion_tokens_details":null},"prompt_logprobs":null,"prompt_token_ids":null,"prompt_text":null,"kv_transfer_params":null,"ec_transfer_params":null,"metrics":null}
+== indexing
+Sun Oct  4 06:25:23 CEST 2026
+Building two-layer memory (no schema) from 28 docs...
+Built memory structure:
+  Schema layer: 0 unique ontologies (expected 0)
+  Fact layer:   530 unique triples
+  Passage layer: 28 unique chunks
+INDEXING FAILED
+(EngineCore pid=615546) WARNING 10-04 06:25:19 [vllm.py:1570] Inductor compilation was disabled by user settings, optimizations settings that are only active during inductor compilation will be ignored.
+(EngineCore pid=615546) INFO 10-04 06:25:19 [kernel.py:416] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'], gelu_and_mul_sparse=['triton', 'native'])
+(EngineCore pid=615546) INFO 10-04 06:25:19 [vllm.py:1780] Cudagraph is disabled under eager mode
+(EngineCore pid=615546) INFO 10-04 06:25:19 [compilation.py:336] Enabled custom fusions: norm_quant, act_quant
+(APIServer pid=615434) INFO 10-04 06:25:19 [entry.py:135] Supported tasks: ['generate']
+(APIServer pid=615434) INFO 10-04 06:25:19 [factories.py:76] Scale-out endpoints are disabled. Set --enable-scale-out to enable them.
+(APIServer pid=615434) INFO 10-04 06:25:19 [hf.py:642] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+(APIServer pid=615434) WARNING 10-04 06:25:20 [model.py:1772] Default vLLM sampling parameters have been overridden by the model's `generation_config.json`: `{'repetition_penalty': 1.05, 'temperature': 0.7, 'top_k': 20, 'top_p': 0.8}`. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+(APIServer pid=615434) INFO 10-04 06:25:20 [entry.py:139] Starting vLLM server on http://0.0.0.0:8000
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:61] Available routes are:
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /openapi.json, Methods: HEAD, GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /docs, Methods: HEAD, GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /docs/oauth2-redirect, Methods: HEAD, GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /redoc, Methods: HEAD, GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /load, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /version, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /health, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /metrics, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /tokenize, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /detokenize, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/models, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /ping, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /ping, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /invocations, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/chat/completions, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/chat/completions/batch, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/responses, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/responses/{response_id}, Methods: GET
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/responses/{response_id}/cancel, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/completions, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/messages, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /v1/messages/count_tokens, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /generative_scoring, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /scale_elastic_ep, Methods: POST
+(APIServer pid=615434) INFO 10-04 06:25:20 [launcher.py:70] Route: /is_scaling_elastic_ep, Methods: POST
+(APIServer pid=615434) INFO:     Started server process [615434]
+(APIServer pid=615434) INFO:     Waiting for application startup.
+(APIServer pid=615434) INFO:     Application startup complete.
+(APIServer pid=615434) INFO:     127.0.0.1:38644 - "GET /v1/models HTTP/1.1" 200 OK
+(APIServer pid=615434) INFO:     127.0.0.1:38650 - "POST /v1/chat/completions HTTP/1.1" 200 OK
