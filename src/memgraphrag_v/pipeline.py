@@ -105,7 +105,7 @@ def normalize_texts(
     passages: Sequence[PassageRecord], captions: Sequence[CaptionRecord], images: Sequence[ImageRecord]
 ) -> list[TextRecord]:
     """Passages in manifest order, then supplied captions in manifest order, as
-    one kind of text record. A caption's ID is ``caption-<image_id>-<n>`` and
+    one kind of text record. A caption's ID is ``caption:<image_id>:<n>`` and
     its document is its parent image's. Nothing is generated."""
     image_by_id: dict[str, ImageRecord] = {}
     for image in images:
@@ -129,7 +129,7 @@ def normalize_texts(
         if image is None:
             raise ValueError(f"caption for unknown image {c.image_id!r}")
         add(TextRecord(
-            record_id=f"caption-{c.image_id}-{ordinal[c.image_id]}", kind="caption",
+            record_id=f"caption:{c.image_id}:{ordinal[c.image_id]}", kind="caption",
             doc_id=image.doc_id, text=c.text, image_id=c.image_id,
         ))
         ordinal[c.image_id] += 1
@@ -469,7 +469,48 @@ def _verify_outputs(artifacts: Artifacts, config: ExperimentConfig, stage: str, 
             raise StaleIndexError(f"{directory} changed after stage {stage!r}: rerun it with --force")
     if "graph" in outputs and _file_sha256(artifacts.root / outputs["graph_file"]) != outputs["graph"]:
         raise StaleIndexError(f"{outputs['graph_file']} changed after stage {stage!r}: rerun it with --force")
+    if "grounding" in outputs:
+        images = read_jsonl(artifacts.image_manifest, ImageRecord)
+        image_ids = [image.image_id for image in images]
+        records = sam3_processing.load_grounding(artifacts, image_ids)
+        current_hash = _json_sha256([record.model_dump(type="json") for record in records])
+        if current_hash != outputs["grounding"]:
+            raise StaleIndexError(f"grounding changed after stage {stage!r}: rerun it with --force")
 
+        for record in records.values():
+            if record.mask_file is None:
+                if record.mask_hash is not None or record.detections:
+                    raise StaleIndexError(
+                        f"Image {record.image_id}: missing mask path "
+                        "despite a recorded hash or retained detections"
+                    )
+                continue  # no detections, no mask, no hash: valid for images that did not produce any crops.
+
+            mask_path = artifacts.root / record.mask_file
+            current_hash = _file_sha256(mask_path)
+
+            if record.mask_hash is None or current_hash != record.mask_hash:
+                raise StaleIndexError(
+                    f"Mask file missing, changed, or has no recorded hash: {mask_path}"
+                )
+
+            detections = record.detections
+            for detection in detections:
+                if detection.crop_path is None:
+                    if detection.crop_status == "saved" and detection.crop_hash is not None:
+                        raise StaleIndexError(
+                            f"Image {record.image_id}, detection {detection.detection_id}: missing crop path "
+                            "despite a recorded hash"
+                        )
+                    continue  # no crop, no hash: valid for detections that did not produce any crops.
+
+                crop_path = artifacts.root / detection.crop_path
+                current_hash = _file_sha256(crop_path)
+
+                if detection.crop_hash is None or current_hash != detection.crop_hash:
+                    raise StaleIndexError(
+                        f"Crop file missing, changed, or has no recorded hash: {crop_path}"
+                    )
 
 def _validate_chain(manifest: dict) -> None:
     """Every stage was built from what the earlier stages currently provide."""
@@ -491,7 +532,25 @@ def _run_stage(
     artifacts: Artifacts, config: ExperimentConfig, manifest: dict, name: str,
     inputs: dict, settings: dict, force: bool, run: Callable[[], dict],
 ) -> dict:
-    """Reuse a stage whose stamp matches, refuse one that does not, else run it."""
+    """
+    Reuse a stage whose stamp matches, refuse one that does not, else run it.
+
+    `artifacts` - Where the pipeline’s files live: manifests, embeddings, graph and other saved results.
+    `config` - The overall pipeline configuration. Here, it helps locate and validate saved outputs.
+    `manifest` - The loaded contents of `index/manifest.json`: the record of previously completed stages.
+    `name` - Which stage is being managed: `"text"`, `"ground"`, `"embed"` or `"assemble"`.
+    `inputs` - A dictionary identifying the data this stage depends on, usually through file hashes. These are fingerprints, rather than the actual images or text.
+    `settings` - A dictionary of configuration values relevant to this stage—for example, SAM3’s confidence threshold for grounding stage.
+    **`force`** - A Boolean: `True` makes the stage execute **even if saved results exist**.
+    `run` - The function to call when execution is needed. For grounding, it calls `_stage_ground(...)`.
+    """
+    workflow_stage_number = STAGES.index(name)
+    for dependencies in STAGES[:workflow_stage_number]:
+        entry = manifest["stages"].get(dependencies)
+        if entry is None:
+            raise RuntimeError(f"stage {name!r} depends on missing stage {dependencies!r}")
+        _verify_outputs(artifacts, config, dependencies, entry["outputs"])
+
     want = json.loads(json.dumps({"inputs": inputs, "settings": settings}))
     entry = manifest["stages"].get(name)
     if entry is not None and not force:
@@ -513,7 +572,7 @@ def _run_stage(
 
 
 # --- Stages ------------------------------------------------------------------
-
+# a stage is a major step in the indexing phase. our pipeline has four: text, ground, embed and assemble.
 
 def _stage_text(artifacts: Artifacts, config: ExperimentConfig, text: TextConfig, force: bool) -> dict:
     from transformers import AutoTokenizer
@@ -691,8 +750,14 @@ def index_with_memory_v(
             {"sam3": config.sam3.model_dump(mode="json"), "grounder": grounder_id}, force,
             lambda: _stage_ground(artifacts, config, repo, checkpoint, grounder_id),
         )
+    images = read_jsonl(artifacts.image_manifest, ImageRecord)
+
+    image_fingerprint = _json_sha256([
+        [image.image_id, image.path, _file_sha256(artifacts.image_path(image))]
+        for image in images
+    ])
     if "embed" in stages:
-        inputs = {"image_manifest": sources["image_manifest"], "grounding": _need(manifest, "ground", "grounding")}
+        inputs = {"image_manifest": sources["image_manifest"], "fingerprint": image_fingerprint, "grounding": _need(manifest, "ground", "grounding")}
         done["embed"] = _run_stage(
             artifacts, config, manifest, "embed", inputs, {"visual_encoder": encoder}, force,
             lambda: _stage_embed(artifacts, config, force, device),
@@ -752,6 +817,17 @@ def load_index(
         )
     enc = config.visual_encoder
     image_set = EmbeddingSet.load(artifacts.embeddings_dir(enc.name, "image"))
+    images = read_jsonl(artifacts.image_manifest, ImageRecord)
+
+    current_image_fingerprint = _json_sha256([
+        [image.image_id, image.path, _file_sha256(artifacts.image_path(image)),] for image in images])
+    stored_image_fingerprint = manifest["stages"]["embed"]["inputs"]["fingerprint"]
+    if stored_image_fingerprint != current_image_fingerprint:
+        raise StaleIndexError(
+            f"the index was built with image fingerprint {stored_image_fingerprint!r}, "
+            f"but the current image set has fingerprint {current_image_fingerprint!r}"
+        )
+
     crop_set = EmbeddingSet.load(artifacts.embeddings_dir(enc.name, "crop"))
     wanted = visual_indexing.encoder_meta(enc)
     for embedded in (image_set, crop_set):

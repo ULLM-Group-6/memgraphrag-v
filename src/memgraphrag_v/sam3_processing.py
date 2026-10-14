@@ -45,6 +45,7 @@ from .schemas import Detection, EntityRecord, ImageGrounding, ImageRecord
 
 logger = logging.getLogger(__name__)
 
+MG2_COMMIT = "91f0eed6fc5f4383f0bae746d12850f05e381e77"
 
 @dataclass(frozen=True)
 class RawDetections:
@@ -80,7 +81,7 @@ def image_prompts(chunk_ids: Sequence[str], entities_by_chunk: Mapping[str, Sequ
     prompts: dict[str, EntityRecord] = {}
     for chunk_id in chunk_ids:
         for entity in entities_by_chunk.get(chunk_id, ()):
-            prompts.setdefault(entity.entity_id, entity)
+            prompts.setdefault(entity.entity_id, entity) # the prompt is only the entity name
     return list(prompts.values())
 
 
@@ -205,7 +206,7 @@ def _ground_one(
         stem = hashlib.md5(f"{image.image_id}\x1f{entity.entity_id}\x1f{ordinal}".encode("utf-8")).hexdigest()
         mask = masks[i].astype(np.uint8)  # as MG2: masks.astype(np.uint8)
         crop, crop_box, status = crop_masked(image_np, mask, boxes[i], config.min_crop_size)
-        crop_id = crop_path = error = None
+        crop_id = crop_path = crop_hash = error = None
         if crop is not None:
             crop_id = f"crop-{stem}"
             crops_dir.mkdir(parents=True, exist_ok=True)
@@ -213,24 +214,30 @@ def _ground_one(
             try:
                 crop.save(crop_file, compress_level=1)
                 crop_path = artifacts.relative(crop_file)
+                crop_hash = hashlib.sha256(crop_file.read_bytes()).hexdigest()
             except Exception as e:
-                crop_id, status, error = None, "failed", f"{type(e).__name__}: {e}"
+                crop_id= crop_path = crop_hash = None
+                status = "failed"
+                error =f"{type(e).__name__}: {e}"
         kept_masks.append(mask.astype(bool))
         detections.append(Detection(
             detection_id=f"det-{stem}", image_id=image.image_id, entity_id=entity.entity_id, prompt=entity.name,
             prompt_index=label, index=i, score=float(scores[i]), box=[float(v) for v in boxes[i]],
-            mask_index=len(kept_masks) - 1, crop_id=crop_id, crop_path=crop_path, crop_box=crop_box,
+            mask_index=len(kept_masks) - 1, crop_id=crop_id, crop_path=crop_path, crop_hash=crop_hash, crop_box=crop_box,
             crop_status=status, error=error,
         ))
     mask_file = None
+    mask_hash = None
     if kept_masks:
         masks_path.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(masks_path, masks=np.stack(kept_masks))
         mask_file = artifacts.relative(masks_path)
+        mask_hash = hashlib.sha256(masks_path.read_bytes()).hexdigest()
+
     return ImageGrounding(
         image_id=image.image_id, doc_id=image.doc_id, status="grounded", fingerprint=fingerprint,
         entity_ids=[e.entity_id for e in prompts], prompts=[e.name for e in prompts],
-        n_raw=n, n_dropped=dropped, mask_file=mask_file, detections=detections,
+        n_raw=n, n_dropped=dropped, mask_file=mask_file, mask_hash=mask_hash, detections=detections,
     )
 
 
@@ -307,7 +314,6 @@ def default_checkpoint(artifacts: Artifacts) -> Path:
 
 def grounder_identity(checkpoint: Path) -> str:
     """Names the model in fingerprints: the MG2 commit and the checkpoint file."""
-    MG2_COMMIT = "91f0eed6fc5f4383f0bae746d12850f05e381e77"
     return f"mg2-sam3@{MG2_COMMIT[:7]}:{checkpoint.name}:{checkpoint.stat().st_size}"
 
 

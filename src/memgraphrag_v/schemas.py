@@ -100,7 +100,7 @@ class TextRecord(Record):
     manifest order, then captions in manifest order)."""
 
     record_id: Id
-    """The passage_id, or ``caption-<image_id>-<n>`` for the n-th caption of an image."""
+    """The passage_id, or ``caption:<image_id>:<n>`` for the n-th caption of an image."""
     kind: Literal["passage", "caption"]
     doc_id: Id
     text: str
@@ -167,6 +167,8 @@ class Detection(Record):
     crop_id: Id | None = None
     crop_path: str | None = None
     """Relative to the artifacts root."""
+    crop_hash: str | None = None
+    """SHA-256 hash of the crop file, for integrity verification."""
     crop_box: list[int] | None = None
     """The clipped integer box the crop was cut from."""
     crop_status: Literal["saved", "too_small", "failed"]
@@ -192,6 +194,7 @@ class ImageGrounding(Record):
     """Raw detections below the threshold or invalid."""
     mask_file: str | None = None
     """.npz with ``masks`` (n_retained, H, W), relative to the artifacts root."""
+    mask_hash: str | None = None
     detections: list[Detection] = Field(default_factory=list) # retained
     error: str | None = None
 
