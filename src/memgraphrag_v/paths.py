@@ -2,7 +2,7 @@
 
 Everything lives under one root outside the repo, given by ``$MGRV_ARTIFACTS``
 (on Snellius: project space or /scratch-shared) or the config's
-``artifacts_root``. Copy Misha's WebQA files into ``webqa/``; ``webqa.py``
+``artifacts_root``. Copy the WebQA files from the ``dataset`` branch into ``webqa/``; ``webqa.py``
 unpacks the images into ``corpus/images/`` and writes ``manifests/``.
 """
 
@@ -31,7 +31,7 @@ class Artifacts:
             raise RuntimeError(f"no artifacts root: set {ENV_VAR} or artifacts_root in the config")
         return cls(Path(value).expanduser())
 
-    # WebQA subset as Misha's builder writes it (plan task 1)
+    # WebQA subset as the dataset branch's builder writes it (plan task 1)
     @property
     def webqa_dir(self) -> Path:
         """text_manifest.jsonl, image_manifest.jsonl, caption_manifest.jsonl,

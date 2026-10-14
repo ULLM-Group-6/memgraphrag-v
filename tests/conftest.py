@@ -5,7 +5,7 @@ import pytest
 
 from memgraphrag_v.schemas import ImageRecord, PassageRecord, QuestionRecord
 
-# Rows in the shape webqa.py writes (from Misha's WebQA builder).
+# Rows in the shape webqa.py writes (from the WebQA builder on the dataset branch).
 PASSAGE_ROW = {
     "doc_id": "Beale Street",
     "passage_id": "cap_30193116",

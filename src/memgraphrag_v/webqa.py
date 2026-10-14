@@ -1,16 +1,16 @@
-"""Misha's WebQA subset -> corpus images and manifests.
+"""Our WebQA subset -> corpus images and manifests.
 
 Copy the builder's files (``dataset`` branch) into ``$MGRV_ARTIFACTS/webqa/``,
 then run from the repo:
 
-    python -m memgraphrag_v.webqa images --tsv /scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv
+    python -m memgraphrag_v.webqa images --tsv <path to shortlisted_imgs.tsv>
     python -m memgraphrag_v.webqa manifests   # re-run whenever webqa/ or the images change
 
-``images`` unpacks the corpus images from the TSV Misha cut out of WebQA's
+``images`` unpacks the corpus images from the TSV cut out of WebQA's
 ``imgs.tsv`` (one ``<image_id> TAB <base64 bytes>`` line per image) into
-``corpus/images/<image_id>.jpg``, the same names her ``unpack_tsv.py`` uses.
-Should a file not really be a JPEG, Pillow still reads it by its content.
-Images already on disk are skipped.
+``corpus/images/<image_id>.jpg``, the same names ``unpack_tsv.py`` on the
+``dataset`` branch uses. Should a file not really be a JPEG, Pillow still
+reads it by its content. Images already on disk are skipped.
 
 ``manifests`` writes ``manifests/{text_manifest,image_manifest,questions,captions}.jsonl``:
 
@@ -21,7 +21,7 @@ Images already on disk are skipped.
   Snippet IDs get the ``txt_`` prefix their passages have, gold documents are
   the titles of the gold sources, and questions sharing gold evidence share a
   ``group_id``;
-- captions are Misha's Qwen2.5-VL descriptions (``caption_manifest.jsonl``),
+- captions are the Qwen2.5-VL descriptions in ``caption_manifest.jsonl``,
   one per image.
 """
 
@@ -42,7 +42,7 @@ from .schemas import CaptionRecord, ImageRecord, PassageRecord, QuestionRecord
 
 CAPTION_MODEL = "Qwen/Qwen2.5-VL-7B-Instruct"
 CAPTION_PROMPT_VERSION = "createCaption.py@2c94363"
-"""Misha's caption script on the dataset branch, at the commit that made the captions."""
+"""The caption script on the dataset branch, at the commit that made the captions."""
 
 
 # --- Images ------------------------------------------------------------------
@@ -153,7 +153,7 @@ def _evidence_groups(questions: list[dict]) -> list[int]:
 
 
 def caption_records(rows: Iterable[dict]) -> list[CaptionRecord]:
-    """Misha's generated descriptions in our schema. Her rows also repeat the
+    """The generated descriptions in our schema. The source rows also repeat the
     image's title and URLs; those are already in the image manifest."""
     return [
         CaptionRecord(
@@ -233,7 +233,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Unpack the WebQA images and write the manifests.")
     parser.add_argument("step", choices=["images", "manifests"])
     parser.add_argument("--config", default="configs/default.yaml")
-    parser.add_argument("--tsv", type=Path, help="images step: Misha's shortlisted_imgs.tsv")
+    parser.add_argument("--tsv", type=Path, help="images step: the shortlisted_imgs.tsv from the dataset work")
     args = parser.parse_args(argv)
 
     artifacts = Artifacts.from_env(ExperimentConfig.load(args.config).artifacts_root)

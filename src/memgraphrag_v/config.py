@@ -24,7 +24,7 @@ class _Section(BaseModel):
 
 class DatasetConfig(_Section):
     name: str = "webqa"
-    """Misha's WebQA subset; its builder fixes the dev and test questions."""
+    """Our WebQA subset; its builder fixes the dev and test questions."""
 
 
 class VisualEncoderConfig(_Section):

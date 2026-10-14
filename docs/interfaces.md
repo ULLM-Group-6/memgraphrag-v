@@ -10,7 +10,7 @@ Everything lives under one directory outside the repo, `$MGRV_ARTIFACTS`. On Sne
 
 ```
 $MGRV_ARTIFACTS/
-├── webqa/                Misha's WebQA subset (dataset branch), copied as is:
+├── webqa/                our WebQA subset (dataset branch), copied as is:
 │                         text_manifest.jsonl, image_manifest.jsonl, caption_manifest.jsonl,
 │                         build_qa.json, test_qa.json
 ├── manifests/            written by `python -m memgraphrag_v.webqa manifests`
@@ -24,10 +24,10 @@ $MGRV_ARTIFACTS/
 
 ## Manifests (plan task 1): `schemas.py`
 
-The dataset is Misha's WebQA subset (`subsetcheck4.py` on the `dataset` branch): 4,221 images, 12,080 passages (one caption `cap_<image_id>` per image plus `txt_<snippet_id>` text snippets), 480 graph-building questions (360 image, 120 text) and 120 held-out image questions. Misha also generated a description of every image with Qwen2.5-VL-7B (`createCaption.py`, `caption_manifest.jsonl`). `webqa.py` turns it into the manifests below:
+The dataset is our WebQA subset (`subsetcheck4.py` on the `dataset` branch): 4,221 images, 12,080 passages (one caption `cap_<image_id>` per image plus `txt_<snippet_id>` text snippets), 480 graph-building questions (360 image, 120 text) and 120 held-out image questions. Every image also has a description generated with Qwen2.5-VL-7B (`createCaption.py`, `caption_manifest.jsonl`). `webqa.py` turns it into the manifests below:
 
-- `images --tsv <file>` unpacks the images from the TSV Misha cut out of WebQA's own `imgs.tsv` (`/scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv`, one base64 image per line) into `corpus/images/<image_id>.jpg`. These are the files WebQA was built with, and Misha captioned all 4,221 of them, so none are missing. We used to download them from Wikimedia instead, which took about 7 hours and lost 77 images that had since been deleted.
-- `manifests` copies the passages, adds each image's local `path`, `width`, `height` and `ok`, and normalises the questions: `build_qa.json` becomes split `dev` (used to tune β), `test_qa.json` becomes split `test`, snippet IDs get their passages' `txt_` prefix, `gold_doc_ids` are the gold sources' titles, and `group_id` joins questions that share gold evidence. Misha's descriptions become `CaptionRecord`s with the model and prompt that made them. It fails on repeated IDs, on captions or gold sources missing from the corpus and on a description of an unknown image, and prints how many gold images do not open and how many images have no description.
+- `images --tsv <file>` unpacks the images from a TSV cut out of WebQA's own `imgs.tsv` (`/scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv`, one base64 image per line) into `corpus/images/<image_id>.jpg`. These are the files WebQA was built with, and all 4,221 have a generated caption, so none are missing. We used to download them from Wikimedia instead, which took about 7 hours and lost 77 images that had since been deleted.
+- `manifests` copies the passages, adds each image's local `path`, `width`, `height` and `ok`, and normalises the questions: `build_qa.json` becomes split `dev` (used to tune β), `test_qa.json` becomes split `test`, snippet IDs get their passages' `txt_` prefix, `gold_doc_ids` are the gold sources' titles, and `group_id` joins questions that share gold evidence. The generated descriptions become `CaptionRecord`s with the model and prompt that made them. It fails on repeated IDs, on captions or gold sources missing from the corpus and on a description of an unknown image, and prints how many gold images do not open and how many images have no description.
 
 Records are frozen and reject unknown fields. IDs are non-empty strings and may contain spaces, because `doc_id`s are page titles. A title is **not** unique to one image: images from the same Wikipedia article share it (up to 14), and 264 titles also have text snippets.
 
@@ -76,7 +76,7 @@ Whole images and questions are embedded on a GPU node with `scripts/embed_eva_cl
 
 The attached passages are not trimmed here: see `passage_ids` under *Retrieval output* for where the 256-token cut belongs.
 
-**Dummy dataset.** `python -m memgraphrag_v.dummy <root>` writes a synthetic corpus in Misha's format: twelve documents "<Colour> <shape>", each with one picture and the question "Which picture shows a red circle?", plus edge cases (a document with two pictures, a picture without passages, a text-only document and an unreadable image). `tests/test_image_retrieval.py` runs embedding and retrieval on it with a colour-matching stand-in encoder; `scripts/dummy_image_retrieval.sbatch` runs it with the real EVA-CLIP on Snellius.
+**Dummy dataset.** `python -m memgraphrag_v.dummy <root>` writes a synthetic corpus in the dataset branch's format: twelve documents "<Colour> <shape>", each with one picture and the question "Which picture shows a red circle?", plus edge cases (a document with two pictures, a picture without passages, a text-only document and an unreadable image). `tests/test_image_retrieval.py` runs embedding and retrieval on it with a colour-matching stand-in encoder; `scripts/dummy_image_retrieval.sbatch` runs it with the real EVA-CLIP on Snellius.
 
 ## Retrieval output (plan tasks 3 and 5)
 
