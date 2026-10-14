@@ -17,7 +17,7 @@ def test_default_config_loads():
 
 def test_unresolved_lists_open_settings():
     config = ExperimentConfig.load(DEFAULT)
-    assert config.unresolved() == ["sam3.threshold", "retrieval.beta"]
+    assert config.unresolved() == ["text.llm_name", "retrieval.beta"]
     with pytest.raises(ValueError, match="not frozen"):
         config.require_frozen()
 
@@ -25,7 +25,7 @@ def test_unresolved_lists_open_settings():
 def test_frozen_config_passes():
     config = ExperimentConfig.load(DEFAULT)
     config = config.model_copy(update={
-        "sam3": config.sam3.model_copy(update={"threshold": 0.5}),
+        "text": config.text.model_copy(update={"llm_name": "qwen2.5-7b-instruct"}),
         "retrieval": config.retrieval.model_copy(update={"beta": 0.5}),
     })
     config.require_frozen()
