@@ -1,0 +1,8 @@
+== host: gcn2.local.snellius.surf.nl  job: 27525148
+== internet checks
+huggingface.co: 200
+pypi.org: 200
+github.com: 200
+downloaded to /gpfs/home6/scur0466/hf_cache/hub/models--BAAI--bge-large-en-v1.5/snapshots/d4aa6901d3a41ba39fb536a557fa166f842b0e09
+1.3G	/home/scur0466/hf_cache
+== done
