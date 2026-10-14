@@ -1,0 +1,5 @@
+unmatched records: 0
+type=bridge_comparison      n= 235  acc= 76.6%
+type=comparison             n= 244  acc= 88.9%
+type=compositional          n= 413  acc= 26.6%
+type=inference              n= 108  acc= 30.6%
