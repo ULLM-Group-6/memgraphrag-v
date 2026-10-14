@@ -1,0 +1,34 @@
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["nsync s debut studio album", "supported by", "nsync in concert"],\n        "ontology": ["WORK_OF_ART", "supported by", "EVENT"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["nbc television series", "consists of", "32 episodes"],\n        "ontology": ["ORG", "consists of", "CARDINAL"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["s", "is pronounced as", "t in many situations"],\n        "ontology": ["PERSON", "is pronounced as", "PHONETIC"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["s", "is pronounced as", "k in other situations"],\n        "ontology": ["CARDINAL", "is pronounced as", "CARDINAL"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["temla", "is pronounced as", "semla"],\n        "ontology": ["LOC", "is pronounced as", "LOC"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["united kingdom", "has", "prime minister"],\n        "ontology": ["GPE", "has", "PERSON"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["united kingdom", "has", "british ballistic missile submarines"],\n        "ontology": ["GPE", "has", "FAC"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["united kingdom", "has", "prime minister of the united kingdom"],\n        "ontology": ["GPE", "has", "PERSON"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["letters of last resort", "in case of", "destruction of british government"],\n        "ontology": ["OBJECT", "in case of", "EVENT"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["letters of last resort", "in case of", "death of prime minister"],\n        "ontology": ["FAC", "in case of", "EVENT"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["letters of last resort", "in case of", "death of second person"],\n        "ontology": ["OBJECT", "in case of", "EVENT"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["letters of last resort", "in case of", "second person designated by prime minister"],\n        "ontology": ["FAC", "in case of", "PERSON"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["lord lieutenant", "acted", "similar to governors general in other westminster systems"],\n        "ontology": ["PERSON", "acted", "ORG"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["governors general", "are", "in other westminster systems"],\n        "ontology": ["ORG", "are", "LOC"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["scottish lords", "intended to avenge", "darnley s death"],\n        "ontology": ["ORG", "intended to avenge", "TIME"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["slaves", "tried to escape to", "kansas for freedom"],\n        "ontology": ["PERSON", "tried to escape to", "LOC"]\n      }\n    }\n  ]\n}'
+---
+'{\n  "ontology_triples": [\n    {\n      {\n        "triple": ["raymond", "includes", "marijuana infused goods manufacturing"],\n        "ontology": ["ORG", "includes", "PRODUCT"]\n      }\n    }\n  ]\n}'
+---

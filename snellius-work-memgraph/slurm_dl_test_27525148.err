@@ -1,0 +1,5 @@
+
+[notice] A new release of pip available: 22.3.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files:  10%|█         | 1/10 [00:00<00:01,  8.20it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 10 files:  80%|████████  | 8/10 [00:00<00:00, 37.79it/s]Fetching 10 files: 100%|██████████| 10/10 [00:01<00:00,  5.15it/s]

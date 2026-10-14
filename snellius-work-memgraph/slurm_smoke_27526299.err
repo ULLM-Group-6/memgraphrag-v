@@ -1,0 +1,68 @@
+INFO:src.prompts.prompt_template_manager:Loading templates from directory: /gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/prompts/templates
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+INFO:src.embedding_store:Loaded 28 records from /home/scur0466/snellius-work/tiny/outputs/qwen2.5-7b-instruct__home_scur0466_hf_cache_hub_models--BAAI--bge-large-en-v1.5_snapshots_d4aa6901d3a41ba39fb536a557fa166f842b0e09/chunk_embeddings/vdb_chunk.parquet
+INFO:src.prompts.prompt_template_manager:Loading templates from directory: /gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/prompts/templates
+INFO:src.MemGraphRAG:Performing OpenIE
+INFO:src.embedding_store:Inserting 0 new records, 28 records already exist.
+INFO:src.MemGraphRAG:OpenIE results saved to /home/scur0466/snellius-work/tiny/outputs/openie_results_ner_qwen2.5-7b-instruct.json
+Extracting schema:   0%|          | 0/530 [00:00<?, ?it/s]Extracting schema:   3%|▎         | 15/530 [00:00<00:00, 1122.21it/s]
+Traceback (most recent call last):
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 324, in _memory_json
+    return json.loads(cleaned)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 4 column 7 (char 38)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 993, in index_with_memory
+    with_schema = self.extract_memory_schema(initial)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 423, in extract_memory_schema
+    fact_idx, ontology = future.result()
+                         ^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 390, in extract_one
+    rows = self._memory_json(response).get("ontology_triples", [])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 328, in _memory_json
+    return json.loads(fix_broken_generated_json(candidate))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/RHEL8/EB_production/2023/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 4 column 7 (char 38)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/index.py", line 118, in <module>
+    main()
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/index.py", line 110, in main
+    result = MemGraphRAG(global_config=config).index_with_memory(docs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gpfs/home6/scur0466/snellius-work/MemGraphRAG/code/src/MemGraphRAG.py", line 1034, in index_with_memory
+    raise RuntimeError(f"index_with_memory failed during {stage}: {exc}") from exc
+RuntimeError: index_with_memory failed during schema extraction: Expecting property name enclosed in double quotes: line 4 column 7 (char 38)

@@ -1,0 +1,6 @@
+# Artifacts live outside the repo (MGRV_ARTIFACTS); this catches accidental local roots.
+artifacts/
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
