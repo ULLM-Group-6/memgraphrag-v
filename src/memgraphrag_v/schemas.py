@@ -2,7 +2,9 @@
 
 The manifests are built from Misha's WebQA subset (``subsetcheck4.py`` on the
 ``dataset`` branch) by ``webqa.py``: passages are copied as they are, images
-gain the local file and whether it opens, and questions are normalised.
+gain the local file (unpacked from WebQA's image TSV) and whether it opens,
+questions are normalised, and her generated captions get the model and prompt
+that made them.
 Records are frozen and reject unknown fields, so a producer that drifts from
 this contract fails on read instead of corrupting a later stage. Files are
 JSON Lines (see ``io.py``).
@@ -54,7 +56,7 @@ class ImageRecord(Record):
     path: str
     """Relative to the corpus images directory (``Artifacts.images_dir``)."""
     source_url: str | None = None
-    """Where the file was downloaded from."""
+    """The original file on Wikimedia. Our copy comes from WebQA's TSV."""
     commons_url: str | None = None
     """The page the image belongs to."""
     passage_ids: list[Id]
@@ -94,8 +96,9 @@ class QuestionRecord(Record):
 
 class CaptionRecord(Record):
     """manifests/captions.jsonl: a generated, question-independent image
-    description. Used only by the caption systems (C, G-caption), never by
-    the native-image method."""
+    description, one per image (Misha's ``caption_manifest.jsonl``). Not the
+    same as the image's WebQA caption, which is a passage. Used only by the
+    caption systems (C, G-caption), never by the native-image method."""
 
     image_id: Id
     text: str

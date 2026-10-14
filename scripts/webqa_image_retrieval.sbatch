@@ -4,7 +4,8 @@
 #   sbatch scripts/webqa_image_retrieval.sbatch
 # Needs: MGRV_ARTIFACTS exported, the models downloaded
 # (scripts/download_eva_clip.py), the images and manifests from
-# scripts/webqa_download.sbatch, and a venv at .venv-eva.
+# `python -m memgraphrag_v.webqa images|manifests` (see docs/interfaces.md),
+# and a venv at .venv-eva.
 # Read the log's "image_recall_at_5" per split, then open
 # $MGRV_ARTIFACTS/runs/d-{dev,test}/report.html.
 #SBATCH --job-name=webqa-d

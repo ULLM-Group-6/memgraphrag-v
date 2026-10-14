@@ -3,17 +3,16 @@
 Copy the builder's files (``dataset`` branch) into ``$MGRV_ARTIFACTS/webqa/``,
 then run from the repo:
 
-    python -m memgraphrag_v.webqa download    # needs internet: login node or staging partition
-    python -m memgraphrag_v.webqa manifests   # offline; re-run whenever webqa/ or the images change
+    python -m memgraphrag_v.webqa images --tsv /scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv
+    python -m memgraphrag_v.webqa manifests   # re-run whenever webqa/ or the images change
 
-``download`` fetches every image in ``images_to_download.jsonl`` into
-``corpus/images/<image_id>.<ext>``. It is resumable: images already on disk
-are skipped. Wikimedia only serves thumbnails at its standard widths
-(https://w.wiki/GHai) and WebQA's URLs use other widths, so a thumbnail URL is
-rewritten to the next standard width, and the original file is fetched if
-that fails. Each finished attempt is appended to ``corpus/download.jsonl``.
+``images`` unpacks the corpus images from the TSV Misha cut out of WebQA's
+``imgs.tsv`` (one ``<image_id> TAB <base64 bytes>`` line per image) into
+``corpus/images/<image_id>.jpg``, the same names her ``unpack_tsv.py`` uses.
+Should a file not really be a JPEG, Pillow still reads it by its content.
+Images already on disk are skipped.
 
-``manifests`` writes ``manifests/{text_manifest,image_manifest,questions}.jsonl``:
+``manifests`` writes ``manifests/{text_manifest,image_manifest,questions,captions}.jsonl``:
 
 - passages are copied as they are;
 - images gain ``path``, ``width``, ``height`` and ``ok`` (the file opens);
@@ -21,118 +20,57 @@ that fails. Each finished attempt is appended to ``corpus/download.jsonl``.
   questions, used to tune beta) and ``test_qa.json`` becomes split ``test``.
   Snippet IDs get the ``txt_`` prefix their passages have, gold documents are
   the titles of the gold sources, and questions sharing gold evidence share a
-  ``group_id``.
+  ``group_id``;
+- captions are Misha's Qwen2.5-VL descriptions (``caption_manifest.jsonl``),
+  one per image.
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import json
-import re
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from collections import Counter
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import Iterable
 
 from PIL import Image
 
 from .io import read_jsonl, write_jsonl
 from .paths import Artifacts
-from .schemas import ImageRecord, PassageRecord, QuestionRecord
+from .schemas import CaptionRecord, ImageRecord, PassageRecord, QuestionRecord
 
-USER_AGENT = "MemGraphRAG-V research downloader (https://github.com/ULLM-Group-6/memgraphrag-v)"
-THUMB_STEPS = (20, 40, 60, 120, 250, 330, 500, 960, 1280, 1920, 3840)
-"""Wikimedia's standard thumbnail widths; other widths are rejected (HTTP 400)."""
-
-_THUMB = re.compile(r"^(?P<base>.+)/thumb(?P<file>/[0-9a-f]/[0-9a-f]{2}/[^/]+)/(?P<width>\d+)px-(?P<name>[^/]+)$")
-
-Fetch = Callable[[str], bytes]
+CAPTION_MODEL = "Qwen/Qwen2.5-VL-7B-Instruct"
+CAPTION_PROMPT_VERSION = "createCaption.py@2c94363"
+"""Misha's caption script on the dataset branch, at the commit that made the captions."""
 
 
-# --- Download ----------------------------------------------------------------
+# --- Images ------------------------------------------------------------------
 
 
-def candidate_urls(url: str) -> list[str]:
-    """URLs to try for one image, best first: the thumbnail at the next
-    standard width, then the original file. Non-thumbnail URLs are kept."""
-    m = _THUMB.match(url)
-    if not m:
-        return [url]
-    width = int(m["width"])
-    step = next((s for s in THUMB_STEPS if s >= width), THUMB_STEPS[-1])
-    return [f"{m['base']}/thumb{m['file']}/{step}px-{m['name']}", f"{m['base']}{m['file']}"]
+def image_file(images_dir: Path, image_id: str) -> Path:
+    return images_dir / f"{image_id}.jpg"
 
 
-def fetch_url(url: str, retries: int = 4, rate_limit_retries: int = 20, timeout: float = 60) -> bytes:
-    """GET with a descriptive User-Agent, as Wikimedia asks. Waits out rate
-    limits (429, honouring Retry-After) up to ``rate_limit_retries`` times and
-    retries server and network errors with backoff; other errors raise."""
-    failures = limited = 0
-    while True:
-        try:
-            request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(request, timeout=timeout) as response:
-                return response.read()
-        except urllib.error.HTTPError as e:
-            if e.code == 429 and limited < rate_limit_retries:
-                limited += 1
-                wait = e.headers.get("Retry-After")
-                time.sleep(min(float(wait), 120) if wait and wait.isdigit() else 15)
-            elif e.code >= 500 and failures < retries:
-                failures += 1
-                time.sleep(2**failures)
-            else:
-                raise
-        except (urllib.error.URLError, TimeoutError):
-            if failures == retries:
-                raise
-            failures += 1
-            time.sleep(2**failures)
-
-
-def local_file(images_dir: Path, image_id: str) -> Path | None:
-    """The downloaded file for ``image_id``, if any."""
-    return next((p for p in sorted(images_dir.glob(f"{image_id}.*")) if p.suffix != ".part"), None)
-
-
-def download_images(
-    rows: Iterable[dict],
-    images_dir: Path,
-    log_path: Path,
-    fetch: Fetch = fetch_url,
-    delay: float = 0.1,
-) -> Counter:
-    """Download every row's ``imgUrl`` to ``images_dir/<image_id><ext>``,
-    skipping images already there. Returns counts of skipped/ok/failed."""
+def unpack_images(tsv_path: Path, images_dir: Path) -> Counter:
+    """Write every image in the TSV to ``images_dir``, skipping files that are
+    already there. Returns counts of written and skipped images."""
     images_dir.mkdir(parents=True, exist_ok=True)
     counts: Counter = Counter()
-    with open(log_path, "a", encoding="utf-8", newline="\n") as log:
-        for row in rows:
-            image_id = str(row["image_id"])
-            if local_file(images_dir, image_id):
+    with open(tsv_path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            image_id, data = line.strip().split("\t")
+            out = image_file(images_dir, image_id)
+            if out.exists():
                 counts["skipped"] += 1
                 continue
-            entry = {"image_id": image_id, "status": "failed", "url": None, "bytes": 0, "errors": []}
-            for url in candidate_urls(row["imgUrl"]):
-                try:
-                    data = fetch(url)
-                except Exception as e:
-                    entry["errors"].append(f"{url}: {type(e).__name__}: {e}")
-                    continue
-                suffix = Path(urllib.parse.unquote(url.rsplit("/", 1)[-1])).suffix.lower() or ".img"
-                part = images_dir / f"{image_id}{suffix}.part"
-                part.write_bytes(data)
-                part.replace(images_dir / f"{image_id}{suffix}")
-                entry.update(status="ok", url=url, bytes=len(data))
-                break
-            counts[entry["status"]] += 1
-            log.write(json.dumps(entry, ensure_ascii=False) + "\n")
-            log.flush()
-            if delay:
-                time.sleep(delay)
+            # write to a temporary name first, so a killed run leaves no half-written image
+            part = out.with_suffix(".part")
+            part.write_bytes(base64.b64decode(data))
+            part.replace(out)
+            counts["written"] += 1
     return counts
 
 
@@ -141,14 +79,14 @@ def download_images(
 
 def image_records(rows: Iterable[dict], images_dir: Path) -> list[ImageRecord]:
     """Builder image rows plus the local file, its size and whether it opens.
-    A missing file gets the path it would have and ``ok`` false."""
+    A missing file keeps the path it would have and gets ``ok`` false."""
     records = []
     for row in rows:
-        file = local_file(images_dir, row["image_id"])
-        size = _image_size(file) if file else None
+        file = image_file(images_dir, row["image_id"])
+        size = _image_size(file)
         records.append(ImageRecord(
             **row,
-            path=file.name if file else f"{row['image_id']}.missing",
+            path=file.name,
             width=size[0] if size else None,
             height=size[1] if size else None,
             ok=size is not None,
@@ -214,18 +152,39 @@ def _evidence_groups(questions: list[dict]) -> list[int]:
     return [numbers.setdefault(find(i), len(numbers)) for i in range(len(questions))]
 
 
+def caption_records(rows: Iterable[dict]) -> list[CaptionRecord]:
+    """Misha's generated descriptions in our schema. Her rows also repeat the
+    image's title and URLs; those are already in the image manifest."""
+    return [
+        CaptionRecord(
+            image_id=row["image_id"],
+            text=row["generated_description"],
+            model=CAPTION_MODEL,
+            prompt_version=CAPTION_PROMPT_VERSION,
+        )
+        for row in rows
+    ]
+
+
 def check_references(
-    passages: list[PassageRecord], images: list[ImageRecord], questions: list[QuestionRecord]
+    passages: list[PassageRecord],
+    images: list[ImageRecord],
+    questions: list[QuestionRecord],
+    captions: list[CaptionRecord],
 ) -> dict[str, int]:
-    """Raise if IDs repeat or a caption or gold source is missing from the
-    corpus; return counts worth reading before a run."""
+    """Raise if IDs repeat, an image's caption passage or a gold source is
+    missing from the corpus, or a generated caption belongs to no image;
+    return counts worth reading before a run."""
     passage_ids = {p.passage_id for p in passages}
     image_ids = {i.image_id for i in images}
+    captioned = {c.image_id for c in captions}
     for name, ids, n in (("passage", passage_ids, len(passages)), ("image", image_ids, len(images)),
-                         ("question", {q.qid for q in questions}, len(questions))):
+                         ("question", {q.qid for q in questions}, len(questions)),
+                         ("generated caption", captioned, len(captions))):
         if len(ids) != n:
             raise ValueError(f"repeated {name} IDs")
     problems = [f"image {i.image_id}: caption {p} missing" for i in images for p in i.passage_ids if p not in passage_ids]
+    problems += [f"generated caption for unknown image {c}" for c in sorted(captioned - image_ids)]
     for q in questions:
         problems += [f"question {q.qid}: gold image {g} not in corpus" for g in q.gold_image_ids if g not in image_ids]
         problems += [f"question {q.qid}: gold passage {g} not in corpus" for g in q.gold_passage_ids
@@ -243,6 +202,8 @@ def check_references(
         "groups": len({q.group_id for q in questions}),
         "gold_images": len(gold_images),
         "gold_images_not_ok": len(gold_images - ok),
+        "generated_captions": len(captions),
+        "images_without_generated_caption": len(image_ids - captioned),
     }
 
 
@@ -253,10 +214,13 @@ def write_manifests(artifacts: Artifacts) -> dict[str, int]:
         images = image_records((json.loads(line) for line in f if line.strip()), artifacts.images_dir)
     load = lambda name: json.loads((source / name).read_text(encoding="utf-8"))
     questions = question_records(load("build_qa.json"), load("test_qa.json"))
-    counts = check_references(passages, images, questions)
+    with open(source / "caption_manifest.jsonl", encoding="utf-8") as f:
+        captions = caption_records(json.loads(line) for line in f if line.strip())
+    counts = check_references(passages, images, questions, captions)
     write_jsonl(artifacts.text_manifest, passages)
     write_jsonl(artifacts.image_manifest, images)
     write_jsonl(artifacts.questions, questions)
+    write_jsonl(artifacts.captions, captions)
     return counts
 
 
@@ -266,19 +230,17 @@ def write_manifests(artifacts: Artifacts) -> dict[str, int]:
 def main(argv: list[str] | None = None) -> None:
     from .config import ExperimentConfig
 
-    parser = argparse.ArgumentParser(description="Download WebQA images and write the manifests.")
-    parser.add_argument("step", choices=["download", "manifests"])
+    parser = argparse.ArgumentParser(description="Unpack the WebQA images and write the manifests.")
+    parser.add_argument("step", choices=["images", "manifests"])
     parser.add_argument("--config", default="configs/default.yaml")
-    parser.add_argument("--limit", type=int, help="download only the first N images (smoke runs)")
-    parser.add_argument("--delay", type=float, default=0.1, help="seconds between downloads")
+    parser.add_argument("--tsv", type=Path, help="images step: Misha's shortlisted_imgs.tsv")
     args = parser.parse_args(argv)
 
     artifacts = Artifacts.from_env(ExperimentConfig.load(args.config).artifacts_root)
-    if args.step == "download":
-        with open(artifacts.webqa_dir / "images_to_download.jsonl", encoding="utf-8") as f:
-            rows = [json.loads(line) for line in f if line.strip()][: args.limit]
-        artifacts.download_log.parent.mkdir(parents=True, exist_ok=True)
-        counts = download_images(rows, artifacts.images_dir, artifacts.download_log, delay=args.delay)
+    if args.step == "images":
+        if args.tsv is None:
+            parser.error("the images step needs --tsv")
+        counts = unpack_images(args.tsv, artifacts.images_dir)
         print(json.dumps({"images_dir": str(artifacts.images_dir), **counts}, indent=2))
     else:
         print(json.dumps({"manifests": str(artifacts.text_manifest.parent), **write_manifests(artifacts)}, indent=2))

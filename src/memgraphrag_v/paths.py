@@ -3,7 +3,7 @@
 Everything lives under one root outside the repo, given by ``$MGRV_ARTIFACTS``
 (on Snellius: project space or /scratch-shared) or the config's
 ``artifacts_root``. Copy Misha's WebQA files into ``webqa/``; ``webqa.py``
-downloads the images into ``corpus/images/`` and writes ``manifests/``.
+unpacks the images into ``corpus/images/`` and writes ``manifests/``.
 """
 
 from __future__ import annotations
@@ -34,14 +34,9 @@ class Artifacts:
     # WebQA subset as Misha's builder writes it (plan task 1)
     @property
     def webqa_dir(self) -> Path:
-        """text_manifest.jsonl, image_manifest.jsonl, images_to_download.jsonl,
+        """text_manifest.jsonl, image_manifest.jsonl, caption_manifest.jsonl,
         build_qa.json, test_qa.json from the ``dataset`` branch."""
         return self.root / "webqa"
-
-    @property
-    def download_log(self) -> Path:
-        """One line per image download attempt that finished (see webqa.py)."""
-        return self.root / "corpus" / "download.jsonl"
 
     # Manifests (plan task 1)
     @property

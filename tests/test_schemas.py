@@ -45,7 +45,8 @@ def test_records_are_frozen(image):
 
 
 def test_caption_record():
-    c = CaptionRecord(image_id="i1", text="A man in a suit.", model="reader-vlm", prompt_version="v1")
+    c = CaptionRecord(image_id="30193116", text="A street lined with neon signs at dusk.",
+                      model="Qwen/Qwen2.5-VL-7B-Instruct", prompt_version="createCaption.py@2c94363")
     assert c.text
 
 

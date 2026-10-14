@@ -1,6 +1,6 @@
+import base64
 import io
 import json
-import urllib.error
 
 import pytest
 from PIL import Image
@@ -8,11 +8,10 @@ from PIL import Image
 from memgraphrag_v import webqa
 from memgraphrag_v.io import read_jsonl
 from memgraphrag_v.paths import Artifacts
-from memgraphrag_v.schemas import ImageRecord, PassageRecord, QuestionRecord
+from memgraphrag_v.schemas import CaptionRecord, ImageRecord, PassageRecord, QuestionRecord
 
 THUMB = ("https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/"
          "Memphis%2C_TN%2C_Beale_St.jpg/800px-Memphis%2C_TN%2C_Beale_St.jpg")
-ORIGINAL = "https://upload.wikimedia.org/wikipedia/commons/4/47/Memphis%2C_TN%2C_Beale_St.jpg"
 
 
 def _png() -> bytes:
@@ -21,37 +20,18 @@ def _png() -> bytes:
     return buffer.getvalue()
 
 
-def test_thumbnail_url_moves_to_next_standard_width_then_original():
-    assert webqa.candidate_urls(THUMB) == [THUMB.replace("/800px-", "/960px-"), ORIGINAL]
-    assert webqa.candidate_urls(THUMB.replace("/800px-", "/5000px-"))[0].endswith("/3840px-Memphis%2C_TN%2C_Beale_St.jpg")
-    assert webqa.candidate_urls(ORIGINAL) == [ORIGINAL]
+def test_unpack_images_writes_each_image_once(tmp_path):
+    tsv, images = tmp_path / "imgs.tsv", tmp_path / "images"
+    encoded = base64.b64encode(_png()).decode()
+    tsv.write_text(f"1\t{encoded}\n2\t{encoded}\n\n")
 
+    assert webqa.unpack_images(tsv, images) == {"written": 2}
+    assert sorted(p.name for p in images.iterdir()) == ["1.jpg", "2.jpg"]
+    # a PNG saved as .jpg still opens, since Pillow goes by the content
+    with Image.open(images / "1.jpg") as image:
+        assert image.size == (30, 20)
 
-def test_download_falls_back_to_original_and_resumes(tmp_path):
-    calls = []
-
-    def fetch(url):
-        calls.append(url)
-        if "/thumb/" in url:
-            raise urllib.error.HTTPError(url, 400, "Use thumbnail sizes", {}, None)
-        return _png()
-
-    rows = [{"image_id": "1", "imgUrl": THUMB}, {"image_id": "2", "imgUrl": "https://x.org/missing.png"}]
-    images, log = tmp_path / "images", tmp_path / "download.jsonl"
-
-    def fetch_some(url):
-        if "missing" in url:
-            raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)
-        return fetch(url)
-
-    assert webqa.download_images(rows, images, log, fetch_some, delay=0) == {"ok": 1, "failed": 1}
-    assert sorted(p.name for p in images.iterdir()) == ["1.jpg"]
-    entries = [json.loads(line) for line in log.read_text().splitlines()]
-    assert entries[0]["url"] == ORIGINAL and entries[1]["status"] == "failed"
-
-    calls.clear()
-    assert webqa.download_images(rows[:1], images, log, fetch, delay=0) == {"skipped": 1}
-    assert calls == []
+    assert webqa.unpack_images(tsv, images) == {"skipped": 2}
 
 
 def _write_source(artifacts: Artifacts) -> None:
@@ -66,8 +46,15 @@ def _write_source(artifacts: Artifacts) -> None:
         {"image_id": "1", "doc_id": "Beale Street", "passage_ids": ["cap_1"], "source_url": THUMB, "commons_url": None},
         {"image_id": "2", "doc_id": "Beale Street", "passage_ids": ["cap_2"], "source_url": THUMB, "commons_url": None},
     ]
+    # only image 1 has a generated caption
+    captions = [
+        {"image_id": "1", "doc_id": "Beale Street", "passage_ids": ["cap_1"], "source_url": THUMB,
+         "commons_url": None, "image_title": "Beale Street",
+         "generated_description": "A street with neon signs at dusk."},
+    ]
     (src / "text_manifest.jsonl").write_text("".join(json.dumps(p) + "\n" for p in passages))
     (src / "image_manifest.jsonl").write_text("".join(json.dumps(i) + "\n" for i in images))
+    (src / "caption_manifest.jsonl").write_text("".join(json.dumps(c) + "\n" for c in captions))
 
     def question(qid, cls, images=(), snippets=(), titles=()):
         return {"qid": qid, "question": f"{qid}?", "answers": ["a"], "Qcate": "YesNo", "topic": "streets",
@@ -87,16 +74,20 @@ def test_manifests(tmp_path):
     artifacts = Artifacts(tmp_path)
     _write_source(artifacts)
     artifacts.images_dir.mkdir(parents=True)
-    (artifacts.images_dir / "1.png").write_bytes(_png())
+    (artifacts.images_dir / "1.jpg").write_bytes(_png())
     (artifacts.images_dir / "2.jpg").write_bytes(b"not an image")
 
     counts = webqa.write_manifests(artifacts)
 
     assert counts["images_ok"] == 1 and counts["gold_images_not_ok"] == 1
+    assert counts["generated_captions"] == 1 and counts["images_without_generated_caption"] == 1
     assert len(read_jsonl(artifacts.text_manifest, PassageRecord)) == 3
     images = {i.image_id: i for i in read_jsonl(artifacts.image_manifest, ImageRecord)}
-    assert (images["1"].path, images["1"].width, images["1"].ok) == ("1.png", 30, True)
+    assert (images["1"].path, images["1"].width, images["1"].ok) == ("1.jpg", 30, True)
     assert not images["2"].ok
+    [caption] = read_jsonl(artifacts.captions, CaptionRecord)
+    assert (caption.image_id, caption.text) == ("1", "A street with neon signs at dusk.")
+    assert caption.model == "Qwen/Qwen2.5-VL-7B-Instruct"
     q = {q.qid: q for q in read_jsonl(artifacts.questions, QuestionRecord)}
     assert [q[i].split for i in ("q1", "q2", "q3", "q4")] == ["dev", "dev", "test", "test"]
     assert q["q3"].gold_passage_ids == ["txt_q2_0"] and q["q3"].modalities == ["image", "text"]
@@ -112,6 +103,7 @@ def test_missing_image_file_is_not_ok(tmp_path):
     webqa.write_manifests(artifacts)
     images = read_jsonl(artifacts.image_manifest, ImageRecord)
     assert [i.ok for i in images] == [False, False]
+    assert images[0].path == "1.jpg"
 
 
 def test_broken_gold_reference_is_rejected(tmp_path):
@@ -121,4 +113,13 @@ def test_broken_gold_reference_is_rejected(tmp_path):
     test[1]["gold_image_ids"] = ["404"]
     (artifacts.webqa_dir / "test_qa.json").write_text(json.dumps(test))
     with pytest.raises(ValueError, match="gold image 404 not in corpus"):
+        webqa.write_manifests(artifacts)
+
+
+def test_caption_for_unknown_image_is_rejected(tmp_path):
+    artifacts = Artifacts(tmp_path)
+    _write_source(artifacts)
+    path = artifacts.webqa_dir / "caption_manifest.jsonl"
+    path.write_text(path.read_text().replace('"image_id": "1"', '"image_id": "999"'))
+    with pytest.raises(ValueError, match="generated caption for unknown image 999"):
         webqa.write_manifests(artifacts)

@@ -11,13 +11,12 @@ Everything lives under one directory outside the repo, `$MGRV_ARTIFACTS`. On Sne
 ```
 $MGRV_ARTIFACTS/
 ├── webqa/                Misha's WebQA subset (dataset branch), copied as is:
-│                         text_manifest.jsonl, image_manifest.jsonl, images_to_download.jsonl,
+│                         text_manifest.jsonl, image_manifest.jsonl, caption_manifest.jsonl,
 │                         build_qa.json, test_qa.json
 ├── manifests/            written by `python -m memgraphrag_v.webqa manifests`
 │   ├── text_manifest.jsonl, image_manifest.jsonl, questions.jsonl
 │   └── captions.jsonl    generated image descriptions (caption systems only)
-├── corpus/images/        <image_id>.<ext>, from `webqa download`; ImageRecord.path is relative to this
-├── corpus/download.jsonl one line per finished download attempt (URL used, or the errors)
+├── corpus/images/        <image_id>.jpg, from `webqa images`; ImageRecord.path is relative to this
 ├── models/               EVA-CLIP-8B/, clip-vit-large-patch14/ (scripts/download_eva_clip.py)
 ├── embeddings/eva-clip-8b/{image,query,crop}/   vectors.npy, rows.jsonl, meta.json
 └── runs/<run_id>/        retrieval.jsonl, config.yaml
@@ -25,10 +24,10 @@ $MGRV_ARTIFACTS/
 
 ## Manifests (plan task 1): `schemas.py`
 
-The dataset is Misha's WebQA subset (`subsetcheck4.py` on the `dataset` branch): 4,221 images, 12,080 passages (one caption `cap_<image_id>` per image plus `txt_<snippet_id>` text snippets), 480 graph-building questions (360 image, 120 text) and 120 held-out image questions. `webqa.py` turns it into the manifests below:
+The dataset is Misha's WebQA subset (`subsetcheck4.py` on the `dataset` branch): 4,221 images, 12,080 passages (one caption `cap_<image_id>` per image plus `txt_<snippet_id>` text snippets), 480 graph-building questions (360 image, 120 text) and 120 held-out image questions. Misha also generated a description of every image with Qwen2.5-VL-7B (`createCaption.py`, `caption_manifest.jsonl`). `webqa.py` turns it into the manifests below:
 
-- `download` fetches the images. Wikimedia now rejects thumbnails at non-standard widths (HTTP 400, https://w.wiki/GHai), and most of WebQA's URLs use such widths, so each thumbnail URL is moved to the next standard width (800 px becomes 960 px), with the original file as a fallback. Images deleted from Commons fail (404) and are logged.
-- `manifests` copies the passages, adds each image's local `path`, `width`, `height` and `ok`, and normalises the questions: `build_qa.json` becomes split `dev` (used to tune β), `test_qa.json` becomes split `test`, snippet IDs get their passages' `txt_` prefix, `gold_doc_ids` are the gold sources' titles, and `group_id` joins questions that share gold evidence. It fails on repeated IDs and on captions or gold sources missing from the corpus, and prints how many gold images did not download.
+- `images --tsv <file>` unpacks the images from the TSV Misha cut out of WebQA's own `imgs.tsv` (`/scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv`, one base64 image per line) into `corpus/images/<image_id>.jpg`. These are the files WebQA was built with, and Misha captioned all 4,221 of them, so none are missing. We used to download them from Wikimedia instead, which took about 7 hours and lost 77 images that had since been deleted.
+- `manifests` copies the passages, adds each image's local `path`, `width`, `height` and `ok`, and normalises the questions: `build_qa.json` becomes split `dev` (used to tune β), `test_qa.json` becomes split `test`, snippet IDs get their passages' `txt_` prefix, `gold_doc_ids` are the gold sources' titles, and `group_id` joins questions that share gold evidence. Misha's descriptions become `CaptionRecord`s with the model and prompt that made them. It fails on repeated IDs, on captions or gold sources missing from the corpus and on a description of an unknown image, and prints how many gold images do not open and how many images have no description.
 
 Records are frozen and reject unknown fields. IDs are non-empty strings and may contain spaces, because `doc_id`s are page titles. A title is **not** unique to one image: images from the same Wikipedia article share it (up to 14), and 264 titles also have text snippets.
 
@@ -37,7 +36,9 @@ Records are frozen and reject unknown fields. IDs are non-empty strings and may 
 | `text_manifest.jsonl` | `PassageRecord` | doc_id, passage_id, text, source_url? |
 | `image_manifest.jsonl` | `ImageRecord` | image_id, doc_id, path, source_url?, commons_url?, passage_ids, width?, height?, ok |
 | `questions.jsonl` | `QuestionRecord` | qid, question, answers, gold_doc_ids, gold_image_ids, gold_passage_ids, distractor_image_ids, distractor_passage_ids, q_type? (WebQA Qcate), topic?, modalities ⊆ {image, text}, split ∈ {dev, test}, group_id |
-| `captions.jsonl` | `CaptionRecord` | image_id, text, model, prompt_version (provisional) |
+| `captions.jsonl` | `CaptionRecord` | image_id, text, model (`Qwen/Qwen2.5-VL-7B-Instruct`), prompt_version (`createCaption.py@2c94363`) |
+
+Two kinds of caption: an image's WebQA caption is a passage (`cap_<image_id>`, in `text_manifest.jsonl`) and is what every system's reader gets with the image. The generated description in `captions.jsonl` is only for the caption baselines (C, G-caption).
 
 Retrieval reads only `qid` and `question` from a question. The gold and distractor fields are for evaluation. Test questions' gold images are part of the corpus the dev questions built. The 120 test questions use only 49 distinct gold images, 33 of which are also gold for a dev question (104 test questions touch one), so most groups span both splits and β tuned on dev has seen the test images as gold.
 
@@ -106,9 +107,10 @@ export MGRV_ARTIFACTS=/scratch-shared/$USER/mgrv
 python scripts/download_eva_clip.py                     # login node, about 30 GB
 sbatch scripts/dummy_image_retrieval.sbatch             # end-to-end test on the dummy dataset
 mkdir -p $MGRV_ARTIFACTS/webqa && git fetch origin dataset
-for f in text_manifest.jsonl image_manifest.jsonl images_to_download.jsonl build_qa.json test_qa.json; do
+for f in text_manifest.jsonl image_manifest.jsonl caption_manifest.jsonl build_qa.json test_qa.json; do
   git show origin/dataset:$f > $MGRV_ARTIFACTS/webqa/$f; done
-sbatch scripts/webqa_download.sbatch                    # images + manifests (staging partition, has internet)
+python -m memgraphrag_v.webqa images --tsv /scratch-shared/scur0462/WebQA/shortlisted_imgs.tsv   # login node
+python -m memgraphrag_v.webqa manifests
 sbatch scripts/webqa_image_retrieval.sbatch             # embed, then D on dev and test
 # results: log lines "image_recall_at_5"; reports in runs/d-dev/ and runs/d-test/report.html
 ```
