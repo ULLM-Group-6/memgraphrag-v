@@ -1,7 +1,10 @@
 """Show a retrieval run as a page of thumbnails, to eyeball or demo it.
 
-For every question: the question, its gold document, and the retrieved
-documents in rank order with their image, score and first passage. Prints
+For every question: the question, its gold documents, and the retrieved
+documents in rank order with their image, score and first passage. A
+retrieved image is outlined when it is a gold image (WebQA page titles are
+shared by several images, so matching the document alone is too loose); for
+questions without a gold image, a gold document is outlined. Prints
 one line per question and writes a self-contained runs/<id>/report.html
 (thumbnails are embedded, so the file can be copied anywhere and opened).
     python scripts/show_retrieval.py --run-id dummy-direct
@@ -57,8 +60,12 @@ def thumbnail(path: Path) -> str:
     return "data:image/jpeg;base64," + base64.b64encode(buffer.getvalue()).decode()
 
 
-def gold_rank(result: RetrievalResult, gold: set[str]) -> int | None:
-    return next((rank for rank, e in enumerate(result.evidence, 1) if e.doc_id in gold), None)
+def is_gold(e, q: QuestionRecord) -> bool:
+    return e.image_id in q.gold_image_ids if q.gold_image_ids else e.doc_id in q.gold_doc_ids
+
+
+def gold_rank(result: RetrievalResult, q: QuestionRecord) -> int | None:
+    return next((rank for rank, e in enumerate(result.evidence, 1) if is_gold(e, q)), None)
 
 
 def main():
@@ -74,9 +81,9 @@ def main():
     images = {i.image_id: i for i in read_jsonl(artifacts.image_manifest, ImageRecord)}
     passages = {p.passage_id: p.text for p in read_jsonl(artifacts.text_manifest, PassageRecord)}
 
-    ranks = [gold_rank(r, set(questions[r.question_id].gold_doc_ids)) for r in results]
+    ranks = [gold_rank(r, questions[r.question_id]) for r in results]
     at_1, in_top = sum(r == 1 for r in ranks), sum(r is not None for r in ranks)
-    summary = f"{len(results)} questions, gold document first for {at_1}, retrieved at all for {in_top}"
+    summary = f"{len(results)} questions, gold evidence first for {at_1}, retrieved at all for {in_top}"
 
     cards = []
     for result, rank in zip(results, ranks):
@@ -90,7 +97,7 @@ def main():
             text = passages.get(e.passage_ids[0], "") if e.passage_ids else ""
             text = text[:SNIPPET] + ("…" if len(text) > SNIPPET else "")
             docs.append(
-                f'<div class="doc{" gold" if e.doc_id in q.gold_doc_ids else ""}">'
+                f'<div class="doc{" gold" if is_gold(e, q) else ""}">'
                 + (f'<img src="{src}" alt="">' if src else "")
                 + f"<b>{html.escape(e.doc_id)}</b><small>score {e.score:.3f}</small>"
                 + f"<small>{html.escape(text)}</small></div>"

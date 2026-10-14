@@ -1,4 +1,4 @@
-"""A tiny synthetic corpus in the MMQA manifest format.
+"""A tiny synthetic corpus in the manifest format.
 
 It lets us run image retrieval end to end before the real dataset is ready.
 Each of the twelve documents "<Colour> <shape>" (e.g. "Red circle") has one
@@ -68,7 +68,7 @@ def make_dummy_dataset(artifacts: Artifacts) -> dict[str, int]:
                 qid=_hex("question", doc_id), question=f"Which picture shows a {colour} {shape}?",
                 answers=[doc_id], gold_doc_ids=[doc_id], gold_image_ids=[image.image_id],
                 gold_passage_ids=[], distractor_image_ids=[], distractor_passage_ids=[],
-                q_type="ImageQ", modalities=["image"], split="dev" if len(questions) % 2 == 0 else "test",
+                q_type="color", modalities=["image"], split="dev" if len(questions) % 2 == 0 else "test",
                 group_id=len(questions),
             ))
 
@@ -98,7 +98,7 @@ def _draw(shape: str, rgb: tuple[int, int, int], margin: int, fill: bool = True)
 
 
 def _hex(*parts: str) -> str:
-    """A stable 32-character hex ID, like MMQA's."""
+    """A stable 32-character hex ID."""
     return hashlib.md5("|".join(parts).encode()).hexdigest()
 
 

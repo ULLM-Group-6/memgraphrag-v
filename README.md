@@ -27,10 +27,10 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 ## Repo map
 
 ```
-src/memgraphrag_v/            manifest + retrieval schemas, EVA-CLIP embeddings, whole-image retrieval,
+src/memgraphrag_v/            WebQA images + manifests, schemas, EVA-CLIP embeddings, whole-image retrieval,
                               dummy dataset, JSONL I/O, artifact layout, config
 configs/default.yaml          experiment config; null = still to be decided
-scripts/                      EVA-CLIP download, MG2 parity check, Snellius embedding and dummy-retrieval jobs, run report
+scripts/                      EVA-CLIP download, MG2 parity check, Snellius jobs (system D, dummy run), run report
 tests/                        pytest suite (`pip install -e ".[dev]" && pytest -q`)
 docs/
 ├── method.md                 proposed method, evaluation, timeline, caveats

@@ -14,7 +14,7 @@ from conftest import IMAGE_ROW, QUESTION_ROW
 
 
 def test_builder_rows_parse(passage, image, question):
-    assert passage.doc_id == "Barack Obama"  # Wikipedia titles contain spaces
+    assert passage.doc_id == "Beale Street"  # titles contain spaces
     assert image.passage_ids == [passage.passage_id]
     assert question.split == "dev"
 
@@ -29,6 +29,11 @@ def test_empty_id_rejected():
         ImageRecord(**{**IMAGE_ROW, "image_id": ""})
 
 
+def test_modalities_are_checked():
+    with pytest.raises(ValidationError):
+        QuestionRecord(**{**QUESTION_ROW, "modalities": ["video"]})
+
+
 def test_split_must_be_dev_or_test():
     with pytest.raises(ValidationError):
         QuestionRecord(**{**QUESTION_ROW, "split": "train"})
@@ -40,7 +45,8 @@ def test_records_are_frozen(image):
 
 
 def test_caption_record():
-    c = CaptionRecord(image_id="i1", text="A man in a suit.", model="reader-vlm", prompt_version="v1")
+    c = CaptionRecord(image_id="30193116", text="A street lined with neon signs at dusk.",
+                      model="Qwen/Qwen2.5-VL-7B-Instruct", prompt_version="createCaption.py@2c94363")
     assert c.text
 
 
