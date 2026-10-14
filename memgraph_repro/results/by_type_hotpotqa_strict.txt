@@ -1,0 +1,3 @@
+unmatched records: 0
+type=bridge                 n= 811  acc= 49.8%
+type=comparison             n= 189  acc= 72.5%

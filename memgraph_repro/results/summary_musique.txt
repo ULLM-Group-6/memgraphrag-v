@@ -1,0 +1,18 @@
+== retrieval + QA start: Mon Oct 12 12:44:34 PM CEST 2026
+Loading memory structure from: /home/scur0466/work/memgraph_repro/musique/outputs/memory.json
+Loaded: 41767 schemas, 103471 facts, 5627 passages
+{
+  "questions_path": "/home/scur0466/work/MemGraphRAG/dataset/musique/musique.json",
+  "save_dir": "/home/scur0466/work/memgraph_repro/musique/outputs",
+  "num_questions": 1000,
+  "question_type": "all",
+  "retrieval_seconds": 2476.821,
+  "qa_seconds": 1042.6421,
+  "total_seconds": 3519.4631,
+  "seconds_per_question": 3.5195,
+  "prompt_tokens": 3840392,
+  "completion_tokens": 125780,
+  "total_tokens": 3966172
+}
+== retrieval + QA end: Mon Oct 12 01:43:35 PM CEST 2026
+== done

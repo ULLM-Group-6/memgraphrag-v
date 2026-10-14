@@ -1,0 +1,46 @@
+diff --git a/code/src/MemGraphRAG.py b/code/src/MemGraphRAG.py
+index d868c5f..47c7589 100644
+--- a/code/src/MemGraphRAG.py
++++ b/code/src/MemGraphRAG.py
+@@ -325,7 +325,22 @@ class MemGraphRAG:
+         except json.JSONDecodeError:
+             match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+             candidate = match.group(0) if match else cleaned
+-            return json.loads(fix_broken_generated_json(candidate))
++            try:
++                return json.loads(fix_broken_generated_json(candidate))
++            except json.JSONDecodeError:
++                import json_repair
++                with open(os.path.expanduser("~/work/memgraph_repro/logs/bad_json.log"), "a", encoding="utf-8") as _f:
++                    _f.write(repr(str(response)[:1500]) + "\n---\n")
++                try:
++                    return json.loads(re.sub(r"\}\s*\}", "}", re.sub(r"\{\s*\{", "{", candidate)))
++                except json.JSONDecodeError:
++                    pass
++                repaired = json_repair.loads(candidate)
++                if isinstance(repaired, dict):
++                    return repaired
++                with open(os.path.expanduser("~/work/memgraph_repro/logs/unrepairable_json.log"), "a", encoding="utf-8") as _f:
++                    _f.write(repr(str(response)[:3000]) + "\n---\n")
++                return {}
+ 
+     @staticmethod
+     def _memory_infer_result(result: Any) -> Tuple[str, Dict[str, Any]]:
+@@ -739,6 +754,8 @@ class MemGraphRAG:
+                     )
+                     response, metadata = self._memory_infer_result(raw)
+                     parsed = self._memory_json(response)
++                    if not parsed:
++                        parsed = {"resolved_triples": [], "unresolved_conflicts": [{"triple_ids": component, "reason": "unparseable LLM JSON"}]}
+                     parsed["component_fact_ids"] = component
+                     parsed["fallback_attempt"] = attempt
+                     parsed["token_usage"] = {"prompt_tokens": int(metadata.get("prompt_tokens", 0) or 0),
+@@ -747,7 +764,7 @@ class MemGraphRAG:
+                 except Exception as exc:
+                     last_error = exc
+                     message = str(exc).lower()
+-                    if "content_filter" not in message and "content management policy" not in message:
++                    if "content_filter" not in message and "content management policy" not in message and "maximum context length" not in message:
+                         raise
+             return {"component_fact_ids": component, "resolved_triples": [],
+                     "unresolved_conflicts": [{"triple_ids": component, "reason": str(last_error)}],

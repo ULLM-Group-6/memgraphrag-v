@@ -1,0 +1,18 @@
+== retrieval + QA start: Mon Oct 12 05:40:15 AM CEST 2026
+Loading memory structure from: /home/scur0466/work/memgraph_repro/hotpotqa/outputs/memory.json
+Loaded: 35420 schemas, 101313 facts, 5433 passages
+{
+  "questions_path": "/home/scur0466/work/MemGraphRAG/dataset/hotpotqa/hotpotqa.json",
+  "save_dir": "/home/scur0466/work/memgraph_repro/hotpotqa/outputs",
+  "num_questions": 1000,
+  "question_type": "all",
+  "retrieval_seconds": 2114.3964,
+  "qa_seconds": 926.5041,
+  "total_seconds": 3040.9005,
+  "seconds_per_question": 3.0409,
+  "prompt_tokens": 3805370,
+  "completion_tokens": 102914,
+  "total_tokens": 3908284
+}
+== retrieval + QA end: Mon Oct 12 06:31:22 AM CEST 2026
+== done

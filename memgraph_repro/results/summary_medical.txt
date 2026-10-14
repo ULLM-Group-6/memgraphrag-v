@@ -1,0 +1,18 @@
+== retrieval + QA start: Sun Oct 11 11:32:43 PM CEST 2026
+Loading memory structure from: /home/scur0466/work/memgraph_repro/medical/outputs/memory.json
+Loaded: 8149 schemas, 13221 facts, 1024 passages
+{
+  "questions_path": "/home/scur0466/work/MemGraphRAG/dataset/medical/question.json",
+  "save_dir": "/home/scur0466/work/memgraph_repro/medical/outputs",
+  "num_questions": 2062,
+  "question_type": "all",
+  "retrieval_seconds": 760.9221,
+  "qa_seconds": 2705.3836,
+  "total_seconds": 3466.3058,
+  "seconds_per_question": 1.681,
+  "prompt_tokens": 6829955,
+  "completion_tokens": 419825,
+  "total_tokens": 7249780
+}
+== retrieval + QA end: Mon Oct 12 12:30:38 AM CEST 2026
+== done
