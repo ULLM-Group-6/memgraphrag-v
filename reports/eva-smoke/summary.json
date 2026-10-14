@@ -1,0 +1,59 @@
+{
+  "status": "structural checks passed; inspect semantic rankings",
+  "mg2_commit": "91f0eed6fc5f4383f0bae746d12850f05e381e77",
+  "checkpoint_revisions": {
+    "eva_repo": "BAAI/EVA-CLIP-8B",
+    "eva_revision": "0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9",
+    "processor_repo": "openai/clip-vit-large-patch14",
+    "processor_revision": "32bd64288804d66eefd0ccbe215aa642df71cc41"
+  },
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "torch": "2.7.0+cu126",
+  "cuda": "12.6",
+  "embedding_dimension": 1280,
+  "images": [
+    "/gpfs/home6/scur0464/projects/memgraphrag-v-eva/external/MG2-RAG/examples/data/impala_demo/kb_image.jpg",
+    "/gpfs/home6/scur0464/projects/memgraphrag-v-eva/external/MG2-RAG/examples/data/impala_demo/query_image.jpg"
+  ],
+  "texts": [
+    "a photograph of an impala antelope",
+    "a photograph of an airplane",
+    "a line chart showing revenue over time"
+  ],
+  "cosine_similarities": [
+    [
+      0.26139065623283386,
+      0.0879293829202652,
+      0.01681009866297245
+    ],
+    [
+      0.2400776743888855,
+      0.05184007063508034,
+      -0.02425333485007286
+    ]
+  ],
+  "ranking_indices": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      2
+    ]
+  ],
+  "load_seconds": 18.07597618998261,
+  "text_encode_seconds": 0.3918667570105754,
+  "image_encode_seconds": 0.365925757039804,
+  "repeat_image_seconds": 0.03951761801727116,
+  "repeat_max_absolute_difference": 0.0,
+  "repeat_close_at_1e-3": true,
+  "peak_allocated_gib": 15.348275661468506,
+  "text_token_lengths": [
+    8,
+    7,
+    9
+  ]
+}

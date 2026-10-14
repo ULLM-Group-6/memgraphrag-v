@@ -1,3 +1,10 @@
+
+# EVA-CLIP smoke-test artifacts
+.venv-eva/
+external/MG2-RAG/
+checkpoints/eva-smoke/
+outputs/
+eva-clip-smoke.zip
 # Artifacts live outside the repo (MGRV_ARTIFACTS); this catches accidental local roots.
 artifacts/
 .venv/
