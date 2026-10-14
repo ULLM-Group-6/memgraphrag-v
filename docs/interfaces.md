@@ -2,7 +2,7 @@
 
 This page describes the files that retrieval reads and writes. The code in [`src/memgraphrag_v/`](../src/memgraphrag_v) enforces it: `schemas.py` for the manifests and retrieval output, `embeddings.py` for the EVA-CLIP vectors. If this page and the code disagree, fix one of them.
 
-It covers only what retrieval needs. Records that only graph construction uses (the MemGraphRAG entity export, the passage-to-chunk map, SAM3 detections) are added with plan tasks 2 and 4.
+It covers what retrieval needs, plus the [combined pipeline](#combined-pipeline-implementation-note) that builds the index (entity export, chunk map, SAM3 detections).
 
 ## Artifacts root
 
@@ -16,7 +16,8 @@ $MGRV_ARTIFACTS/
 ├── corpus/images/        MMQA final_dataset_images/; ImageRecord.path is relative to this
 ├── models/               EVA-CLIP-8B/, clip-vit-large-patch14/ (scripts/download_eva_clip.py)
 ├── embeddings/eva-clip-8b/{image,query,crop}/   vectors.npy, rows.jsonl, meta.json
-└── runs/<run_id>/        retrieval.jsonl, config.yaml
+├── index/                combined MemGraphRAG-V index (see the implementation note below)
+└── runs/<run_id>/        retrieval.jsonl, config.yaml (+ diagnostics.jsonl, provenance.json for the combined pipeline)
 ```
 
 ## Manifests (plan task 1): `schemas.py`
@@ -102,3 +103,95 @@ python scripts/show_retrieval.py --run-id d-dev           # runs/d-dev/report.ht
 ```
 
 To run the parity check against MG2, use a GPU job that runs `python scripts/check_eva_parity.py --mg2 <MG2-RAG checkout>` (MG2 commit `91f0eed`).
+
+## Combined pipeline (implementation note)
+
+`pipeline.py` builds **one** multimodal graph and retrieves from it. It stops at evidence ready for a future reader. This note overrides the older scope in `method.md` where they differ: EVA-CLIP (not SigLIP2); one indexing invocation and one graph (no separate text baseline snapshot, ablations, evaluation, tuning, caption generation or reader); the dataset supplies passages, captions and images; the benchmark and reader VLM stay undecided. Nothing here was executed: see the checklist below.
+
+### Modules
+
+| File | Responsibility |
+|---|---|
+| `sam3_processing.py` | entity-name prompts per image, detections (≥ `sam3.threshold`), masks, MG2-style crops, per-image resumable records, adapter over MG2's `SAM3Grounding` |
+| `visual_indexing.py` | EVA-CLIP embeddings of whole images and crops with explicit save and reuse validation; image vertices, image–passage and image–entity edges |
+| `retrieval.py` | adapted `prepare_retrieval_objects`, text and visual seeds, fusion, CPU PPR, `select_documents`, dense fallback, diagnostics |
+| `pipeline.py` | owns the upstream text backend (thin subclass), stages, `index_with_memory_v`, `load_index`, `retrieve`, CLI |
+
+`schemas.py`, `config.py` and `paths.py` gained the records, settings and paths below. `embeddings.py`, `eva_clip.py` and `image_retrieval.py` are reused unchanged (`EmbedItem`, `EmbeddingSet`, `items_from_images`, `embed_files`, `image_passage_edges`, `select_documents`, `Evidence`, `RetrievalResult`).
+
+### Indexing stages
+
+```bash
+python -m memgraphrag_v.pipeline index --llm-name <served name>                 # all four stages
+python -m memgraphrag_v.pipeline index --stages text assemble --llm-name <name>   # MemGraphRAG environment
+python -m memgraphrag_v.pipeline index --stages ground embed                      # MG2 / SAM3 / EVA environment
+```
+
+1. **text**: passages and supplied captions become `TextRecord`s (passages in manifest order, then captions as `caption:<image_id>:<n>`, in the parent image's document). Each record is chunked on its own (upstream's token-window algorithm; the text is never prefixed with IDs). Chunk IDs hash (record, position, text), so equal text in two records never collapses. Then upstream `triple_extraction`, `build_from_raw_openie_results`, `extract_memory_schema`, `filter_memory_ontology` (default: absolute, minimum frequency 1), `detect_memory_conflicts`, `resolve_memory_conflicts`. The surviving entities and their supporting chunks are exported from the final memory (`entities.jsonl`).
+2. **ground**: each image is prompted with the entities of its *explicitly associated* chunks (its `passage_ids` and its captions; a shared document is not an association).
+3. **embed**: EVA-CLIP embeds every manifest image (so the set equals what `embeddings.py image` writes; failures stay as failed rows) and every saved crop (`kind="crop"`, with the existing entity ID).
+4. **assemble**: upstream `build_memory_graph` and `install_memory_graph` (their save is deferred), then one vertex per usable embedded image, `image_passage` edges (weight 1) to the chunks of its associated records, and `image_entity` edges weighted by the maximum retained SAM3 confidence of the pair. Each new pair is added once; text edges, including parallel ones, are untouched. The finished graph is written once.
+
+Image vertices are named `image-<image_id>`; graph vertex kinds are entity, type, passage and image. Crops and facts are never vertices.
+
+Each stage records its input hashes, settings and output hashes in `index/manifest.json`. A stage whose stamp no longer matches raises `StaleIndexError` (use `--force` to recompute); `load_index` also checks that the stages agree with each other and that the saved files still have the recorded hashes. `embed_cached` reuses saved vectors only if encoder and processor revisions, item IDs, paths and file hashes match. SAM3 results are saved per image, so an interrupted `ground` resumes.
+
+```
+index/
+├── manifest.json            stage stamps (inputs, settings, output hashes)
+├── texts.jsonl, chunks.jsonl, entities.jsonl, images.jsonl   TextRecord, ChunkRecord, EntityRecord, IndexedImage
+├── text/                    MemGraphRAG save_dir: OpenIE cache, LLM cache, memory.json,
+│   └── <llm>_<embedding>/   chunk/entity/fact stores and graph.graphml (the final multimodal graph)
+└── grounding/               records/<md5(image_id)>.json (ImageGrounding), masks/*.npz, crops/<md5>/*.png
+```
+
+### Retrieval
+
+`load_index` loads the saved graph and stores without rebuilding or grounding, and `retrieve` reads only question IDs and texts.
+
+- **Text seeds** (upstream seed building without PPR): raw query–fact similarity ≥ `fact_similarity_threshold` (0.4) selects facts (`skip_fact_rerank`, `use_raw_threshold_filter`); min–max normalized fact scores become entity weights (a later fact overwrites an earlier one for the same entity, as upstream), divided by the entity's passage count; `get_top_k_weights` keeps `linking_top_k` entities; then `t_raw = phrase_weights + passage_node_weight × normalized passage scores` (0.05). No selected fact: channel unavailable.
+- **Visual seeds**: one EVA question vector against whole images and crops; top 20 of each by raw cosine (ties by ID), negatives clamped to 0. Image scores seed image vertices; crop scores seed existing entity vertices (max per image–entity pair, then max across images). No confidence weighting or normalization other than the final `N(x) = x / sum(x)`.
+- **Fusion**: `v = 0.5 i + 0.5 c` (or the available one), `s = (1 − β) t + β v` (or the available channel), neither → dense-passage fallback. β must be given (`--beta` or `retrieval.beta`); no value is claimed optimal and nothing tunes it.
+- **PPR**: `igraph personalized_pagerank`, all vertices, undirected, edge `weight`, PRPACK, `damping` from the config (restart probability `1 − damping`). `select_documents` keeps the best image of at most five documents; `route="graph"`.
+- **Fallback** (`route="fallback"`): best chunk per document by dense similarity, at most five documents, each with the first usable image explicitly associated with the chunk's record in source order, else `image_id=None`. It also answers when no image receives PPR mass, so arbitrary images are never returned with score 0.
+- `Evidence.passage_ids` are text **record** IDs (passage IDs and `caption:<image_id>:<n>`), in source order: passages in manifest order, then captions.
+- `runs/<run_id>/` gets `retrieval.jsonl`, `diagnostics.jsonl` (facts, component availability, strongest seeds, β, top image PPR scores, selected IDs, fallback reason), `provenance.json` and `config.yaml`.
+
+### Configuration and environment
+
+`config.py` / `configs/default.yaml` gained `sam3` (threshold 0.5, minimum crop 10 px, prompt batch 1), `text` (`llm_name` is still null; chunk 256/32; ontology filter) and the retrieval settings above. Machine-specific inputs are environment variables, read only when the operation needs them:
+
+| Variable | Needed by | Meaning |
+|---|---|---|
+| `MGRV_ARTIFACTS` | all | artifacts root (or `artifacts_root`) |
+| `MGRV_MEMGRAPHRAG` | text, assemble, retrieve | checkout of [MemGraphRAG @ 49f20cec](https://github.com/XMUDeepLIT/MemGraphRAG/tree/49f20cec41290c95209724d33ec527f72449d300); its `code/` is imported |
+| `MGRV_MG2_RAG` | ground | checkout of MG2-RAG @ `91f0eed` (bundled `sam3/`, `assets/`, the wrapper) |
+| `MGRV_SAM3_CHECKPOINT` | ground | SAM3 weights (default `<artifacts>/models/sam3/sam3.pt`) |
+| `MGRV_TEXT_EMBEDDING_MODEL` | text, assemble, retrieve | overrides `text.embedding_model`, e.g. an offline snapshot path; it names the stores, so keep it the same |
+| `OPENAI_API_KEY` | text, assemble, retrieve | for the OpenAI-compatible endpoint (`text.llm_base_url`), e.g. a local vLLM server (any value) |
+
+**Environments.** MemGraphRAG pins `torch==2.5.1`, `transformers==4.45.2`, `pydantic==2.10.4` (`snellius-work-memgraph/req_memgraph.txt`); MG2's requirements and this repo's `eva` extra use `torch==2.7.0` and `transformers==4.49.0` (SAM3 was smoke-tested on torch 2.7.0). A single environment is therefore unverified. Run `text` and `assemble` in the MemGraphRAG environment and `ground` and `embed` in the MG2 environment; `retrieve` needs the upstream backend and EVA-CLIP in one process (see the open issues).
+
+### Adaptations of upstream MemGraphRAG
+
+The text backend is upstream imported from a checkout, with a documented subclass in `pipeline.py` (no runtime patching): chunks are inserted under source-aware IDs (upstream hashes the text); the OpenIE cache is matched by chunk ID and text, in source order (upstream re-hashes it); the entity-to-triples index, which re-hashes chunk IDs, is skipped; the text-only graph is not saved on installation; `get_top_k_weights` keeps its logic without the final assertion that fails for a zero-weight entity. `retrieval.prepare_retrieval_objects` replaces upstream's, whose vertex-count assertion excludes images. The local `snellius-work-memgraph/backups/MemGraphRAG.py` (no `run_ppr`) is not used; `MemGraphRAG.py_bkp` has the byte size of the pinned commit's file (121,890 bytes).
+
+### Open issues
+
+- **Not executed or tested.** No imports, tests or models were run; the code was written against the sources of the pinned commits.
+- `retrieve` needs EVA-CLIP (transformers 4.49.0, the smoke-tested pin) and the upstream backend (4.45.2 pin) in one process. Whether one environment serves both is unverified. `retrieval.retrieve_questions` takes any object with `encode_texts`, so precomputed question vectors can be supplied if it does not.
+- Whether MG2's modules and upstream's generic `src` package coexist in one process (`index` without `--stages`) is unverified; the staged runs avoid it.
+- `MG2Sam3` follows `component-verification/smoke_sam3.py`; masks are assumed boolean `(n, 1, H, W)` and boxes `(n, 4)` in original coordinates, as that script asserts. Crops reproduce MG2's `_process_single_crop` rules; a parity check against `get_save_crop` is not written.
+- `skip_fact_rerank=False` needs upstream's DSPy reranker configuration, which this pipeline does not expose.
+- The 256-token cut of `Evidence.passage_ids` (and caption position within it) belongs to the future reader input step.
+
+### Snellius verification checklist (not yet run)
+
+1. `pytest -q` (config and pure-logic tests), in the MG2 environment.
+2. Environments: install MemGraphRAG's requirements in one and MG2's (+ this repo with `.[eva]`) in the other; try importing the upstream backend and EVA-CLIP in one process.
+3. Dummy dataset (`python -m memgraphrag_v.dummy`), then `index --stages text`; inspect `chunks.jsonl`, `entities.jsonl`, that chunk IDs in `memory.json`, the stores and the graph agree, and that equal text in two records gives two chunk vertices.
+4. `index --stages ground` on a few images: positive, empty and failing prompts; open `crops/` and `masks/`; check IDs and scores in `records/*.json`; rerun to see per-image reuse.
+5. `index --stages embed assemble`: compare `images.jsonl`, `stats` in the manifest (vertices, both edge counts), no crop vertices, no duplicate image pairs, image vectors identical to a direct `embeddings.py image` run.
+6. Tamper checks: change a manifest line, a setting or an image and confirm `StaleIndexError`; rerun with `--force`.
+7. `retrieve --run-id <id> --beta <β> --limit 5`: check `diagnostics.jsonl` for seeds, components, fallback reasons; try a question that selects no fact (visual only) and one with neither channel (fallback).
+8. Time and memory: stage by stage on the real corpus before the full run.

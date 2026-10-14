@@ -28,7 +28,10 @@ Both base systems are forks of HippoRAG: they build a graph of entities and pass
 
 ```
 src/memgraphrag_v/            manifest + retrieval schemas, EVA-CLIP embeddings, whole-image retrieval,
-                              dummy dataset, JSONL I/O, artifact layout, config
+                              dummy dataset, JSONL I/O, artifact layout, config, and the combined pipeline:
+                              sam3_processing (grounding), visual_indexing (image/crop embeddings, image
+                              vertices + edges), retrieval (seeds, fusion, PPR), pipeline (index/retrieve CLI;
+                              see "Combined pipeline" in docs/interfaces.md, not yet run)
 configs/default.yaml          experiment config; null = still to be decided
 scripts/                      EVA-CLIP download, MG2 parity check, Snellius embedding and dummy-retrieval jobs, run report
 tests/                        pytest suite (`pip install -e ".[dev]" && pytest -q`)

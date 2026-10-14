@@ -1,5 +1,7 @@
 # MemGraphRAG-V: methodology
 
+> **Scope update.** The combined pipeline implements only text/image indexing, query seeds, fusion, PPR and retrieval output, with **EVA-CLIP** (not SigLIP2) and a single multimodal graph. Baselines, ablations, evaluation, tuning, caption generation and the reader are out of its scope. Where this page differs, [interfaces.md, "Combined pipeline"](interfaces.md#combined-pipeline-implementation-note) wins.
+
 ## 1. Research question and scope
 
 **Does graph-guided retrieval of native image evidence improve answers to text questions compared with caption-based MemGraphRAG and direct text-to-image retrieval?**

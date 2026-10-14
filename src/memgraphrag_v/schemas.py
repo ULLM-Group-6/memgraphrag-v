@@ -22,7 +22,6 @@ MAX_DOCS = 5
 """Documents returned per question, each with at most one whole image."""
 
 VERTEX_LAYERS = ("entity", "type", "passage", "image")
-"""Graph vertex kinds. SAM3 crops and facts are never vertices."""
 
 Id = Annotated[str, Field(min_length=1)]
 """A dataset ID. MMQA doc IDs are Wikipedia titles, so spaces are allowed."""
@@ -101,7 +100,7 @@ class TextRecord(Record):
     manifest order, then captions in manifest order)."""
 
     record_id: Id
-    """The passage_id, or ``caption:<image_id>:<n>`` for the n-th caption of an image."""
+    """The passage_id, or ``caption-<image_id>-<n>`` for the n-th caption of an image."""
     kind: Literal["passage", "caption"]
     doc_id: Id
     text: str
@@ -118,7 +117,7 @@ class ChunkRecord(Record):
     record_id: Id
     doc_id: Id
     position: int
-    """Chunk number within its record."""
+    """Chunk number within its text record."""
     text: str
 
 
@@ -159,7 +158,7 @@ class Detection(Record):
     index: int
     """Position in SAM3's output for the image."""
     score: float
-    """Full-precision confidence. The image-entity edge weight is the maximum
+    """Full-precision confidence. The image-entity edge weight is the max SAM3 confidence score
     per (image, entity) pair."""
     box: list[float]
     """x1, y1, x2, y2 in the original image's pixel coordinates."""
@@ -193,7 +192,7 @@ class ImageGrounding(Record):
     """Raw detections below the threshold or invalid."""
     mask_file: str | None = None
     """.npz with ``masks`` (n_retained, H, W), relative to the artifacts root."""
-    detections: list[Detection] = Field(default_factory=list)
+    detections: list[Detection] = Field(default_factory=list) # retained
     error: str | None = None
 
 
@@ -254,11 +253,11 @@ class QueryDiagnostics(Record):
     facts: list[str] = Field(default_factory=list)
     """Facts that passed selection."""
     n_facts_scored: int = 0
-    text_seeds: dict[str, float] = Field(default_factory=dict)
+    text_seeds: dict[str, float] = Field(default_factory=dict) # vertex name: score
     """Strongest raw text seeds (before normalization), by vertex name."""
-    image_seeds: dict[str, float] = Field(default_factory=dict)
-    crop_entity_seeds: dict[str, float] = Field(default_factory=dict)
-    image_ppr: dict[str, float] = Field(default_factory=dict)
+    image_seeds: dict[str, float] = Field(default_factory=dict) # vertex name: score
+    crop_entity_seeds: dict[str, float] = Field(default_factory=dict) # vertex name: score
+    image_ppr: dict[str, float] = Field(default_factory=dict) # vertex name: score
     """Highest PPR scores of image vertices, by image ID."""
     selected_doc_ids: list[Id] = Field(default_factory=list)
     selected_image_ids: list[Id | None] = Field(default_factory=list)

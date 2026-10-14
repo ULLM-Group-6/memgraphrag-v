@@ -50,13 +50,13 @@ class Sam3Config(_Section):
     """MG2 skips crops narrower or shorter than this many pixels."""
     prompt_batch_size: int = Field(default=1, ge=1)
     """Prompts per SAM3 forward pass; 1 is what the smoke test used."""
-    device: int = Field(default=0, ge=0)
+    device: int = Field(default=0, ge=0) #cuda:0
 
 
 class TextConfig(_Section):
     """MemGraphRAG text index. Everything not listed keeps the upstream default."""
 
-    llm_name: str | None = None
+    llm_name: str | None = None # LLM for OpenIE, schema and ontology extraction and conflict resolution
     """Name the OpenAI-compatible endpoint serves; still to be decided."""
     llm_base_url: str = ""
     """Empty: the provider default. The API key comes from OPENAI_API_KEY."""
@@ -91,13 +91,13 @@ class RetrievalConfig(_Section):
     linking_top_k: int = Field(default=5, ge=1)
     """Entities kept as text seeds (upstream default)."""
     skip_fact_rerank: bool = True
-    """Select facts by similarity threshold instead of the LLM reranker."""
+    """Select facts by similarity threshold instead of the LLM reranker.""" # we did not implement the LLM reranker
     fact_similarity_threshold: float = 0.4
     """Raw query-fact similarity a fact needs to be selected."""
     use_raw_threshold_filter: bool = True
     """Threshold all facts, not only the top ``linking_top_k``."""
     damping: float = Field(default=0.5, gt=0.0, lt=1.0)
-    """PPR damping, as upstream. The restart probability is ``1 - damping``."""
+    """PPR damping factor, as upstream. The restart probability is ``1 - damping``."""
 
 
 class ExperimentConfig(_Section):

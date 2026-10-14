@@ -105,7 +105,7 @@ def normalize_texts(
     passages: Sequence[PassageRecord], captions: Sequence[CaptionRecord], images: Sequence[ImageRecord]
 ) -> list[TextRecord]:
     """Passages in manifest order, then supplied captions in manifest order, as
-    one kind of text record. A caption's ID is ``caption:<image_id>:<n>`` and
+    one kind of text record. A caption's ID is ``caption-<image_id>-<n>`` and
     its document is its parent image's. Nothing is generated."""
     image_by_id: dict[str, ImageRecord] = {}
     for image in images:
@@ -129,7 +129,7 @@ def normalize_texts(
         if image is None:
             raise ValueError(f"caption for unknown image {c.image_id!r}")
         add(TextRecord(
-            record_id=f"caption:{c.image_id}:{ordinal[c.image_id]}", kind="caption",
+            record_id=f"caption-{c.image_id}-{ordinal[c.image_id]}", kind="caption",
             doc_id=image.doc_id, text=c.text, image_id=c.image_id,
         ))
         ordinal[c.image_id] += 1
@@ -612,9 +612,12 @@ def _stage_assemble(artifacts: Artifacts, config: ExperimentConfig, text: TextCo
     backend = make_backend(config, artifacts, text)
     try:
         backend.check_chunks(chunks)
+        by_record: dict[str, list[str]] = defaultdict(list)
+        for chunk in chunks:
+            by_record[chunk.record_id].append(chunk.chunk_id)
         memory_graph = backend.build_memory_graph(memory)
         backend.install_memory_graph(memory_graph)  # the text-only graph is not saved
-        indexed, stats = visual_indexing.add_visual_structure(backend.graph, links, image_set, grounding)
+        indexed, stats = visual_indexing.add_visual_structure(backend.graph, links, by_record, image_set, grounding)
         backend.write_graph()
         graph_file = artifacts.relative(Path(backend._graphml_xml_file))
         working_dir = Path(backend.working_dir).name
@@ -664,8 +667,13 @@ def index_with_memory_v(
     if "text" in stages:
         if not text.llm_name:
             raise ValueError("text.llm_name is not set: put it in the config or pass --llm-name")
+        # Of the image manifest, only the image-to-document identity matters here (captions take their image's document).
+        identities = _json_sha256([[i.image_id, i.doc_id] for i in read_jsonl(artifacts.image_manifest, ImageRecord)])
+        text_inputs = {
+            "text_manifest": sources["text_manifest"], "captions": sources["captions"], "image_identities": identities,
+        }
         done["text"] = _run_stage(
-            artifacts, config, manifest, "text", sources, text_settings, force,
+            artifacts, config, manifest, "text", text_inputs, text_settings, force,
             lambda: _stage_text(artifacts, config, text, force),
         )
     if "ground" in stages:
@@ -705,6 +713,13 @@ def index_with_memory_v(
             lambda: _stage_assemble(artifacts, config, text),
         )
     _validate_chain(manifest)
+    manifest["provenance"] = {
+        "config_hash": config.config_hash(),
+        "config": config.model_dump(mode="json", exclude={"artifacts_root"}),
+        "memgraphrag_commit": MEMGRAPHRAG_COMMIT,
+        "mg2_commit": sam3_processing.MG2_COMMIT,
+    }
+    _write_manifest(artifacts, manifest)
     return done
 
 
@@ -793,14 +808,15 @@ def retrieve(
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Build the MemGraphRAG-V index, or retrieve from it.")
-    parser.add_argument("--config", default="configs/default.yaml")
-    parser.add_argument("--llm-name", help="overrides text.llm_name")
-    parser.add_argument("--device", default="cuda")
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--config", default="configs/default.yaml")
+    common.add_argument("--llm-name", help="overrides text.llm_name")
+    common.add_argument("--device", default="cuda")
     modes = parser.add_subparsers(dest="mode", required=True)
-    build = modes.add_parser("index", help="build the index (all stages by default)")
+    build = modes.add_parser("index", parents=[common], help="build the index (all stages by default)")
     build.add_argument("--stages", nargs="+", choices=STAGES, default=list(STAGES))
     build.add_argument("--force", action="store_true", help="recompute the stages even if their stamps no longer match")
-    query = modes.add_parser("retrieve", help="retrieve evidence from the saved index")
+    query = modes.add_parser("retrieve", parents=[common], help="retrieve evidence from the saved index")
     query.add_argument("--run-id", required=True)
     query.add_argument("--split", choices=["dev", "test"])
     query.add_argument("--limit", type=int)

@@ -45,8 +45,6 @@ from .schemas import Detection, EntityRecord, ImageGrounding, ImageRecord
 
 logger = logging.getLogger(__name__)
 
-MG2_COMMIT = "91f0eed6fc5f4383f0bae746d12850f05e381e77"
-
 
 @dataclass(frozen=True)
 class RawDetections:
@@ -138,9 +136,9 @@ def ground_images(
                     )
                 else:
                     attempted += 1
+                    if grounder is None:
+                        grounder = get_grounder()  # a model that cannot load is fatal, not an image failure
                     try:
-                        if grounder is None:
-                            grounder = get_grounder()
                         record = _ground_one(image, path, prompts, fingerprint, grounder, artifacts, key, config)
                     except Exception as e:
                         failures += 1
@@ -309,6 +307,7 @@ def default_checkpoint(artifacts: Artifacts) -> Path:
 
 def grounder_identity(checkpoint: Path) -> str:
     """Names the model in fingerprints: the MG2 commit and the checkpoint file."""
+    MG2_COMMIT = "91f0eed6fc5f4383f0bae746d12850f05e381e77"
     return f"mg2-sam3@{MG2_COMMIT[:7]}:{checkpoint.name}:{checkpoint.stat().st_size}"
 
 

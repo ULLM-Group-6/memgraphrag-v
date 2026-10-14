@@ -36,6 +36,7 @@ from PIL import Image
 from . import sam3_processing
 from .config import VisualEncoderConfig
 from .embeddings import EmbedItem, EmbeddingMeta, EmbeddingSet, Encoder, embed_files, items_from_images
+from .image_retrieval import image_passage_edges
 from .paths import Artifacts
 from .schemas import VERTEX_LAYERS, ImageGrounding, ImageRecord, IndexedImage
 
@@ -163,13 +164,19 @@ def embed_visual(
 def add_visual_structure(
     graph,
     links: Sequence[IndexedImage],
+    chunks_by_record: Mapping[str, Sequence[str]],
     image_set: EmbeddingSet,
     grounding: Mapping[str, ImageGrounding],
 ) -> tuple[list[IndexedImage], dict[str, int]]:
     """Add image vertices and both edge types to ``graph`` (an igraph graph
     with ``name`` and ``layer`` vertex attributes and ``weight`` and ``type``
     edge attributes). Returns the links with vertex and usability filled in,
-    and counts."""
+    and counts.
+
+    ``image_passage_edges`` gives (image, text record, 1.0) for each usable
+    image's associated records; they are translated to the records' chunk
+    vertices through ``chunks_by_record``, so a caption's or passage's image
+    edges land on its chunks and nowhere else."""
     attributes = graph.vs.attributes()
     if graph.vcount() and not {"name", "layer"} <= set(attributes):
         raise ValueError("the text graph needs name and layer vertex attributes")
@@ -205,25 +212,30 @@ def add_visual_structure(
             len(new_names),
             attributes={"name": new_names, "layer": [IMAGE_LAYER] * len(new_names), "content": new_content},
         )
+    usable = {link.image_id: link for link in updated if link.usable}
 
     pairs: list[tuple[int, int]] = []
     weights: list[float] = []
     kinds: list[str] = []
-    n_passage = 0
-    for link in updated:
-        if not link.usable:
-            continue
-        for chunk_id in dict.fromkeys(link.chunk_ids):
+    seen: set[tuple[int, int]] = set()
+    records = [
+        ImageRecord(image_id=u.image_id, doc_id=u.doc_id, path=u.path, passage_ids=list(u.record_ids), ok=True)
+        for u in usable.values()
+    ]
+    for image_id, record_id, weight in image_passage_edges(records, image_set):
+        for chunk_id in chunks_by_record.get(record_id, ()):
             if layer_of.get(chunk_id) != "passage":
-                raise ValueError(f"image {link.image_id} is linked to {chunk_id}, which is not a passage vertex")
-            pairs.append((index[link.vertex], index[chunk_id]))
-            weights.append(1.0)
-            kinds.append(IMAGE_PASSAGE)
-            n_passage += 1
+                raise ValueError(f"image {image_id} is linked to {chunk_id}, which is not a passage vertex")
+            pair = (index[usable[image_id].vertex], index[chunk_id])
+            if pair not in seen:
+                seen.add(pair)
+                pairs.append(pair)
+                weights.append(weight)
+                kinds.append(IMAGE_PASSAGE)
+    n_passage = len(pairs)
+
     n_entity = n_detections = 0
-    for link in updated:
-        if not link.usable:
-            continue
+    for link in usable.values():
         best: dict[int, float] = {}
         for detection in grounding[link.image_id].detections:
             if layer_of.get(detection.entity_id) != "entity":
