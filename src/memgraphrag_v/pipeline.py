@@ -473,7 +473,7 @@ def _verify_outputs(artifacts: Artifacts, config: ExperimentConfig, stage: str, 
         images = read_jsonl(artifacts.image_manifest, ImageRecord)
         image_ids = [image.image_id for image in images]
         records = sam3_processing.load_grounding(artifacts, image_ids)
-        current_hash = _json_sha256([record.model_dump(type="json") for record in records])
+        current_hash = _json_sha256([records[image_id].model_dump(mode="json") for image_id in image_ids])
         if current_hash != outputs["grounding"]:
             raise StaleIndexError(f"grounding changed after stage {stage!r}: rerun it with --force")
 
@@ -497,7 +497,7 @@ def _verify_outputs(artifacts: Artifacts, config: ExperimentConfig, stage: str, 
             detections = record.detections
             for detection in detections:
                 if detection.crop_path is None:
-                    if detection.crop_status == "saved" and detection.crop_hash is not None:
+                    if detection.crop_status == "saved" or detection.crop_hash is not None:
                         raise StaleIndexError(
                             f"Image {record.image_id}, detection {detection.detection_id}: missing crop path "
                             "despite a recorded hash"
@@ -735,6 +735,11 @@ def index_with_memory_v(
             artifacts, config, manifest, "text", text_inputs, text_settings, force,
             lambda: _stage_text(artifacts, config, text, force),
         )
+    images = read_jsonl(artifacts.image_manifest, ImageRecord)
+    image_fingerprint = _json_sha256([
+        [image.image_id, image.path, _file_sha256(artifacts.image_path(image))]
+        for image in images
+    ])
     if "ground" in stages:
         repo = external_path(MG2_ENV, "MG2-RAG checkout")
         checkpoint = sam3_processing.default_checkpoint(artifacts)
@@ -742,7 +747,7 @@ def index_with_memory_v(
             raise FileNotFoundError(f"SAM3 weights not found at {checkpoint}: set MGRV_SAM3_CHECKPOINT")
         grounder_id = sam3_processing.grounder_identity(checkpoint)
         inputs = {
-            "image_manifest": sources["image_manifest"], "texts": _need(manifest, "text", "texts"),
+            "image_manifest": sources["image_manifest"], "fingerprint": image_fingerprint, "texts": _need(manifest, "text", "texts"),
             "chunks": _need(manifest, "text", "chunks"), "entities": _need(manifest, "text", "entities"),
         }
         done["ground"] = _run_stage(
@@ -750,12 +755,6 @@ def index_with_memory_v(
             {"sam3": config.sam3.model_dump(mode="json"), "grounder": grounder_id}, force,
             lambda: _stage_ground(artifacts, config, repo, checkpoint, grounder_id),
         )
-    images = read_jsonl(artifacts.image_manifest, ImageRecord)
-
-    image_fingerprint = _json_sha256([
-        [image.image_id, image.path, _file_sha256(artifacts.image_path(image))]
-        for image in images
-    ])
     if "embed" in stages:
         inputs = {"image_manifest": sources["image_manifest"], "fingerprint": image_fingerprint, "grounding": _need(manifest, "ground", "grounding")}
         done["embed"] = _run_stage(

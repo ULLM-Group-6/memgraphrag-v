@@ -84,6 +84,45 @@ def image_prompts(chunk_ids: Sequence[str], entities_by_chunk: Mapping[str, Sequ
             prompts.setdefault(entity.entity_id, entity) # the prompt is only the entity name
     return list(prompts.values())
 
+def grounding_artifacts_valid(
+    record: ImageGrounding,
+    artifacts: Artifacts,
+) -> bool:
+    def file_matches(path: str | None, expected_hash: str | None) -> bool:
+        if path is None or expected_hash is None:
+            return False
+
+        full_path = artifacts.root / path
+        try:
+            current_hash = hashlib.sha256(full_path.read_bytes()).hexdigest()
+        except OSError:
+            return False  # Missing, unreadable, or not a regular file.
+
+        return current_hash == expected_hash
+
+    # Retained detections must have a saved mask.
+    if record.detections:
+        if not file_matches(record.mask_file, record.mask_hash):
+            return False
+    elif record.mask_file is not None or record.mask_hash is not None:
+        return False  # No detections should mean no mask or mask hash.
+
+    for detection in record.detections:
+        if detection.crop_status == "saved":
+            if detection.crop_id is None:
+                return False
+            if not file_matches(detection.crop_path, detection.crop_hash):
+                return False
+        else:
+            # Too-small or failed crops should not claim saved artifacts.
+            if (
+                detection.crop_id is not None
+                or detection.crop_path is not None
+                or detection.crop_hash is not None
+            ):
+                return False
+
+    return True
 
 def ground_images(
     images: Sequence[ImageRecord],
@@ -128,7 +167,7 @@ def ground_images(
                 record = failed(f"{type(e).__name__}: {e}")
             else:
                 cached = _read_record(record_path)
-                if cached is not None and cached.fingerprint == fingerprint and cached.status != "failed":
+                if cached is not None and cached.fingerprint == fingerprint and cached.status != "failed" and grounding_artifacts_valid(cached, artifacts):
                     results.append(cached)
                     continue
                 if not prompts:
