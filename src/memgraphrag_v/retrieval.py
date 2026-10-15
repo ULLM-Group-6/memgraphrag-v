@@ -179,8 +179,8 @@ def text_seed(backend, question: str) -> TextSeed:
     phrase_scores: dict[str, list[float]] = defaultdict(list)
     for rank, fact in enumerate(facts):
         score = float(normalized[indices[rank]])
-        for phrase in (fact[0].lower(), fact[2].lower()):
-            key = backend.hash_id(phrase, "entity-")
+        for phrase in (fact[0], fact[2]):
+            key = backend.entity_id(phrase)
             vertex = backend.node_name_to_vertex_idx.get(key)
             if vertex is not None:
                 # As upstream: a later fact overwrites an earlier one for the

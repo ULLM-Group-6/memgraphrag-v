@@ -191,6 +191,7 @@ def link_images(
     position = {t.record_id: i for i, t in enumerate(texts)}
     kinds = {t.record_id: t.kind for t in texts}
     captions: dict[str, list[str]] = defaultdict(list)
+    texts_by_id: dict[str, TextRecord] = {t.record_id: t for t in texts}
     for t in texts:
         if t.kind == "caption":
             captions[t.image_id].append(t.record_id)
@@ -204,6 +205,10 @@ def link_images(
         if unknown:
             raise ValueError(f"image {image.image_id} references unknown passages {unknown[:3]}")
         record_ids = sorted(set(explicit) | set(captions.get(image.image_id, ())), key=position.__getitem__)
+        for record_id in record_ids:
+            text = texts_by_id[record_id]
+            if text.doc_id != image.doc_id:
+                raise ValueError(f"image {image.image_id} references text {record_id} from a different document")
         links.append(IndexedImage(
             image_id=image.image_id, doc_id=image.doc_id, path=image.path, record_ids=record_ids,
             chunk_ids=[c for r in record_ids for c in by_record.get(r, ())], usable=image.ok,
@@ -322,6 +327,41 @@ def _backend_class():
             have = {info["idx"] for info in cached}
             return cached, {k for k in chunk_keys if k not in have}
 
+        def save_openie_results(self, all_openie_info: list[dict]) -> None:
+            """Adapted upstream saving to support successful zero-entity results."""
+            if not all_openie_info:
+                return  # Preserve upstream behavior for an empty document list.
+
+            entities = [
+                entity
+                for chunk in all_openie_info
+                for entity in chunk["extracted_entities"]
+            ]
+            num_phrases = len(entities)
+
+            # Zero means "no entities" for these cache statistics.
+            avg_ent_chars = 0.0
+            avg_ent_words = 0.0
+
+            if num_phrases > 0:
+                avg_ent_chars = round(
+                    sum(len(entity) for entity in entities) / num_phrases, 4
+                )
+                avg_ent_words = round(
+                    sum(len(entity.split()) for entity in entities) / num_phrases, 4
+                )
+
+            openie_dict = {
+                "docs": all_openie_info,
+                "avg_ent_chars": avg_ent_chars,
+                "avg_ent_words": avg_ent_words,
+            }
+
+            with open(self.openie_results_path, "w", encoding="utf-8") as file:
+                json.dump(openie_dict, file)
+
+            logger.info(f"OpenIE results saved to {self.openie_results_path}")
+
         def triple_extraction_chunks(self, chunks: Sequence[ChunkRecord]) -> None:
             if self.global_config.openie_mode != "online":
                 raise ValueError("only online OpenIE is supported")
@@ -332,7 +372,47 @@ def _backend_class():
             new_rows = {k: row for k, row in rows.items() if k in todo}
             if new_rows:
                 ner, triples = self.openie.batch_openie(new_rows)
-                self.merge_openie_results(all_info, new_rows, ner, triples)
+
+                failures = []
+                successful_rows = {}
+
+                for chunk_id, row in new_rows.items():
+                    errors = []
+                    for extraction_type, results in (("ner", ner), ("triples", triples)):
+                        result = results.get(chunk_id, [])
+                        if result is None:
+                            errors.append(f"{extraction_type}: missing result")
+                            continue
+                        metadata = result.metadata or {}
+                        if "error" in metadata:
+                            errors.append(
+                            f"{extraction_type}: {metadata['error']}"
+                        )
+                    if errors:
+                        failures.append({
+                            "chunk_id": chunk_id,
+                            "errors": errors,
+                        })
+                    else:
+                        successful_rows[chunk_id] = row
+
+                for failure in failures:
+                    logger.warning(
+                        "OpenIE failed for chunk %s: %s",
+                        failure["chunk_id"],
+                        "; ".join(failure["errors"]),
+                    )
+
+                failure_count = len(failures)
+                self.merge_openie_results(all_info, successful_rows, ner, triples)
+                logger.info("Merged successful OpenIE results")
+
+                if failure_count > 5:
+                    raise RuntimeError(
+                        f"OpenIE failed for {failure_count} chunks; "
+                        "the limit is 5. See the logged errors."
+                    )
+                
             all_info.sort(key=lambda info: order[info["idx"]])
             self.openie_results = all_info
             if self.global_config.save_openie:
@@ -467,6 +547,40 @@ def _verify_outputs(artifacts: Artifacts, config: ExperimentConfig, stage: str, 
         directory = artifacts.embeddings_dir(config.visual_encoder.name, kind)
         if key in outputs and _embedding_sha256(directory) != outputs[key]:
             raise StaleIndexError(f"{directory} changed after stage {stage!r}: rerun it with --force")
+    if stage == "text" or stage == "assemble":
+        stores = outputs.get("text_embedding_files")
+        required = {"chunk"} if stage == "text" else {"chunk", "entity", "fact"}
+
+        if not isinstance(stores, dict):
+            raise StaleIndexError(
+                f"Stage {stage!r} has no embedding store records"
+            )
+
+        missing = required - stores.keys()
+        if missing:
+            raise StaleIndexError(
+                f"Stage {stage!r} is missing store records: {sorted(missing)}"
+            )
+
+        for name in required:
+            saved = stores[name]
+            path = artifacts.root / saved["path"]
+            current_hash = _file_sha256(path)
+
+            if saved["sha256"] is None:
+                raise StaleIndexError(
+                    f"{name} embedding store has no recorded hash"
+                )
+
+            if current_hash is None:
+                raise StaleIndexError(
+                    f"{name} embedding store file is missing: {path}"
+                )
+
+            if current_hash != saved["sha256"]:
+                raise StaleIndexError(
+                    f"{name} embedding store changed: {path}"
+                )
     if "graph" in outputs and _file_sha256(artifacts.root / outputs["graph_file"]) != outputs["graph"]:
         raise StaleIndexError(f"{outputs['graph_file']} changed after stage {stage!r}: rerun it with --force")
     if "grounding" in outputs:
@@ -530,7 +644,7 @@ def _validate_chain(manifest: dict) -> None:
 
 def _run_stage(
     artifacts: Artifacts, config: ExperimentConfig, manifest: dict, name: str,
-    inputs: dict, settings: dict, force: bool, run: Callable[[], dict],
+    inputs: dict, expected_inputs: dict, settings: dict, force: bool, run: Callable[[], dict],
 ) -> dict:
     """
     Reuse a stage whose stamp matches, refuse one that does not, else run it.
@@ -550,6 +664,12 @@ def _run_stage(
         if entry is None:
             raise RuntimeError(f"stage {name!r} depends on missing stage {dependencies!r}")
         _verify_outputs(artifacts, config, dependencies, entry["outputs"])
+        if entry["inputs"] != expected_inputs[dependencies]:
+            raise StaleIndexError(
+                f"Stage {dependencies!r} has outdated inputs. "
+                f"Rebuild {dependencies!r} with --force before running {name!r}."
+            )
+
 
     want = json.loads(json.dumps({"inputs": inputs, "settings": settings}))
     entry = manifest["stages"].get(name)
@@ -601,11 +721,18 @@ def _stage_text(artifacts: Artifacts, config: ExperimentConfig, text: TextConfig
         final_memory.save(str(artifacts.memory_path))
         entities = export_entities(final_memory, {c.chunk_id: i for i, c in enumerate(chunks)}, backend.entity_id)
         write_jsonl(artifacts.entities, entities)
+        store_path = Path(backend.chunk_embedding_store.filename)
+        text_embedding_files = {
+            "chunk": {
+                "path": artifacts.relative(store_path),
+                "sha256": _file_sha256(store_path),
+            }
+        }
     finally:
         del backend
         sam3_processing.release_gpu()
     return {
-        "texts": _file_sha256(artifacts.texts), "chunks": _file_sha256(artifacts.chunks),
+        "texts": _file_sha256(artifacts.texts), "chunks": _file_sha256(artifacts.chunks), "text_embedding_files": text_embedding_files,
         "memory": _file_sha256(artifacts.memory_path), "entities": _file_sha256(artifacts.entities),
     }
 
@@ -680,6 +807,23 @@ def _stage_assemble(artifacts: Artifacts, config: ExperimentConfig, text: TextCo
         backend.write_graph()
         graph_file = artifacts.relative(Path(backend._graphml_xml_file))
         working_dir = Path(backend.working_dir).name
+        chunk_embedding_path = Path(backend.chunk_embedding_store.filename)
+        entity_embedding_path = Path(backend.entity_embedding_store.filename)
+        fact_embedding_path = Path(backend.fact_embedding_store.filename)
+        text_embedding_files = {
+            "chunk": {
+                "path": artifacts.relative(chunk_embedding_path),
+                "sha256": _file_sha256(chunk_embedding_path),
+            },
+            "entity": {
+                "path": artifacts.relative(entity_embedding_path),
+                "sha256": _file_sha256(entity_embedding_path),
+            },
+            "fact": {
+                "path": artifacts.relative(fact_embedding_path),
+                "sha256": _file_sha256(fact_embedding_path),
+            },
+        }
     finally:
         del backend
         sam3_processing.release_gpu()
@@ -688,6 +832,7 @@ def _stage_assemble(artifacts: Artifacts, config: ExperimentConfig, text: TextCo
     return {
         "graph": _file_sha256(artifacts.root / graph_file), "graph_file": graph_file, "working_dir": working_dir,
         "images": _file_sha256(artifacts.indexed_images), "stats": stats,
+        "text_embedding_files": text_embedding_files,
     }
 
 
@@ -709,6 +854,8 @@ def index_with_memory_v(
         raise ValueError(f"unknown stages {sorted(unknown)}; choose from {STAGES}")
     text = effective_text(config, llm_name)
     manifest = _read_manifest(artifacts)
+    expected_inputs = {}
+    last_stage = max((STAGES.index(s) for s in stages), default=-1)
     sources = {
         "text_manifest": _file_sha256(artifacts.text_manifest),
         "image_manifest": _file_sha256(artifacts.image_manifest),
@@ -722,60 +869,67 @@ def index_with_memory_v(
     }
     encoder = visual_indexing.encoder_meta(config.visual_encoder)
     done: dict[str, dict] = {}
-
-    if "text" in stages:
-        if not text.llm_name:
-            raise ValueError("text.llm_name is not set: put it in the config or pass --llm-name")
-        # Of the image manifest, only the image-to-document identity matters here (captions take their image's document).
+    if last_stage >= 0:
         identities = _json_sha256([[i.image_id, i.doc_id] for i in read_jsonl(artifacts.image_manifest, ImageRecord)])
         text_inputs = {
             "text_manifest": sources["text_manifest"], "captions": sources["captions"], "image_identities": identities,
         }
-        done["text"] = _run_stage(
-            artifacts, config, manifest, "text", text_inputs, text_settings, force,
-            lambda: _stage_text(artifacts, config, text, force),
-        )
+        expected_inputs["text"] = text_inputs
+        if "text" in stages:
+            if not text.llm_name:
+                raise ValueError("text.llm_name is not set: put it in the config or pass --llm-name")
+            # Of the image manifest, only the image-to-document identity matters here (captions take their image's document).
+            done["text"] = _run_stage(
+                artifacts, config, manifest, "text", text_inputs, expected_inputs, text_settings, force,
+                lambda: _stage_text(artifacts, config, text, force),
+            )
     images = read_jsonl(artifacts.image_manifest, ImageRecord)
     image_fingerprint = _json_sha256([
         [image.image_id, image.path, _file_sha256(artifacts.image_path(image))]
         for image in images
     ])
-    if "ground" in stages:
-        repo = external_path(MG2_ENV, "MG2-RAG checkout")
-        checkpoint = sam3_processing.default_checkpoint(artifacts)
-        if not checkpoint.is_file():
-            raise FileNotFoundError(f"SAM3 weights not found at {checkpoint}: set MGRV_SAM3_CHECKPOINT")
-        grounder_id = sam3_processing.grounder_identity(checkpoint)
+    if last_stage >= 1:
         inputs = {
             "image_manifest": sources["image_manifest"], "fingerprint": image_fingerprint, "texts": _need(manifest, "text", "texts"),
             "chunks": _need(manifest, "text", "chunks"), "entities": _need(manifest, "text", "entities"),
         }
-        done["ground"] = _run_stage(
-            artifacts, config, manifest, "ground", inputs,
-            {"sam3": config.sam3.model_dump(mode="json"), "grounder": grounder_id}, force,
-            lambda: _stage_ground(artifacts, config, repo, checkpoint, grounder_id),
-        )
-    if "embed" in stages:
+        expected_inputs["ground"] = inputs
+        if "ground" in stages:
+            repo = external_path(MG2_ENV, "MG2-RAG checkout")
+            checkpoint = sam3_processing.default_checkpoint(artifacts)
+            if not checkpoint.is_file():
+                raise FileNotFoundError(f"SAM3 weights not found at {checkpoint}: set MGRV_SAM3_CHECKPOINT")
+            grounder_id = sam3_processing.grounder_identity(checkpoint)
+            done["ground"] = _run_stage(
+                artifacts, config, manifest, "ground", inputs, expected_inputs,
+                {"sam3": config.sam3.model_dump(mode="json"), "grounder": grounder_id}, force,
+                lambda: _stage_ground(artifacts, config, repo, checkpoint, grounder_id),
+            )
+    if last_stage >= 2:
         inputs = {"image_manifest": sources["image_manifest"], "fingerprint": image_fingerprint, "grounding": _need(manifest, "ground", "grounding")}
-        done["embed"] = _run_stage(
-            artifacts, config, manifest, "embed", inputs, {"visual_encoder": encoder}, force,
-            lambda: _stage_embed(artifacts, config, force, device),
-        )
-    if "assemble" in stages:
-        if not text.llm_name:
-            raise ValueError("text.llm_name is not set: put it in the config or pass --llm-name")
-        inputs = {
-            "image_manifest": sources["image_manifest"], "memory": _need(manifest, "text", "memory"),
-            "texts": _need(manifest, "text", "texts"), "chunks": _need(manifest, "text", "chunks"),
-            "grounding": _need(manifest, "ground", "grounding"),
-            "image_embeddings": _need(manifest, "embed", "image_embeddings"),
-            "crop_embeddings": _need(manifest, "embed", "crop_embeddings"),
-        }
-        settings = {"llm_name": text.llm_name, "embedding_model": text.embedding_model}
-        done["assemble"] = _run_stage(
-            artifacts, config, manifest, "assemble", inputs, settings, force,
-            lambda: _stage_assemble(artifacts, config, text),
-        )
+        expected_inputs["embed"] = inputs
+        if "embed" in stages:
+            done["embed"] = _run_stage(
+                artifacts, config, manifest, "embed", inputs, expected_inputs, {"visual_encoder": encoder}, force,
+                lambda: _stage_embed(artifacts, config, force, device),
+            )
+    if last_stage >= 3:
+        if "assemble" in stages:
+            inputs = {
+                    "image_manifest": sources["image_manifest"], "memory": _need(manifest, "text", "memory"),
+                    "texts": _need(manifest, "text", "texts"), "chunks": _need(manifest, "text", "chunks"),
+                    "grounding": _need(manifest, "ground", "grounding"),
+                    "image_embeddings": _need(manifest, "embed", "image_embeddings"),
+                    "crop_embeddings": _need(manifest, "embed", "crop_embeddings"),
+                }
+            expected_inputs["assemble"] = inputs
+            if not text.llm_name:
+                raise ValueError("text.llm_name is not set: put it in the config or pass --llm-name")
+            settings = {"llm_name": text.llm_name, "embedding_model": text.embedding_model}
+            done["assemble"] = _run_stage(
+                artifacts, config, manifest, "assemble", inputs, expected_inputs, settings, force,
+                lambda: _stage_assemble(artifacts, config, text),
+            )
     _validate_chain(manifest)
     manifest["provenance"] = {
         "config_hash": config.config_hash(),
@@ -798,6 +952,38 @@ def load_index(
     against the others, and any mismatch raises."""
     manifest = _read_manifest(artifacts)
     missing = [s for s in STAGES if s not in manifest["stages"]]
+    if not artifacts.text_manifest.is_file():
+        raise StaleIndexError("The text manifest file is missing")
+    saved_text_inputs = manifest["stages"]["text"]["inputs"]
+    for key, path in (
+        ("text_manifest", artifacts.text_manifest),
+        ("captions", artifacts.captions),
+    ):
+        if key not in saved_text_inputs:
+            raise StaleIndexError(f"Index has no saved {key} fingerprint")
+
+        if _file_sha256(path) != saved_text_inputs[key]:
+            raise StaleIndexError(
+                f"{key} changed since indexing: rebuild the affected stages"
+            )
+    current_hash = _file_sha256(artifacts.image_manifest)
+    
+    if current_hash is None:
+        raise StaleIndexError("The image manifest file is missing")
+
+    for stage in ("ground", "embed", "assemble"):
+        saved_inputs = manifest["stages"][stage]["inputs"]
+
+        if "image_manifest" not in saved_inputs:
+            raise StaleIndexError(
+                f"Stage {stage!r} has no saved image-manifest fingerprint"
+            )
+
+        if current_hash != saved_inputs["image_manifest"]:
+            raise StaleIndexError(
+                f"The image manifest differs from the one used by "
+                f"stage {stage!r}: rebuild the affected stages"
+            )
     if missing:
         raise RuntimeError(f"the index is incomplete: stages {missing} have not run")
     _validate_chain(manifest)
@@ -805,7 +991,6 @@ def load_index(
         _verify_outputs(artifacts, config, stage, manifest["stages"][stage]["outputs"])
     assembled = manifest["stages"]["assemble"]
     recorded = assembled["settings"]
-
     text = effective_text(config, llm_name)
     if text.llm_name is None:
         text = text.model_copy(update={"llm_name": recorded["llm_name"]})
@@ -820,12 +1005,13 @@ def load_index(
 
     current_image_fingerprint = _json_sha256([
         [image.image_id, image.path, _file_sha256(artifacts.image_path(image)),] for image in images])
-    stored_image_fingerprint = manifest["stages"]["embed"]["inputs"]["fingerprint"]
-    if stored_image_fingerprint != current_image_fingerprint:
-        raise StaleIndexError(
-            f"the index was built with image fingerprint {stored_image_fingerprint!r}, "
-            f"but the current image set has fingerprint {current_image_fingerprint!r}"
-        )
+    for stage in ("ground", "embed"):
+        saved_inputs = manifest["stages"][stage]["inputs"]
+
+        if saved_inputs.get("fingerprint") != current_image_fingerprint:
+            raise StaleIndexError(
+                f"Image contents differ from those used by stage {stage!r}"
+            )
 
     crop_set = EmbeddingSet.load(artifacts.embeddings_dir(enc.name, "crop"))
     wanted = visual_indexing.encoder_meta(enc)
