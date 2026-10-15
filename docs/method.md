@@ -265,16 +265,6 @@ Use the benchmark authors’ scorer and prescribed normalization; record its ver
 
 **Containment accuracy** and a **fixed LLM judge** are supplementary but necessary. Freeze the judge model and rubric, hide system identities and cache decisions.
 
-### Uncertainty
-
-Report 95% bootstrap confidence intervals using 2,000 resamples and seed `42`.
-
-Resample dependent question groups together when they share supporting documents or benchmark-defined dependencies; otherwise resample questions. Report the grouping rule and number of groups.
-
-For system differences, use identical sampled groups in each replicate. Report paired differences for the main comparisons and SAM3 ablations.
-
-These intervals represent evaluation-sample uncertainty, not variability from rebuilding graphs with stochastic models.
-
 ### Error analysis
 
 Inspect up to 30 failed G answers sampled with seed `42`, plus up to 10 cases where C or D succeeds and G fails. Deduplicate overlaps.
