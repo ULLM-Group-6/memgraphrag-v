@@ -24,10 +24,8 @@ class _Section(BaseModel):
 
 
 class DatasetConfig(_Section):
-    name: str = "mmqa"
-    split_seed: int = 42
-    n_dev: int = 100
-    n_test: int = 400
+    name: str = "webqa"
+    """Our WebQA subset; its builder fixes the dev and test questions."""
 
 
 class VisualEncoderConfig(_Section):

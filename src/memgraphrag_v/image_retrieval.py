@@ -1,7 +1,7 @@
 """Whole-image retrieval (plan task 3).
 
-- ``image_passage_edges``: graph edges from each image node to its document's
-  passages, weight 1, for the PPR graph.
+- ``image_passage_edges``: graph edges from each image node to its caption
+  passage, weight 1, for the PPR graph.
 - ``select_documents``: image scores -> top documents, each with its single
   best image. Shared by direct retrieval (D, cosine scores) and the graph
   method (G, PPR image-node scores).
@@ -75,15 +75,29 @@ def retrieve_direct(
     ]
 
 
-def gold_doc_hits(results: Sequence[RetrievalResult], questions: Sequence[QuestionRecord]) -> dict[str, int]:
-    """Questions whose gold document is ranked first / anywhere. A sanity
-    check only; evaluation (plan task 6) computes the real metrics."""
-    gold = {q.qid: set(q.gold_doc_ids) for q in questions}
-    ranked = [(gold[r.question_id], [e.doc_id for e in r.evidence]) for r in results]
+def gold_hits(results: Sequence[RetrievalResult], questions: Sequence[QuestionRecord]) -> dict[str, float]:
+    """Sanity check over the questions that have a gold image: how often a
+    gold document is first or retrieved at all, and the mean share of gold
+    documents and gold images among the evidence (Recall@5). Evaluation
+    (plan task 6) computes the real metrics. Doc recall is looser than image
+    recall in WebQA, because several images share a page title."""
+    by_id = {q.qid: q for q in questions}
+    rows = [(by_id[r.question_id], r.evidence) for r in results if by_id[r.question_id].gold_image_ids]
+    if not rows:
+        return {"questions_with_gold_image": 0}
+
+    def recall(gold: list[str], found: list[str | None]) -> float:
+        return len(set(gold) & set(found)) / len(set(gold))
+
+    n = len(rows)
     return {
-        "questions": len(ranked),
-        "gold_doc_at_1": sum(bool(docs) and docs[0] in g for g, docs in ranked),
-        f"gold_doc_in_top_{MAX_DOCS}": sum(bool(g & set(docs)) for g, docs in ranked),
+        "questions_with_gold_image": n,
+        "gold_doc_at_1": sum(bool(ev) and ev[0].doc_id in q.gold_doc_ids for q, ev in rows),
+        f"gold_doc_in_top_{MAX_DOCS}": sum(bool(set(q.gold_doc_ids) & {e.doc_id for e in ev}) for q, ev in rows),
+        f"doc_recall_at_{MAX_DOCS}": round(sum(recall(q.gold_doc_ids, [e.doc_id for e in ev]) for q, ev in rows) / n, 4),
+        f"image_recall_at_{MAX_DOCS}": round(
+            sum(recall(q.gold_image_ids, [e.image_id for e in ev]) for q, ev in rows) / n, 4
+        ),
     }
 
 
@@ -112,7 +126,7 @@ def main(argv: list[str] | None = None) -> None:
     run_dir = artifacts.run_dir(args.run_id)
     write_jsonl(run_dir / "retrieval.jsonl", results)
     config.save(run_dir / "config.yaml")
-    print(json.dumps({"out": str(run_dir), **gold_doc_hits(results, questions)}, indent=2))
+    print(json.dumps({"out": str(run_dir), "questions": len(results), **gold_hits(results, questions)}, indent=2))
 
 
 if __name__ == "__main__":

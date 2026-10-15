@@ -1,0 +1,3 @@
+hotpotqa         n= 1000  full-output  55.3% [52.2-58.4]   final-answer  55.3% [52.2-58.4]
+2wikimultihopqa  n= 1000  full-output  54.8% [51.7-57.9]   final-answer  54.8% [51.7-57.9]
+musique          n= 1000  full-output  19.6% [17.3-22.2]   final-answer  19.6% [17.3-22.2]

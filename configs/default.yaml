@@ -5,10 +5,7 @@
 # in docs/interfaces.md) instead.
 
 dataset:
-  name: mmqa
-  split_seed: 42
-  n_dev: 100
-  n_test: 400
+  name: webqa                # our subset: 480 dev (graph-building) + 120 test questions
 
 visual_encoder:              # MG2's EVA-CLIP, smoke-tested on an A100
   name: BAAI/EVA-CLIP-8B

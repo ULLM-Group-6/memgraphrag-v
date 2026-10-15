@@ -54,6 +54,13 @@ class Artifacts:
             raise RuntimeError(f"no artifacts root: set {ENV_VAR} or artifacts_root in the config")
         return cls(Path(value).expanduser())
 
+    # WebQA subset as the dataset branch's builder writes it (plan task 1)
+    @property
+    def webqa_dir(self) -> Path:
+        """text_manifest.jsonl, image_manifest.jsonl, caption_manifest.jsonl,
+        build_qa.json, test_qa.json from the ``dataset`` branch."""
+        return self.root / "webqa"
+
     # Manifests (plan task 1)
     @property
     def text_manifest(self) -> Path:

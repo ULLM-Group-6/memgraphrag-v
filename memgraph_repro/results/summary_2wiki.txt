@@ -1,0 +1,18 @@
+== retrieval + QA start: Mon Oct 12 02:27:12 AM CEST 2026
+Loading memory structure from: /home/scur0466/work/memgraph_repro/2wikimultihopqa/outputs/memory.json
+Loaded: 14416 schemas, 53915 facts, 2771 passages
+{
+  "questions_path": "/home/scur0466/work/MemGraphRAG/dataset/2wikimutlhopqa/2wikimultihopqa.json",
+  "save_dir": "/home/scur0466/work/memgraph_repro/2wikimultihopqa/outputs",
+  "num_questions": 1000,
+  "question_type": "all",
+  "retrieval_seconds": 1178.3318,
+  "qa_seconds": 1071.564,
+  "total_seconds": 2249.8958,
+  "seconds_per_question": 2.2499,
+  "prompt_tokens": 3957676,
+  "completion_tokens": 128221,
+  "total_tokens": 4085897
+}
+== retrieval + QA end: Mon Oct 12 03:05:01 AM CEST 2026
+== done

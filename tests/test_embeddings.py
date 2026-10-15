@@ -100,5 +100,6 @@ def test_queries_mark_truncation(encoder):
         QuestionRecord(**{**QUESTION_ROW, "qid": "short", "question": "Who is this?"}),
     ]
     result = embed_queries(questions, encoder, META)
-    assert [(r.item_id, r.status, r.row) for r in result.rows] == [("abc123", "truncated", 0), ("short", "ok", 1)]
+    rows = [(r.item_id, r.status, r.row) for r in result.rows]
+    assert rows == [(QUESTION_ROW["qid"], "truncated", 0), ("short", "ok", 1)]
     assert result.meta.kind == "query"
