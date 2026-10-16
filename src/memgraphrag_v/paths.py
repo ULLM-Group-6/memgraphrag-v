@@ -2,8 +2,9 @@
 
 Everything lives under one root outside the repo, given by ``$MGRV_ARTIFACTS``
 (on Snellius: project space or /scratch-shared) or the config's
-``artifacts_root``. Copy the builder's output into ``manifests/`` and the
-MMQA ``final_dataset_images/`` folder into ``corpus/images/``.
+``artifacts_root``. ``python -m memgraphrag_v.webqa`` turns the dataset
+branch's files (copied into ``webqa/``) into ``manifests/`` and unpacks the
+images into ``corpus/images/``.
 
 External code and checkpoints are located through environment variables, only
 when the requested operation needs them (``external_path``).
@@ -27,6 +28,8 @@ SAM3_CHECKPOINT_ENV = "MGRV_SAM3_CHECKPOINT"
 """SAM3 weights; default ``<artifacts>/models/sam3/sam3.pt``."""
 TEXT_EMBEDDING_ENV = "MGRV_TEXT_EMBEDDING_MODEL"
 """Overrides ``text.embedding_model`` (e.g. with an offline snapshot path)."""
+OPENIE_FAILURES_FILE = "openie_failures.json"
+"""Chunks OpenIE failed on, written next to the OpenIE cache (``Artifacts.openie_failures``)."""
 EMBEDDING_KINDS = ("image", "crop", "query")
 
 
@@ -124,6 +127,10 @@ class Artifacts:
     @property
     def memory_path(self) -> Path:
         return self.text_dir / "memory.json"
+
+    @property
+    def openie_failures(self) -> Path:
+        return self.text_dir / OPENIE_FAILURES_FILE
 
     @property
     def texts(self) -> Path:

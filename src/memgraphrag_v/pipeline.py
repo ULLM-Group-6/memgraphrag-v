@@ -4,7 +4,11 @@
     python -m memgraphrag_v.pipeline retrieve --run-id ID [--beta B] [--split dev|test]
 
 ``index_with_memory_v`` builds **one** graph from corpus inputs only (passages,
-captions, images). Its stages, each saving its outputs and a stamp of its
+captions, images). This is the G-augmented index: the dataset's original text
+(WebQA's ``cap_<image_id>`` captions and ``txt_`` snippets, all passages) and
+the supplied generated descriptions (``captions.jsonl``) are both indexed as
+text records, and each image is linked to its own ``cap_`` passage and its own
+generated descriptions only. Its stages, each saving its outputs and a stamp of its
 inputs and settings in ``index/manifest.json``:
 
 1. ``text``: normalize passages and supplied captions into text records,
@@ -46,6 +50,14 @@ requirements; there is no runtime patching:
 - ``load_existing_openie`` and ``triple_extraction_chunks``: upstream re-hashes
   cached OpenIE entries from their text and processes new chunks in set order.
   The cache is matched by chunk ID and text, and results stay in source order.
+  A chunk whose NER or triple result is missing or carries an error is
+  recorded in ``openie_failures.json`` and left out of the cache (it stays a
+  passage vertex and is retried on the next run); more than
+  ``OPENIE_FAILURE_LIMIT`` such chunks stop the stage, after the successful
+  results and the diagnostics are saved.
+- ``persist_stores``: upstream writes a store only when it inserts rows, so a
+  corpus without surviving facts leaves no entity or fact store to hash or
+  reload. Missing stores are written (empty) before their hashes are recorded.
 - ``build_entity_to_triples_index``: upstream re-hashes chunk IDs again; the
   index is only for ``get_triples_by_entity``, which is not used.
 - ``save_igraph``: upstream saves the text-only graph on installation. Saving
@@ -67,13 +79,13 @@ from collections import Counter, defaultdict
 from functools import lru_cache
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from . import retrieval, sam3_processing, visual_indexing
 from .config import ExperimentConfig, TextConfig
 from .embeddings import EmbeddingSet, Encoder
 from .io import read_jsonl, write_jsonl
-from .paths import MEMGRAPHRAG_ENV, MG2_ENV, TEXT_EMBEDDING_ENV, Artifacts, external_path
+from .paths import MEMGRAPHRAG_ENV, MG2_ENV, OPENIE_FAILURES_FILE, TEXT_EMBEDDING_ENV, Artifacts, external_path
 from .retrieval import Question, RetrievalIndex
 from .schemas import (
     CaptionRecord,
@@ -92,6 +104,8 @@ logger = logging.getLogger(__name__)
 
 MEMGRAPHRAG_COMMIT = "49f20cec41290c95209724d33ec527f72449d300"
 STAGES = ("text", "ground", "embed", "assemble")
+OPENIE_FAILURE_LIMIT = 5
+"""Chunks OpenIE may fail on before the text stage stops (more than this is fatal)."""
 
 
 class StaleIndexError(RuntimeError):
@@ -105,8 +119,11 @@ def normalize_texts(
     passages: Sequence[PassageRecord], captions: Sequence[CaptionRecord], images: Sequence[ImageRecord]
 ) -> list[TextRecord]:
     """Passages in manifest order, then supplied captions in manifest order, as
-    one kind of text record. A caption's ID is ``caption:<image_id>:<n>`` and
-    its document is its parent image's. Nothing is generated."""
+    one kind of text record. The passages are the dataset's original text (for
+    WebQA the ``cap_`` captions and ``txt_`` snippets); the captions are the
+    generated descriptions, indexed in addition (G-augmented). A caption's ID is
+    ``caption:<image_id>:<n>`` and its document is its parent image's.
+    Nothing is generated."""
     image_by_id: dict[str, ImageRecord] = {}
     for image in images:
         if image.image_id in image_by_id:
@@ -246,6 +263,51 @@ def _read_sources(artifacts: Artifacts) -> tuple[list[PassageRecord], list[Capti
     return passages, captions, read_jsonl(artifacts.image_manifest, ImageRecord)
 
 
+def openie_failures(
+    chunks: Mapping[str, ChunkRecord], ner: Mapping[str, Any], triples: Mapping[str, Any]
+) -> tuple[list[str], list[dict]]:
+    """Split the chunks sent to OpenIE into those with a complete result and a
+    diagnostic for each of the others. A chunk fails when NER or triple
+    extraction has no result for it, or recorded an error in its metadata."""
+    succeeded: list[str] = []
+    failures: list[dict] = []
+    for chunk_id, chunk in chunks.items():
+        errors = []
+        for kind, results in (("ner", ner), ("triples", triples)):
+            result = results.get(chunk_id)
+            if result is None:
+                errors.append(f"{kind}: missing result")
+                continue
+            metadata = result.metadata or {}
+            if "error" in metadata:
+                errors.append(f"{kind}: {metadata['error']}")
+        if errors:
+            failures.append({"chunk_id": chunk_id, "record_id": chunk.record_id, "doc_id": chunk.doc_id, "errors": errors})
+        else:
+            succeeded.append(chunk_id)
+    return succeeded, failures
+
+
+def write_openie_failures(path: str | Path, requested: int, failures: Sequence[dict]) -> None:
+    """Save the failed chunks of this run (an empty list too, so the file never
+    reports failures a later run has fixed). Atomic."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"requested": requested, "failed": len(failures), "limit": OPENIE_FAILURE_LIMIT, "chunks": list(failures)}
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False, default=str), encoding="utf-8", newline="\n")
+    tmp.replace(path)
+
+
+def persist_missing_stores(stores: Sequence[Any]) -> None:
+    """Write every embedding store whose file does not exist yet. Upstream only
+    saves a store when it inserts rows, so a store that stayed empty (no
+    surviving entity or fact) has no file to hash or to reload."""
+    for store in stores:
+        if not os.path.isfile(store.filename):
+            store._save_data()
+
+
 # --- Upstream text backend ---------------------------------------------------
 
 
@@ -285,6 +347,7 @@ def _backend_class():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self._chunk_text: dict[str, str] = {}
+            self.openie_failed: list[dict] = []
 
         def hash_id(self, content: str, prefix: str) -> str:
             return up.compute_mdhash_id(content, prefix=prefix)
@@ -370,53 +433,33 @@ def _backend_class():
             order = {c.chunk_id: i for i, c in enumerate(chunks)}
             all_info, todo = self.load_existing_openie(list(rows))
             new_rows = {k: row for k, row in rows.items() if k in todo}
+            failures: list[dict] = []
             if new_rows:
                 ner, triples = self.openie.batch_openie(new_rows)
-
-                failures = []
-                successful_rows = {}
-
-                for chunk_id, row in new_rows.items():
-                    errors = []
-                    for extraction_type, results in (("ner", ner), ("triples", triples)):
-                        result = results.get(chunk_id, [])
-                        if result is None:
-                            errors.append(f"{extraction_type}: missing result")
-                            continue
-                        metadata = result.metadata or {}
-                        if "error" in metadata:
-                            errors.append(
-                            f"{extraction_type}: {metadata['error']}"
-                        )
-                    if errors:
-                        failures.append({
-                            "chunk_id": chunk_id,
-                            "errors": errors,
-                        })
-                    else:
-                        successful_rows[chunk_id] = row
-
+                pending = {c.chunk_id: c for c in chunks if c.chunk_id in new_rows}
+                succeeded, failures = openie_failures(pending, ner, triples)
                 for failure in failures:
-                    logger.warning(
-                        "OpenIE failed for chunk %s: %s",
-                        failure["chunk_id"],
-                        "; ".join(failure["errors"]),
-                    )
-
-                failure_count = len(failures)
-                self.merge_openie_results(all_info, successful_rows, ner, triples)
-                logger.info("Merged successful OpenIE results")
-
-                if failure_count > 5:
-                    raise RuntimeError(
-                        f"OpenIE failed for {failure_count} chunks; "
-                        "the limit is 5. See the logged errors."
-                    )
-                
+                    logger.warning("OpenIE failed for chunk %s: %s", failure["chunk_id"], "; ".join(failure["errors"]))
+                self.merge_openie_results(all_info, {k: new_rows[k] for k in succeeded}, ner, triples)
+            self.openie_failed = failures
+            write_openie_failures(
+                os.path.join(self.global_config.save_dir, OPENIE_FAILURES_FILE), len(new_rows), failures
+            )
             all_info.sort(key=lambda info: order[info["idx"]])
-            self.openie_results = all_info
             if self.global_config.save_openie:
+                # Saved before the limit check, so a rerun only repeats the failed chunks.
                 self.save_openie_results(all_info)
+            if len(failures) > OPENIE_FAILURE_LIMIT:
+                raise RuntimeError(
+                    f"OpenIE failed for {len(failures)} chunks; the limit is {OPENIE_FAILURE_LIMIT}. "
+                    f"See {OPENIE_FAILURES_FILE} and the logged errors."
+                )
+            self.openie_results = all_info
+
+        def persist_stores(self) -> None:
+            persist_missing_stores(
+                (self.chunk_embedding_store, self.entity_embedding_store, self.fact_embedding_store)
+            )
 
         def build_entity_to_triples_index(self):
             self.entity_to_triples = {}
@@ -728,12 +771,14 @@ def _stage_text(artifacts: Artifacts, config: ExperimentConfig, text: TextConfig
                 "sha256": _file_sha256(store_path),
             }
         }
+        openie_failed_chunks = len(backend.openie_failed)
     finally:
         del backend
         sam3_processing.release_gpu()
     return {
         "texts": _file_sha256(artifacts.texts), "chunks": _file_sha256(artifacts.chunks), "text_embedding_files": text_embedding_files,
         "memory": _file_sha256(artifacts.memory_path), "entities": _file_sha256(artifacts.entities),
+        "openie_failed_chunks": openie_failed_chunks,
     }
 
 
@@ -805,6 +850,7 @@ def _stage_assemble(artifacts: Artifacts, config: ExperimentConfig, text: TextCo
         backend.install_memory_graph(memory_graph)  # the text-only graph is not saved
         indexed, stats = visual_indexing.add_visual_structure(backend.graph, links, by_record, image_set, grounding)
         backend.write_graph()
+        backend.persist_stores()  # valid empty entity/fact stores when no fact survived, before they are hashed
         graph_file = artifacts.relative(Path(backend._graphml_xml_file))
         working_dir = Path(backend.working_dir).name
         chunk_embedding_path = Path(backend.chunk_embedding_store.filename)
@@ -952,6 +998,8 @@ def load_index(
     against the others, and any mismatch raises."""
     manifest = _read_manifest(artifacts)
     missing = [s for s in STAGES if s not in manifest["stages"]]
+    if missing:
+        raise RuntimeError(f"the index is incomplete: stages {missing} have not run")
     if not artifacts.text_manifest.is_file():
         raise StaleIndexError("The text manifest file is missing")
     saved_text_inputs = manifest["stages"]["text"]["inputs"]
@@ -984,8 +1032,6 @@ def load_index(
                 f"The image manifest differs from the one used by "
                 f"stage {stage!r}: rebuild the affected stages"
             )
-    if missing:
-        raise RuntimeError(f"the index is incomplete: stages {missing} have not run")
     _validate_chain(manifest)
     for stage in STAGES:
         _verify_outputs(artifacts, config, stage, manifest["stages"][stage]["outputs"])

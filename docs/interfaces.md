@@ -15,7 +15,7 @@ $MGRV_ARTIFACTS/
 │                         build_qa.json, test_qa.json
 ├── manifests/            written by `python -m memgraphrag_v.webqa manifests`
 │   ├── text_manifest.jsonl, image_manifest.jsonl, questions.jsonl
-│   └── captions.jsonl    generated image descriptions (caption systems only)
+│   └── captions.jsonl    generated image descriptions (indexed in addition to the passages: G-augmented)
 ├── corpus/images/        <image_id>.jpg, from `webqa images`; ImageRecord.path is relative to this
 ├── models/               EVA-CLIP-8B/, clip-vit-large-patch14/ (scripts/download_eva_clip.py)
 ├── embeddings/eva-clip-8b/{image,query,crop}/   vectors.npy, rows.jsonl, meta.json
@@ -39,7 +39,7 @@ Records are frozen and reject unknown fields. IDs are non-empty strings and may 
 | `questions.jsonl` | `QuestionRecord` | qid, question, answers, gold_doc_ids, gold_image_ids, gold_passage_ids, distractor_image_ids, distractor_passage_ids, q_type? (WebQA Qcate), topic?, modalities ⊆ {image, text}, split ∈ {dev, test}, group_id |
 | `captions.jsonl` | `CaptionRecord` | image_id, text, model (`Qwen/Qwen2.5-VL-7B-Instruct`), prompt_version (`createCaption.py@2c94363`) |
 
-Two kinds of caption: an image's WebQA caption is a passage (`cap_<image_id>`, in `text_manifest.jsonl`) and is what every system's reader gets with the image. The generated description in `captions.jsonl` is only for the caption baselines (C, G-caption).
+Two kinds of caption: an image's WebQA caption is a passage (`cap_<image_id>`, in `text_manifest.jsonl`) and is what every system's reader gets with the image. The generated description in `captions.jsonl` is not the reader's text. The combined pipeline indexes it in addition to the original passages (**G-augmented**): the original WebQA text stays, and each description becomes a text record `caption:<image_id>:0` of its image's document, linked to that image only. The baselines C and G-caption would use it as their only description.
 
 Retrieval reads only `qid` and `question` from a question. The gold and distractor fields are for evaluation. Test questions' gold images are part of the corpus the dev questions built. The 120 test questions use only 49 distinct gold images, 33 of which are also gold for a dev question (104 test questions touch one), so most groups span both splits and β tuned on dev has seen the test images as gold.
 
@@ -141,20 +141,20 @@ python -m memgraphrag_v.pipeline index --stages text assemble --llm-name <name> 
 python -m memgraphrag_v.pipeline index --stages ground embed                      # MG2 / SAM3 / EVA environment
 ```
 
-1. **text**: passages and supplied captions become `TextRecord`s (passages in manifest order, then captions as `caption:<image_id>:<n>`, in the parent image's document). Each record is chunked on its own (upstream's token-window algorithm; the text is never prefixed with IDs). Chunk IDs hash (record, position, text), so equal text in two records never collapses. Then upstream `triple_extraction`, `build_from_raw_openie_results`, `extract_memory_schema`, `filter_memory_ontology` (default: absolute, minimum frequency 1), `detect_memory_conflicts`, `resolve_memory_conflicts`. The surviving entities and their supporting chunks are exported from the final memory (`entities.jsonl`).
-2. **ground**: each image is prompted with the entities of its *explicitly associated* chunks (its `passage_ids` and its captions; a shared document is not an association).
+1. **text**: passages and supplied captions become `TextRecord`s (passages in manifest order, then captions as `caption:<image_id>:<n>`, in the parent image's document). Both are indexed, original passages and generated descriptions (**G-augmented**). Each record is chunked on its own (upstream's token-window algorithm; the text is never prefixed with IDs). Chunk IDs hash (record, position, text), so equal text in two records never collapses. Then upstream `triple_extraction`, `build_from_raw_openie_results`, `extract_memory_schema`, `filter_memory_ontology` (default: absolute, minimum frequency 1), `detect_memory_conflicts`, `resolve_memory_conflicts`. The surviving entities and their supporting chunks are exported from the final memory (`entities.jsonl`). OpenIE runs as one batch; a chunk with a missing or errored NER/triple result is saved to `index/text/openie_failures.json` (chunk, record, document, errors) and skipped, and more than 5 such chunks stop the stage (after the successful results and the failure file are saved).
+2. **ground**: each image is prompted with the entities of its *explicitly associated* chunks (its own `cap_<image_id>` passage from `passage_ids` and its own generated descriptions; a shared document title is not an association).
 3. **embed**: EVA-CLIP embeds every manifest image (so the set equals what `embeddings.py image` writes; failures stay as failed rows) and every saved crop (`kind="crop"`, with the existing entity ID).
 4. **assemble**: upstream `build_memory_graph` and `install_memory_graph` (their save is deferred), then one vertex per usable embedded image, `image_passage` edges (weight 1) to the chunks of its associated records, and `image_entity` edges weighted by the maximum retained SAM3 confidence of the pair. Each new pair is added once; text edges, including parallel ones, are untouched. The finished graph is written once.
 
 Image vertices are named `image-<image_id>`; graph vertex kinds are entity, type, passage and image. Crops and facts are never vertices.
 
-Each stage records its input hashes, settings and output hashes in `index/manifest.json`. A stage whose stamp no longer matches raises `StaleIndexError` (use `--force` to recompute); `load_index` also checks that the stages agree with each other and that the saved files still have the recorded hashes. `embed_cached` reuses saved vectors only if encoder and processor revisions, item IDs, paths and file hashes match. SAM3 results are saved per image, so an interrupted `ground` resumes.
+Each stage records its input hashes, settings and output hashes in `index/manifest.json`, including the hashes of the text-embedding stores. `assemble` writes the entity and fact stores even when they are empty (a corpus where no fact survives), so there is always a file to hash and reload. A stage whose stamp no longer matches raises `StaleIndexError` (use `--force` to recompute); running a stage on its own (`--stages ground`) first checks that every earlier stage exists, still has the recorded output hashes and was built from the inputs now on disk, and `load_index` raises "index is incomplete" before looking at anything else when a stage is missing. `load_index` also checks that the stages agree with each other and that the saved files still have the recorded hashes. `embed_cached` reuses saved vectors only if encoder and processor revisions, item IDs, paths and file hashes match. SAM3 results are saved per image, so an interrupted `ground` resumes.
 
 ```
 index/
 ├── manifest.json            stage stamps (inputs, settings, output hashes)
 ├── texts.jsonl, chunks.jsonl, entities.jsonl, images.jsonl   TextRecord, ChunkRecord, EntityRecord, IndexedImage
-├── text/                    MemGraphRAG save_dir: OpenIE cache, LLM cache, memory.json,
+├── text/                    MemGraphRAG save_dir: OpenIE cache, openie_failures.json, LLM cache, memory.json,
 │   └── <llm>_<embedding>/   chunk/entity/fact stores and graph.graphml (the final multimodal graph)
 └── grounding/               records/<md5(image_id)>.json (ImageGrounding), masks/*.npz, crops/<md5>/*.png
 ```
@@ -188,7 +188,7 @@ index/
 
 ### Adaptations of upstream MemGraphRAG
 
-The text backend is upstream imported from a checkout, with a documented subclass in `pipeline.py` (no runtime patching): chunks are inserted under source-aware IDs (upstream hashes the text); the OpenIE cache is matched by chunk ID and text, in source order (upstream re-hashes it); the entity-to-triples index, which re-hashes chunk IDs, is skipped; the text-only graph is not saved on installation; `get_top_k_weights` keeps its logic without the final assertion that fails for a zero-weight entity. `retrieval.prepare_retrieval_objects` replaces upstream's, whose vertex-count assertion excludes images. The local `snellius-work-memgraph/backups/MemGraphRAG.py` (no `run_ppr`) is not used; `MemGraphRAG.py_bkp` has the byte size of the pinned commit's file (121,890 bytes).
+The text backend is upstream imported from a checkout, with a documented subclass in `pipeline.py` (no runtime patching): chunks are inserted under source-aware IDs (upstream hashes the text); the OpenIE cache is matched by chunk ID and text, in source order (upstream re-hashes it), and chunks with a missing or errored OpenIE result are reported in `openie_failures.json` instead of being merged (more than 5 stop the stage); entity and fact stores are written even when empty (upstream saves a store only when it inserts rows); the entity-to-triples index, which re-hashes chunk IDs, is skipped; the text-only graph is not saved on installation; `get_top_k_weights` keeps its logic without the final assertion that fails for a zero-weight entity. `retrieval.prepare_retrieval_objects` replaces upstream's, whose vertex-count assertion excludes images. The local `snellius-work-memgraph/backups/MemGraphRAG.py` (no `run_ppr`) is not used; `MemGraphRAG.py_bkp` has the byte size of the pinned commit's file (121,890 bytes).
 
 ### Open issues
 
@@ -201,7 +201,7 @@ The text backend is upstream imported from a checkout, with a documented subclas
 
 ### Snellius verification checklist (not yet run)
 
-1. `pytest -q` (config and pure-logic tests), in the MG2 environment.
+1. `pytest -q` (config, schema, WebQA and pure-logic tests), in the MG2 environment.
 2. Environments: install MemGraphRAG's requirements in one and MG2's (+ this repo with `.[eva]`) in the other; try importing the upstream backend and EVA-CLIP in one process.
 3. Dummy dataset (`python -m memgraphrag_v.dummy`), then `index --stages text`; inspect `chunks.jsonl`, `entities.jsonl`, that chunk IDs in `memory.json`, the stores and the graph agree, and that equal text in two records gives two chunk vertices.
 4. `index --stages ground` on a few images: positive, empty and failing prompts; open `crops/` and `masks/`; check IDs and scores in `records/*.json`; rerun to see per-image reuse.

@@ -99,9 +99,10 @@ class QuestionRecord(Record):
 
 class CaptionRecord(Record):
     """manifests/captions.jsonl: a generated, question-independent image
-    description, one per image (``caption_manifest.jsonl``). Not the
-    same as the image's WebQA caption, which is a passage. Used only by the
-    caption systems (C, G-caption), never by the native-image method."""
+    description, one per image (``caption_manifest.jsonl``). Not the same as
+    the image's WebQA caption, which is a passage (``cap_<image_id>``). The
+    combined pipeline indexes both, the original passages and these
+    descriptions, as text records linked to their image (G-augmented)."""
 
     image_id: Id
     text: str
