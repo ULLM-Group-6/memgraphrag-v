@@ -11,6 +11,7 @@ import sqlite3
 from string import Template
 
 from check_cached_ner import load_parser
+from check_openie_retries import load_functions
 
 
 def lookup(db, messages, model):
@@ -84,6 +85,13 @@ def main():
                                                named_entity_json=ner["one_shot_ner_output"])),
         dict(role="assistant", content=constants["ner_conditioned_re_output"]),
     ]
+    # With memgraphrag-openie-triple-repair.patch applied, also report what its
+    # parser makes of each cached response (lookups need the unpatched prompt).
+    try:
+        repair = load_functions(src / "information_extraction/openie_openai.py")["_parse_triples"]
+    except ValueError:
+        repair = None
+    repaired = Counter()
     cache = root / "text/llm_cache" / f"{args.model.replace('/', '_')}_cache.sqlite"
     db = sqlite3.connect(cache.resolve().as_uri() + "?mode=ro", uri=True)
     counts, examples, seen = Counter(), [], Counter()
@@ -111,16 +119,29 @@ def main():
             except (ValueError, KeyError) as exc:
                 status = f"lookup_problem: {exc}"
             counts[status] += 1
+            outcome = None
+            if repair is not None and isinstance(raw, str) and meta.get("finish_reason") == "stop":
+                try:
+                    kept, dropped = repair(raw)
+                    outcome = "kept_some" if kept else ("all_invalid_retry" if dropped else "empty_list")
+                    repaired["dropped_triples"] += len(dropped)
+                    repaired["kept_triples"] += len(kept)
+                except ValueError as exc:
+                    outcome = f"still_fails_retry: {exc}"
+                repaired[outcome] += 1
             # Two examples of each outcome, bounded raw text for easy sharing.
-            if seen[status] < 2:
+            if seen[status] < 2 or (outcome and not outcome.startswith("kept") and seen[outcome] < 3):
                 examples.append(dict(chunk_id=cid, original_errors=failure["errors"],
-                                     assessment=status, metadata=meta,
+                                     assessment=status, repair_outcome=outcome, metadata=meta,
                                      response=raw[:6000] if isinstance(raw, str) else raw))
                 seen[status] += 1
+                seen[outcome] += 1
     finally:
         db.close()
-    print(json.dumps(dict(chunks_checked=len(failures), counts=dict(counts), examples=examples,
-                         note="Read-only diagnostic; no parsing fixes or cache changes applied."),
+    print(json.dumps(dict(chunks_checked=len(failures), counts=dict(counts),
+                          with_triple_repair_patch=dict(repaired) if repair else "patch not applied",
+                          examples=examples,
+                          note="Read-only diagnostic; no cache changes applied."),
                      ensure_ascii=False, indent=2))
 
 

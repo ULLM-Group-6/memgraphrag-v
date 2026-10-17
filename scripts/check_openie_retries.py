@@ -13,10 +13,14 @@ from check_cached_ner import check_examples
 
 def load_functions(path):
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    names = {"_extract_ner_from_response", "_extract_triples_from_response", "_infer_openie_with_validation"}
+    names = {"_extract_ner_from_response", "_extract_triples_from_response", "_infer_openie_with_validation",
+             "_parse_triples", "_clean_triple", "_decode_first_json", "_to_strict_json"}
     nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names]
-    if len(nodes) != 3:
-        raise ValueError("The OpenIE retry patch is not applied: expected three helper functions")
+    if len(nodes) != len(names):
+        raise ValueError("The OpenIE retry and triple-repair patches are not both applied")
+    # Module-level constants the helpers use (_JSON_ESCAPES, _LITERAL_TAG, ...).
+    nodes = [n for n in tree.body if isinstance(n, ast.Assign) and all(
+        isinstance(t, ast.Name) and t.id.startswith("_") for t in n.targets)] + nodes
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "OpenIE")
     cls.body = [n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name in ("ner", "triple_extraction")]
     nodes.append(cls)
@@ -57,16 +61,28 @@ def main():
         ('[["A", "is", "B"]]', [["A", "is", "B"]]),
         ('```json\n{"triples": [["A", "is", "B"]]}\n```', [["A", "is", "B"]]),
         ('{"triples": [["A", "scored", "35.6"]]}', [["A", "scored", "35.6"]]),
+        # Repaired: numbers, qualifiers beyond the object, near-JSON from Qwen.
+        ('{"triples": [["A", "scored", 35.6]]}', [["A", "scored", "35.6"]]),
+        ('{"triples": [["A", "played for", "B", "in", "2008"]]}', [["A", "played for", "B in 2008"]]),
+        ('{"triples": [["A", "is", "B"] // assumption\n]}', [["A", "is", "B"]]),
+        ('{"triples": [["A", "is", "B"],]}', [["A", "is", "B"]]),
+        ('{"triples": [["A", "held on", "24 August 2021"^^xsd:date]]}', [["A", "held on", "24 August 2021"]]),
+        ("{\"triples\": [[\"A\", \"sang\", '\"a line\"']]}", [["A", "sang", '"a line"']]),
+        ('{"triples": [["\\u043b\\u441", "is", "B"]]}', [["\u043b\u0441", "is", "B"]]),
+        # Unusable triples are dropped while the others are kept.
+        ('{"triples": [["A", "is", null], ["C", "is", "D"]]}', [["C", "is", "D"]]),
+        ('{"triples": [["A", "is", None], ["", "is", "D"], ["E", "is", "F"]]}', [["E", "is", "F"]]),
     ]
     for raw, expected in valid:
-        assert parse(raw) == expected
+        assert parse(raw) == expected, (raw, parse(raw))
+    # Not JSON at all, or every listed triple is unusable: retried, then failed.
     invalid = [
         'No triples', '{"players": []}', '{"triples": null}',
-        '{"triples": [["A", "is", null]]}', '{"triples": [["A", "is", true]]}',
-        '{"triples": [["A", "is", 35.6]]}', '{"triples": [["A", "is", {"x": 1}]]}',
-        '{"triples": [["A", "is", ["B"]]]}', '{"triples": [["A", "is", "B", "extra"]]}',
+        '{"triples": [["A", "is", null]]}', '{"triples": [["A", "is", None]]}',
+        '{"triples": [["A", "is", true]]}', '{"triples": [["A", "is", {"x": 1}]]}',
+        '{"triples": [["A", "is", ["B"]]]}', '{"triples": [["A", "is"]]}',
         '{"triples": [["A", "is", ""]]}', '{"triples": [["A", "is", "   "]]}',
-        '{"triples": ["ABC"]}', '{"triples": [["A", "is", "B"] // assumption\n]}',
+        '{"triples": ["ABC"]}',
         '{"triples": [["A"\uff0c "is", "B"]]}', '{"triples": [["A", "is", "B"]',
     ]
     for raw in invalid:

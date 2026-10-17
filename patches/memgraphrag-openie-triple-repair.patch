@@ -1,0 +1,167 @@
+diff --git a/code/src/information_extraction/openie_openai.py b/code/src/information_extraction/openie_openai.py
+index 7cb6e85..0516eaf 100644
+--- a/code/src/information_extraction/openie_openai.py
++++ b/code/src/information_extraction/openie_openai.py
+@@ -51,29 +51,127 @@ def _extract_ner_from_response(real_response):
+     return payload
+ 
+ 
+-def _extract_triples_from_response(real_response):
+-    """Accept JSON objects or lists, requiring three strings per triple."""
+-    if not isinstance(real_response, str):
+-        raise ValueError("Triple response must be text")
+-    start = re.search(r"[\[{]", real_response)
++_JSON_ESCAPES = set('"\\/bfnrtu')
++_BARE_WORDS = {"None": "null", "True": "true", "False": "false"}
++# RDF datatype or language tag after a string literal: "2021"^^xsd:date, "x"@en
++_LITERAL_TAG = re.compile(r"\s*(?:\^\^[\w:#/<>.\-]+|@[A-Za-z\-]+(?=\s*[,\]}]))")
++
++
++def _to_strict_json(text):
++    """Rewrite the near-JSON Qwen emits into strict JSON: // comments,
++    Python None/True/False, single-quoted strings, RDF datatype tags, invalid
++    or short \\u escapes and trailing commas. Content inside strings is kept."""
++    out, i, n = [], 0, len(text)
++    while i < n:
++        ch = text[i]
++        if ch in "\"'":
++            j, body = i + 1, []
++            while j < n and text[j] != ch:
++                if text[j] == "\\" and j + 1 < n:
++                    nxt = text[j + 1]
++                    if nxt == "u":
++                        digits = re.match(r"[0-9a-fA-F]{0,4}", text[j + 2:j + 6]).group()
++                        if digits:
++                            body.append("\\u" + digits.zfill(4))
++                        j += 2 + len(digits)
++                    elif nxt in _JSON_ESCAPES:
++                        body.append(text[j:j + 2])
++                        j += 2
++                    else:  # \' or an unknown escape: keep the character only
++                        body.append('\\"' if nxt == '"' else nxt)
++                        j += 2
++                    continue
++                body.append('\\"' if text[j] == '"' else text[j])
++                j += 1
++            out.append('"' + "".join(body) + '"')
++            i = j + 1
++            tag = _LITERAL_TAG.match(text, i)
++            if tag:
++                i = tag.end()
++        elif text.startswith("//", i) or ch == "#":
++            end = text.find("\n", i)
++            i = n if end < 0 else end
++        elif ch == ",":
++            if not re.match(r",\s*[\]}]", text[i:]):
++                out.append(ch)
++            i += 1
++        elif ch.isalpha() or ch == "_":
++            word = re.match(r"\w+", text[i:]).group()
++            out.append(_BARE_WORDS.get(word, word))
++            i += len(word)
++        else:
++            out.append(ch)
++            i += 1
++    return "".join(out)
++
++
++def _decode_first_json(text, kind):
++    """Decode the first JSON value in text, repairing near-JSON if needed."""
++    if not isinstance(text, str):
++        raise ValueError(f"{kind} response must be text")
++    start = re.search(r"[\[{]", text)
+     if start is None:
+-        raise ValueError("Triple response contains no JSON object or list")
++        raise ValueError(f"{kind} response contains no JSON object or list")
+     try:
+-        payload, _ = json.JSONDecoder().raw_decode(real_response[start.start():])
++        return json.JSONDecoder().raw_decode(text[start.start():])[0]
+     except json.JSONDecodeError as exc:
+-        raise ValueError(f"Invalid triple JSON: {exc.msg}") from exc
++        error = exc.msg
++    try:
++        return json.JSONDecoder(strict=False).raw_decode(_to_strict_json(text[start.start():]))[0]
++    except json.JSONDecodeError:
++        raise ValueError(f"Invalid {kind.lower()} JSON: {error}") from None
++
++
++def _clean_triple(triple):
++    """Return (triple, None) for a usable triple, (None, reason) otherwise.
++    Numbers become strings; extra elements are qualifiers of the object
++    (["A", "played for", "B", "in", "2008"] -> ["A", "played for", "B in 2008"])."""
++    if isinstance(triple, dict):
++        triple = [triple.get(k) for k in ("subject", "relation" if "relation" in triple else "predicate", "object")]
++    if not isinstance(triple, list):
++        return None, "not a list"
++    if any(item is None for item in triple):
++        return None, "null element"
++    if any(isinstance(item, (bool, dict, list)) for item in triple):
++        return None, "boolean or nested element"
++    items = [str(item).strip() for item in triple]
++    if any(not item for item in items):
++        return None, "empty element"
++    if len(items) < 3:
++        return None, f"{len(items)} elements"
++    return [items[0], items[1], " ".join(items[2:])], None
++
++
++def _parse_triples(real_response):
++    """Return (kept, dropped) where dropped lists (index, reason) per triple."""
++    payload = _decode_first_json(real_response, "Triple")
+     if isinstance(payload, dict):
+         if "triples" not in payload:
+             raise ValueError("Triple JSON object has no triples field")
+         payload = payload["triples"]
+     if not isinstance(payload, list):
+         raise ValueError("Triples must be a list")
++    if len(payload) == 3 and all(isinstance(item, str) for item in payload):
++        payload = [payload]  # a single bare triple
++    kept, dropped = [], []
+     for index, triple in enumerate(payload):
+-        if not isinstance(triple, list) or len(triple) != 3:
+-            raise ValueError(f"Triple {index} must contain exactly three strings")
+-        if any(not isinstance(item, str) or not item.strip() for item in triple):
+-            raise ValueError(f"Triple {index} contains a non-string or empty value")
+-    return payload
++        cleaned, reason = _clean_triple(triple)
++        if cleaned is None:
++            dropped.append((index, reason))
++        else:
++            kept.append(cleaned)
++    return kept, dropped
++
++
++def _extract_triples_from_response(real_response):
++    """Keep the usable triples and drop the others, as upstream's
++    filter_invalid_triples does; fail only when the response is not JSON or
++    every triple it lists is unusable."""
++    kept, dropped = _parse_triples(real_response)
++    if dropped and not kept:
++        reasons = "; ".join(f"triple {i}: {r}" for i, r in dropped[:5])
++        raise ValueError(f"All {len(dropped)} triples are invalid ({reasons})")
++    return kept
+ 
+ 
+ def _infer_openie_with_validation(llm_model, messages, parser, kind):
+@@ -84,7 +182,9 @@ def _infer_openie_with_validation(llm_model, messages, parser, kind):
+         'Return {"triples": [["subject", "relation", "object"]]}. '
+         'Every triple must have exactly three nonempty strings. '
+         'Do not use null, booleans, nested objects or lists as triple elements. '
++        'Put dates, places and other qualifiers inside the object string, never as a fourth element. '
+         'Express supported numerical values as strings. '
++        'Use double-quoted strings only, with no datatype suffixes such as ^^xsd:date. '
+         'Omit relationships whose subject, relation or object is unknown.'
+     )
+     attempts = []
+@@ -182,6 +282,11 @@ class OpenIE:
+             )
+             if "error" in metadata:
+                 raise ValueError(metadata["error"])
++            dropped = _parse_triples(raw_response)[1]
++            if dropped:
++                # Kept in the OpenIE results so dropped facts stay auditable.
++                metadata["dropped_triples"] = [f"triple {i}: {r}" for i, r in dropped]
++                logger.info("Chunk %s: dropped %s invalid triples", chunk_key, len(dropped))
+             triplets = filter_invalid_triples(triples=extracted_triples)
+ 
+         except Exception as e:

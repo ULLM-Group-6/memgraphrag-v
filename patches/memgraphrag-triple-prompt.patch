@@ -1,0 +1,25 @@
+diff --git a/code/src/prompts/templates/triple_extraction.py b/code/src/prompts/templates/triple_extraction.py
+index 06d6754..6829b07 100644
+--- a/code/src/prompts/templates/triple_extraction.py
++++ b/code/src/prompts/templates/triple_extraction.py
+@@ -8,10 +8,19 @@ Pay attention to the following requirements:
+ - Each triple should contain at least one, but preferably two, of the named entities in the list for each passage.
+ - Clearly resolve pronouns to their specific names to maintain clarity.
+ 
++Output format (strict):
++- Return only one JSON object of the form {"triples": [["subject", "relation", "object"]]}, with no markdown fences, comments or explanations.
++- Every triple is a list of exactly three non-empty strings: subject, relation, object.
++- Put dates, places and other qualifiers inside the object or relation string (for example ["Radio City", "launched PlanetRadiocity.com in", "May 2008"]), never as a fourth or fifth element.
++- Never use null, None, empty strings, booleans, nested lists or objects. Write numbers and dates as strings, for example "1983".
++- If the subject, relation or object of a fact is unknown, leave that fact out instead of filling it with null or "".
++- Use standard JSON: double quotes only, no datatype suffixes such as ^^xsd:date, and no unicode escape sequences (write every character, including non-Latin text, exactly as it appears in the paragraph).
++- If the paragraph states no relationships, return {"triples": []}.
++
+ """
+ 
+ 
+-ner_conditioned_re_frame = """Convert the paragraph into a JSON dict, it has a named entity list and a triple list.
++ner_conditioned_re_frame = """Extract the triples of the paragraph below as a JSON dict with a single "triples" list, using the named entity list as a guide.
+ Paragraph:
+ ```
+ {passage}
