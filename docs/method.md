@@ -4,19 +4,19 @@
 
 ## 1. Research question and scope
 
-**Does graph-guided retrieval of native image evidence improve answers to text questions compared with caption-based MemGraphRAG and direct text-to-image retrieval?**
+**Does MemGraphRAG-V, using native image evidence in addition to caption-augmented text, improve document retrieval and question answering over caption-augmented MemGraphRAG?**
 
 The system receives a text question, retrieves relevant corpus images and associated text, and passes them to a vision-language model (VLM).
 
-We investigate three mechanisms:
+The extension combines three mechanisms:
 
 1. **Visual graph connections:** SAM3 links depicted objects to MemGraphRAG entities.
 2. **Visual retrieval seeds:** question–image and question–crop similarities guide graph retrieval.
-3. **Native evidence:** the reader model inspects original images instead of generated descriptions.
+3. **Native evidence:** the reader model inspects original images and generated descriptions.
 
 MemGraphRAG supplies the text memory and graph. MG² supplies the inspiration for visual grounding, representations and retrieval seeds. MG² already supports text-to-image matching; our contribution concerns its integration with MemGraphRAG and the explicit selection of native image evidence.
 
-**Intended method:** whole-image nodes, SAM3 grounding, SigLIP2 image/crop embeddings, CPU Personalized PageRank (PPR), and a multimodal reader VLM.
+**Intended method:** whole-image nodes, SAM3 grounding, `EVA-CLIP-8B` image/crop embeddings, CPU Personalized PageRank (PPR), and a multimodal reader VLM.
 
 SAM3 only runs during indexing. Question-time retrieval uses its saved outputs.
 
@@ -26,21 +26,12 @@ Visual fact extraction and multimodal conflict resolution remain outside scope.
 
 **Benchmark selection: Misha.**
 
-Select a benchmark providing:
 
-- Text questions understandable without a query image.
-- Corpus images containing evidence needed to answer.
-- Gold answers and supporting document IDs.
-- An official answer-scoring implementation.
-- Multiple candidate documents, including distractors.
-
-Prefer image-level evidence annotations. Do not remove query images from questions that depend on them.
-
-**Provisional size target:** 100 development and 400 held-out test questions, subject to benchmark availability. Use official splits where possible. Otherwise save a grouped split with random seed `42`, keeping questions sharing supporting documents together.
-
-Every system uses the same corpus, questions and evidence mappings. Include a fixed distractor set. Answers and gold evidence labels must not enter indexing or captioning prompts.
-
-Create these manifests:
+> We use a prepared subset of WebQA containing 480 development questions and 120 test questions. The corpus contains 7,859 original text snippets, 4,221 original image-caption passages, 4,221 images and 4,221 additional generated image descriptions. Both systems index the same 16,301 text records before chunking and use the same question sets, supporting-document mappings and distractor corpus. MemGraphRAG-V additionally indexes the images and detected crops as visual evidence.
+>
+> The supplied `build_qa.json` is used as the development set and `test_qa.json` as the test set. This is a custom WebQA subset, not a claim to reproduce the full official benchmark. All 120 supplied test questions have image-only gold evidence. The split has overlapping supporting sources and is not evidence-disjoint. Questions and reference answers are not passed to the indexing, caption-generation or reader prompts as labels; reference labels are retained separately for evaluation.
+>
+> Additional descriptions were prepared using Qwen/Qwen2.5-VL-7B-Instruct with a question-independent visual-description prompt. The supplied generation script requests three to five factual sentences and sets `max_new_tokens=150`. Both systems reuse the same saved descriptions. 
 
 | Manifest | Required fields |
 |---|---|
@@ -49,33 +40,39 @@ Create these manifests:
 | Crops | `crop_id`, `image_id`, existing entity ID, bounding box, confidence, path |
 | Questions | Question ID/text, answers, gold document IDs, split; gold image IDs where available |
 
-Validate missing files and passage–image mappings before indexing. Report corpus coverage against the original gold labels.
+## 3. Model roles
 
-The benchmark and answering VLM remain unselected. Before experiments, record their exact versions, official scorer, reader image settings and generation settings. Use the same reader throughout, with deterministic decoding where supported.
+Role | Model |
+|---|---|
+| Text extraction and memory construction | Qwen/Qwen2.5-7B-Instruct, served locally through vLLM |
+| Text embeddings | BAAI/bge-large-en-v1.5 |
+| Image, crop and visual-query embeddings | BAAI/EVA-CLIP-8B |
+| Generated descriptions | Qwen/Qwen2.5-VL-7B-Instruct |
+| MemGraphRAG-V answer reader | Qwen/Qwen2.5-VL-7B-Instruct, loaded through Transformers |
 
-## 3. Index construction
+## 4. Index construction
 
-### 3.1 Build MemGraphRAG’s text memory
+### 4.1 Build MemGraphRAG’s text memory
 
 Run: Fact extraction → schema extraction → ontology filtering → conflict detection/resolution → final memory graph
 
-Pin the upstream commit and configuration. **Preserve an unaugmented graph for the text baseline comparison.**
+Pin the upstream commit and configuration. **The baseline graph is built from original WebQA text and captions plus the supplied generated descriptions. It contains no image vertices or SAM3 image–entity edges. The extension uses the same text inputs and text-processing settings before adding visual structure.**
 
 Reuse the final entity and passage IDs. **We do not build a separate MG² graph or independently create entities and merge them afterward.**
 
 Any necessary correctness fixes must be documented and applied consistently across applicable MemGraphRAG configurations.
 
-### 3.2 Attach whole images
+### 4.2 Attach whole images
 
 Add one node per corpus image. Connect it to passages that explicitly contain or reference it.
 
 Assign each image–passage edge weight `1.0`; deduplicate repeated associations. Preserve original text edges and weights.
 
-Retain original captions and surrounding text. Generated image descriptions are reserved for caption experiments.
+Retain original captions and surrounding text. Original captions and generated descriptions are included in the textual index for both systems. In MemGraphRAG-V, image–passage associations also connect each image to its generated-description record.
 
 An image remains retrievable even when SAM3 finds no object: it still has an image embedding and passage connections.
 
-### 3.3 Ground existing entities with SAM3
+### 4.3 Ground existing entities with SAM3
 
 For each image:
 
@@ -92,7 +89,7 @@ Use the maximum retained grounding confidence as the edge weight for each image�
 
 In the core method, textual co-occurrence supplies grounding candidates but does not directly create image–entity edges. This keeps the meaning of those edges clear and allows us to measure what SAM3 adds.
 
-### 3.4 Store crops without adding crop vertices
+### 4.4 Store crops without adding crop vertices
 
 Each crop is a saved visual record linked to its parent image and existing entity. It is not a separate PPR vertex.
 
@@ -100,9 +97,9 @@ Reuse MG²’s crop-generation approach and record its exact preprocessing, incl
 
 Keep the complete parent image. **Crops support retrieval; the reader receives whole images**, preserving axes, legends and diagram structure.
 
-## 4. Visual encoder and execution environment
+## 5. Visual encoder and execution environment
 
-Use **`google/siglip2-so400m-patch14-384`** as the single visual encoder throughout the study. Pin model and processor revisions.
+Use **``BAAI/EVA-CLIP-8B``** as the single visual encoder throughout the study. Pin model and processor revisions.
 
 Implement one adapter:
 
@@ -111,27 +108,21 @@ encode_images(images_or_crops) → normalized vectors
 encode_text(questions)         → normalized vectors
 ```
 
-Use the checkpoint’s processor and projected features. L2-normalize vectors; their dot product gives cosine similarity. Encode questions directly without query expansion.
+Use **``openai/clip-vit-large-patch14``** and projected features. L2-normalize vectors; their dot product gives cosine similarity. Encode questions directly without query expansion.
 
 Precompute and cache all whole-image and crop embeddings. Cache query embeddings as well. Cache keys include model/processor revision and an input-content hash.
 
 Record failed images and truncated questions. Never silently substitute blank images.
 
-Use identical whole-image embeddings in the direct-retrieval baseline and every graph configuration. Keep MemGraphRAG’s text encoder separate; never compare its vectors directly with SigLIP2 vectors.
+## 6. Retrieval and answer generation
 
-Retain MemGraphRAG’s **CPU PPR**. If dependencies conflict, run SAM3 and SigLIP2 preprocessing in separate environments and export embeddings and ID manifests.
-
-Freeze model revisions, preprocessing and the adapter before test evaluation.
-
-## 5. Retrieval and answer generation
-
-### 5.1 Compute both channels before choosing a route
+### 6.1 Compute both channels before choosing a route
 
 For every text question, independently compute:
 
 - **Text seeds:** MemGraphRAG’s existing fact/passage seed weights.
-- **Image candidates:** top 20 whole images by SigLIP2 similarity.
-- **Crop candidates:** top 20 crops by SigLIP2 similarity.
+- **Image candidates:** top 20 whole images by EVA-CLIP similarity.
+- **Crop candidates:** top 20 crops by EVA-CLIP similarity.
 
 Use all available items when an index has fewer than 20. Break ties by stable ID.
 
@@ -139,7 +130,7 @@ Visual retrieval must run even when no textual facts survive. The routing must b
 
 Reject nonfinite scores and clamp negative weights to zero. A component is available when its retained weights have a positive sum.
 
-### 5.2 Convert visual matches into seeds
+### 6.2 Convert visual matches into seeds
 
 Image similarity supplies weights to image nodes.
 
@@ -167,7 +158,7 @@ Tune `β ∈ {0.25, 0.50, 0.75}` on development-set Document-ID Recall@5 for the
 
 If neither channel is available, use the shared dense-passage fallback. For native-image conditions, attach the first associated image in source order to each selected fallback passage, where available. Log every fallback.
 
-### 5.3 Run PPR and select evidence
+### 6.3 Run PPR and select evidence
 
 Run weighted, undirected CPU PPR:
 
@@ -188,7 +179,7 @@ The reader therefore receives at most five images, one per document. This fixed 
 
 For passage-based systems, rank passages, deduplicate by document and retain the highest-scoring passage per document.
 
-### 5.4 Supply native evidence to the reader
+### 6.4 Supply native evidence to the reader
 
 For each selected image, provide:
 
@@ -200,31 +191,22 @@ Use the same text-attachment policy for direct and graph-based image retrieval. 
 
 Save selected evidence IDs, scores, retrieval route, prompts and answers for every question.
 
-## 6. Experiments
+## 7. Experiments
 
 ### Main comparisons
 
-| ID | System | Reader evidence | Purpose |
+We plan two main runs on the same prepared WebQA corpus and question sets. Both systems receive the same original text, original captions and generated descriptions during indexing. Only MemGraphRAG-V adds image vertices, SAM3-derived image–entity edges and visual retrieval seeds.
+
+| ID | System | Indexed evidence | Reader evidence |
 |---|---|---|---|
-| T | Original text MemGraphRAG | Retrieved text | Text baseline |
-| C | Caption-based MemGraphRAG | Text including generated descriptions | End-to-end baseline |
-| D | Direct SigLIP2 image retrieval | Whole images and associated text | Test graph retrieval |
-| G | Full MemGraphRAG-V | Whole images and associated text | Intended method |
-| G-caption | G’s saved evidence selection | Descriptions replacing images | Test evidence representation |
+| C | Caption-augmented MemGraphRAG | Original text and captions plus generated descriptions; textual graph only | Retrieved textual evidence, including captions/descriptions |
+| G-augmented | MemGraphRAG-V | The same textual corpus plus whole-image vertices, SAM3 grounding and EVA image/crop embeddings | Retrieved whole images and original associated text |
 
-For C, use the chosen reader VLM to generate one description per image with a fixed, question-independent prompt and a 256-token output limit. Request visible labels, values, trends and relationships without guessing. Cache descriptions and index them with the text.
+> C is a caption-augmented application of MemGraphRAG, rather than a reproduction of its original paper's benchmark results. G-augmented is the name used by the implemented runner. We compare document retrieval and final answer quality to assess the overall effect of adding the multimodal extension. Because retrieval structure, seeding, evidence selection and reader input modality change together, this comparison cannot isolate their individual contributions.
+>
+> Direct image retrieval, an uncaptioned text baseline, G-caption and the G-image/G-ground/G0 component ablations are not included in the current experiment plan. The limitation is that an observed difference cannot be attributed specifically to SAM3, crop seeds or image reading.
 
-Caption conditions receive up to 256 tokens of original associated text plus 256 tokens of generated description per document. Native conditions receive the same associated text and the image instead of its description. Report their actual costs.
-
-For **G-caption**, reuse G’s exact selected image IDs, document order and associated text. Do not retrieve again.
-
-Interpretation:
-
-- **G versus D:** benefit of the full graph-guided selector.
-- **G versus G-caption:** benefit of native images relative to the chosen description procedure.
-- **G versus C:** overall pipeline difference; it cannot independently identify the cause of a possible performance improvement.
-
-### Component ablations
+### 7.1 Component ablations
 
 | Configuration | Image–passage edges | SAM3 image–entity edges | Visual seeds |
 |---|---|---|---|
@@ -245,9 +227,9 @@ For a separate graph-augmentation diagnostic, compare T with G0 using the same p
 
 The no-SAM3 version is an implementation milestone and control, not the final intended method.
 
-## 7. Evaluation
+## 8. Evaluation
 
-### Primary retrieval metric: Document-ID Recall@5
+### 8.1 Primary retrieval metric: Document-ID Recall@5
 
 For question `q`, let `R₅(q)` be the five returned document IDs and `G(q)` its gold supporting document IDs:
 
@@ -259,13 +241,13 @@ Report the mean across questions. Use benchmark conventions for alternative vali
 
 Where image annotations exist, report recall over the **images actually supplied to the reader**. A correct document ID does not guarantee that the selected figure contains the needed evidence. Otherwise assess this through manual inspection.
 
-### Primary QA metric: official benchmark score
+### 8.2 Primary QA metric: official benchmark score
 
 Use the benchmark authors’ scorer and prescribed normalization; record its version.
 
 **Containment accuracy** and a **fixed LLM judge** are supplementary but necessary. Freeze the judge model and rubric, hide system identities and cache decisions.
 
-### Error analysis
+### 8.3 Error analysis
 
 Inspect up to 30 failed G answers sampled with seed `42`, plus up to 10 cases where C or D succeeds and G fails. Deduplicate overlaps.
 
@@ -285,13 +267,13 @@ Two teammates independently classify cases, then resolve disagreements. Allow mu
 
 Inspect candidate entities, detections, direct ranks, seeds, graph scores and actual reader inputs before assigning causes.
 
-### Cost and text regression
+### 8.4 Cost and text regression
 
 Report indexing time, API tokens, SAM3 preprocessing time, embedding time, crop count and index size. Report median and 95th-percentile retrieval latency on the same hardware, excluding generation. Report generation cost separately.
 
 Run T and the extension on one fixed text-dataset subset without images. Report score differences; a nonsignificant difference alone does not establish no degradation.
 
-## 8. Execution and completion criteria
+## 9. Execution and completion criteria
 
 | Stage | Required output |
 |---|---|
