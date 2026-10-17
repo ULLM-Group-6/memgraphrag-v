@@ -1,6 +1,6 @@
 # MemGraphRAG-V: methodology
 
-> **Scope update.** The combined pipeline implements only text/image indexing, query seeds, fusion, PPR and retrieval output, with **EVA-CLIP** (not SigLIP2) and a single multimodal graph. It indexes the dataset's original passages **and** the supplied generated image descriptions together (**G-augmented**), so "generated descriptions are reserved for caption experiments" below no longer applies to it. Baselines, ablations, evaluation, tuning, caption generation and the reader are out of its scope. Where this page differs, [interfaces.md, "Combined pipeline"](interfaces.md#combined-pipeline-implementation-note) wins.
+**Current scope.** The study compares caption-augmented MemGraphRAG with MemGraphRAG-V on a prepared WebQA subset. Both systems index original WebQA text and captions together with the same generated image descriptions. MemGraphRAG-V additionally represents corpus images in the graph, uses SAM3 grounding and EVA-CLIP image/crop embeddings, and supplies retrieved whole images to a multimodal reader. The combined pipeline implements indexing and retrieval; the WebQA runner implements orchestration, answer generation and result collection. Metric computation is performed separately.
 
 ## 1. Research question and scope
 

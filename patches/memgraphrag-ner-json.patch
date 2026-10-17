@@ -1,0 +1,33 @@
+--- a/code/src/information_extraction/openie_openai.py
++++ b/code/src/information_extraction/openie_openai.py
+@@ -28,9 +28,27 @@
+ 
+ 
+ def _extract_ner_from_response(real_response):
+-    pattern = r'\{[^{}]*"named_entities"\s*:\s*\[[^\]]*\][^{}]*\}'
+-    match = re.search(pattern, real_response, re.DOTALL)
+-    return eval(match.group())["named_entities"]
++    """Accept either a named_entities object or a JSON list of entity names."""
++    if not isinstance(real_response, str):
++        raise ValueError("NER response must be text")
++
++    start = re.search(r"[\[{]", real_response)
++    if start is None:
++        raise ValueError("NER response contains no JSON object or list")
++    try:
++        # Decode the first JSON value; allow fences/prose before it and an
++        # explanation after it, without using eval or repairing invalid JSON.
++        payload, _ = json.JSONDecoder().raw_decode(real_response[start.start():])
++    except json.JSONDecodeError as exc:
++        raise ValueError(f"Invalid NER JSON: {exc.msg}") from exc
++
++    if isinstance(payload, dict):
++        if "named_entities" not in payload:
++            raise ValueError("NER JSON object has no named_entities field")
++        payload = payload["named_entities"]
++    if not isinstance(payload, list) or not all(isinstance(item, str) for item in payload):
++        raise ValueError("NER entities must be a list of strings")
++    return payload
+ 
+ 
+ class OpenIE:
