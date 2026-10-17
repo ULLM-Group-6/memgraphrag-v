@@ -1,0 +1,86 @@
+diff --git a/code/src/MemGraphRAG.py b/code/src/MemGraphRAG.py
+index d868c5f..bf09ef6 100644
+--- a/code/src/MemGraphRAG.py
++++ b/code/src/MemGraphRAG.py
+@@ -38,9 +38,14 @@ from .utils.embed_utils import retrieve_knn
+ from .utils.typing import Triple
+ from .utils.config_utils import BaseConfig
+ from .utils.llm_utils import fix_broken_generated_json
++from .information_extraction.openie_openai import _decode_first_json
+ 
+ from .prompts.prompt import PROMPT as MEMORY_PROMPTS
+ 
++
++class MemoryJSONError(ValueError):
++    """A memory-pipeline LLM answer that is not a JSON object, even after repair."""
++
+ logger = logging.getLogger(__name__)
+ 
+ class MemGraphRAG:
+@@ -321,11 +326,21 @@ class MemGraphRAG:
+             cleaned = cleaned[:-3]
+         cleaned = cleaned.strip()
+         try:
+-            return json.loads(cleaned)
++            parsed = json.loads(cleaned)
+         except json.JSONDecodeError:
+             match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+             candidate = match.group(0) if match else cleaned
+-            return json.loads(fix_broken_generated_json(candidate))
++            try:
++                parsed = json.loads(fix_broken_generated_json(candidate))
++            except json.JSONDecodeError:
++                # Qwen near-JSON: comments, single quotes, None, trailing commas.
++                try:
++                    parsed = _decode_first_json(cleaned, "Memory")
++                except ValueError as exc:
++                    raise MemoryJSONError(str(exc)) from None
++        if not isinstance(parsed, dict):
++            raise MemoryJSONError(f"Memory JSON must be an object, got {type(parsed).__name__}")
++        return parsed
+ 
+     @staticmethod
+     def _memory_infer_result(result: Any) -> Tuple[str, Dict[str, Any]]:
+@@ -387,8 +402,14 @@ class MemGraphRAG:
+                 temperature=self.global_config.schema_extraction_temperature,
+             )
+             response, _ = self._memory_infer_result(result)
+-            rows = self._memory_json(response).get("ontology_triples", [])
+-            if not rows:
++            try:
++                rows = self._memory_json(response).get("ontology_triples", [])
++            except MemoryJSONError as exc:
++                # One unparseable answer leaves this fact without a schema,
++                # as an empty answer does, instead of stopping the stage.
++                logger.warning("Schema extraction: no schema for fact %s: %s", fact.get("idx"), exc)
++                return int(fact["idx"]), None
++            if not rows or not isinstance(rows, list) or not isinstance(rows[0], dict):
+                 return int(fact["idx"]), None
+             ontology = rows[0].get("ontology", [])
+             if not isinstance(ontology, list) or len(ontology) != 3:
+@@ -549,7 +570,12 @@ class MemGraphRAG:
+                 temperature=0.0,
+             )
+             response, metadata = self._memory_infer_result(raw)
+-            parsed = self._memory_json(response)
++            try:
++                parsed = self._memory_json(response)
++            except MemoryJSONError as exc:
++                # Unparseable answer: report no conflict for this target.
++                logger.warning("Conflict detection: unparseable answer for fact %s: %s", target_id, exc)
++                parsed = {}
+             hard = []
+             matched_ids: Set[int] = set()
+             for value in parsed.get("conflicting_triple_ids", []):
+@@ -747,6 +773,11 @@ class MemGraphRAG:
+                 except Exception as exc:
+                     last_error = exc
+                     message = str(exc).lower()
++                    if isinstance(exc, MemoryJSONError):
++                        # Try the next payload; if none parses, the component
++                        # is returned unresolved below.
++                        logger.warning("Conflict resolution: unparseable answer for facts %s: %s", component, exc)
++                        continue
+                     if "content_filter" not in message and "content management policy" not in message:
+                         raise
+             return {"component_fact_ids": component, "resolved_triples": [],
