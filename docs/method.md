@@ -192,15 +192,24 @@ and returns up to five documents with their associated evidence.
 
 ### 6.4 Supply native evidence to the reader
 
-For each selected image, provide:
+For each selected document, provide:
 
-- The actual whole image.
 - A source identifier.
-- Up to 256 tokens of original caption and associated text, assembled in source order.
+- Its selected original whole image, when available.
+- Up to 256 tokens of original caption and passage text.
 
-Use the same text-attachment policy for direct and graph-based image retrieval. Keep reader settings and answer instructions fixed.
+For graph-selected documents, place the best passage chunk's text record
+first, followed by the selected image's associated text records, removing
+duplicates. The reader excludes generated descriptions, preserves the
+remaining record order, and applies the text budget after concatenation.
+Selecting a chunk identifies its source record; the current reader does
+not extract a separate excerpt centered on that chunk.
 
-Save selected evidence IDs, scores, retrieval route, prompts and answers for every question.
+The dense fallback retains its existing evidence-attachment policy.
+Keep reader settings and answer instructions fixed across comparisons.
+
+Save selected evidence IDs, passage/image PPR diagnostics, document scores,
+retrieval route, prompts and answers for every question.
 
 ## 7. Experiments
 
