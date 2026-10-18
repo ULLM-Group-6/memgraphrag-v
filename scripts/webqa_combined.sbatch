@@ -50,7 +50,7 @@ if [[ "$MODE" != qa ]]; then
     LOG="$MGRV_ARTIFACTS/vllm-${SLURM_JOB_ID}.log"
     "$MGRV_VLLM" serve "$MGRV_TEXT_LLM_MODEL" \
         --served-model-name qwen2.5-7b-instruct --host 127.0.0.1 --port "$PORT" \
-        --dtype bfloat16 --max-model-len 16384 --gpu-memory-utilization 0.70 \
+        --dtype bfloat16 --max-model-len 32768 --gpu-memory-utilization 0.70 \
         --enforce-eager --override-generation-config '{"temperature":0.0,"top_p":1.0,"top_k":-1}' \
         > "$LOG" 2>&1 &
     SERVER_PID=$!
