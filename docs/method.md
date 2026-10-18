@@ -168,16 +168,27 @@ p = αs + (1 − α)Pᵀp
 
 `α` is the restart probability, `s` the seed distribution, `P` the transition matrix and `p` the final node scores.
 
-For image-based retrieval:
+For graph-based retrieval:
 
-1. Read final image-node scores.
-2. Give each document the maximum score of its images.
-3. Return the top **five unique documents**.
-4. Select the highest-scoring image within each document.
+1. Read the final PPR scores of passage and usable image nodes.
+2. Score each document by the maximum PPR score among its passage and
+   image nodes.
+3. Select up to five distinct documents with positive scores, ranked by
+   descending document score. Break equal document scores by document ID.
+4. For each selected document, retain its highest positive-scoring passage
+   chunk's text record and its highest positive-scoring usable image,
+   when available. Break equal chunk or image scores by their IDs.
+5. Add the selected image's associated text records, removing duplicates.
 
-The reader therefore receives at most five images, one per document. This fixed limit may miss evidence requiring multiple figures within one document; report that limitation.
+A document can be selected through its passage scores even when it has no
+image. The reader receives at most five original images, one per selected
+document. Passage and image scores come from the same PPR distribution;
+no additional modality-specific score normalization is applied here.
 
-For passage-based systems, rank passages, deduplicate by document and retain the highest-scoring passage per document.
+If there are no usable seeds, or no passage/image nodes receive positive
+PPR scores, use the existing dense-passage fallback. The fallback ranks
+chunks by query similarity, keeps the highest-scoring chunk per document,
+and returns up to five documents with their associated evidence.
 
 ### 6.4 Supply native evidence to the reader
 

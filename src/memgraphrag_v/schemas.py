@@ -280,5 +280,12 @@ class QueryDiagnostics(Record):
     crop_entity_seeds: dict[str, float] = Field(default_factory=dict) # vertex name: score
     image_ppr: dict[str, float] = Field(default_factory=dict) # vertex name: score
     """Highest PPR scores of image vertices, by image ID."""
+    passage_ppr: dict[str, float] = Field(default_factory=dict)
+    """Highest passage-node PPR scores, keyed by chunk ID."""
+
+    document_ppr: dict[str, float] = Field(default_factory=dict)
+    """Selected graph-route document scores, keyed by document ID.
+    Each score is the maximum over that document's passage/image nodes.
+    Empty when dense fallback supplies the evidence."""
     selected_doc_ids: list[Id] = Field(default_factory=list)
     selected_image_ids: list[Id | None] = Field(default_factory=list)

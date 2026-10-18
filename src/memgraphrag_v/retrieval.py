@@ -14,10 +14,12 @@ Both channels are computed for every question before any routing:
   vertices, never crop vertices). The text encoder's space and EVA's space are
   never compared with each other.
 
-``fuse_seeds`` combines them (``beta`` weights the visual channel), PPR runs
-on the saved multimodal graph, and the highest-scoring image of each of at
-most five documents is the evidence. Without any seed, or if no image receives
-PPR mass, the shared dense-passage fallback answers instead.
+``fuse_seeds`` combines them (``beta`` weights the visual channel), and PPR
+runs on the saved multimodal graph. Each document is scored by the maximum
+PPR score among its passage and usable image vertices. Up to five distinct
+documents are selected, with their best positive-scoring passage's text
+record and best positive-scoring image when available. Without any seed,
+or without positive passage/image evidence, dense-passage fallback is used.
 
 Functions take the text backend (an upstream ``MemGraphRAG`` object, see
 ``pipeline.py``) as an argument, so this module imports neither upstream code,
@@ -38,7 +40,6 @@ import numpy as np
 
 from .config import RetrievalConfig
 from .embeddings import EmbeddingSet, Encoder
-from .image_retrieval import select_documents
 from .schemas import (
     VERTEX_LAYERS,
     ChunkRecord,
@@ -55,7 +56,7 @@ logger = logging.getLogger(__name__)
 TOP_SEEDS = 30
 """Entries kept per seed map in the diagnostics (as upstream logs 30)."""
 TOP_PPR = 20
-"""Image PPR scores kept in the diagnostics."""
+"""Maximum entries retained separately for image and passage PPR diagnostics."""
 
 
 @dataclass(frozen=True)
@@ -437,6 +438,69 @@ def visual_seeds(index: RetrievalIndex, query: np.ndarray):
     crop_seeds = {index.names[entity]: weight for entity, weight in per_entity.items()}
     return image_weights, crop_weights, image_seeds, crop_seeds
 
+def select_graph_documents(index: RetrievalIndex, scores: np.ndarray) -> list[Evidence]:
+    """Rank documents by their best positive passage or image PPR score."""
+    scores = np.asarray(scores, dtype=np.float64)
+    if scores.shape != (len(index.names),):
+        raise ValueError("PPR scores do not match the graph vertices")
+    _require_finite(scores, "document-selection PPR scores")
+    if (scores < 0).any():
+        raise ValueError("Document-selection PPR scores must be nonnegative")
+
+    best_chunks: dict[str, tuple[float, str]] = {}
+    best_images: dict[str, tuple[float, str]] = {}
+
+    # Sorted IDs make equal-score ties deterministic.
+    for chunk_id in sorted(index.chunks):
+        chunk = index.chunks[chunk_id]
+        vertex = index.backend.node_name_to_vertex_idx[chunk_id]
+        score = float(scores[vertex])
+        if score <= 0:
+            continue
+        previous = best_chunks.get(chunk.doc_id)
+        if previous is None or score > previous[0]:
+            best_chunks[chunk.doc_id] = (score, chunk_id)
+
+    for image_id in sorted(index.image_vertex):
+        image = index.images[image_id]
+        score = float(scores[index.image_vertex[image_id]])
+        if score <= 0:
+            continue
+        previous = best_images.get(image.doc_id)
+        if previous is None or score > previous[0]:
+            best_images[image.doc_id] = (score, image_id)
+
+    document_scores = {
+        doc_id: max(
+            best_chunks.get(doc_id, (0.0, ""))[0],
+            best_images.get(doc_id, (0.0, ""))[0],
+        )
+        for doc_id in best_chunks.keys() | best_images.keys()
+    }
+    ranked_docs = sorted(
+        document_scores,
+        key=lambda doc_id: (-document_scores[doc_id], doc_id),
+    )[:index.settings.n_docs]
+
+    evidence = []
+    for doc_id in ranked_docs:
+        record_ids = []
+        if doc_id in best_chunks:
+            chunk_id = best_chunks[doc_id][1]
+            record_ids.append(index.chunks[chunk_id].record_id)
+
+        image_id = None
+        if doc_id in best_images:
+            image_id = best_images[doc_id][1]
+            record_ids.extend(index.images[image_id].passage_ids)
+
+        evidence.append(Evidence(
+            doc_id=doc_id,
+            score=document_scores[doc_id],
+            image_id=image_id,
+            passage_ids=list(dict.fromkeys(record_ids)),
+        ))
+    return evidence
 
 def fallback_evidence(index: RetrievalIndex, question: str) -> tuple[list[Evidence], str | None]:
     """Dense text retrieval over passages and captions (the chunks): the best
@@ -474,49 +538,100 @@ def fallback_evidence(index: RetrievalIndex, question: str) -> tuple[list[Eviden
 
 
 def retrieve_one(
-    index: RetrievalIndex, question: Question, query: np.ndarray, truncated: bool, beta: float
-) -> tuple[RetrievalResult, QueryDiagnostics]:
+    index: RetrievalIndex, question: Question, query: np.ndarray, truncated: bool, beta: float) -> tuple[RetrievalResult, QueryDiagnostics]:
+
     backend, settings = index.backend, index.settings
+
     text = text_seed(backend, question.text)
     text_part = normalize_sum(text.weights, "text seeds")
-    image_weights, crop_weights, image_seeds, crop_seeds = visual_seeds(index, query)
+    image_weights, crop_weights, image_seeds, crop_seeds = visual_seeds(
+        index, query
+    )
     image_part = normalize_sum(image_weights, "image seeds")
     crop_part = normalize_sum(crop_weights, "crop seeds")
-    reset = fuse_seeds(text_part, image_part, crop_part, beta, settings.visual_mix)
+    reset = fuse_seeds(
+        text_part, image_part, crop_part, beta, settings.visual_mix
+    )
 
     evidence: list[Evidence] = []
-    ppr_top: dict[str, float] = {}
+    image_ppr: dict[str, float] = {}
+    passage_ppr: dict[str, float] = {}
+    document_ppr: dict[str, float] = {}
     reason: str | None = None
+
     if reset is None:
         reason = "neither the text nor the visual channel has seeds"
     else:
         check_reset(reset)
-        scores = personalized_pagerank(backend.graph, reset, settings.damping)
-        all_images = sorted(
-            ((image_id, float(scores[vertex])) for image_id, vertex in index.image_vertex.items()),
-            key=lambda kv: (-kv[1], kv[0]),
+        scores = personalized_pagerank(
+            backend.graph, reset, settings.damping
         )
-        ppr_top = dict(all_images[:TOP_PPR])
-        positive = {image_id: score for image_id, score in all_images if score > 0}
-        if positive:
-            evidence = select_documents(positive, index.images, settings.n_docs)
-        else:
-            reason = "no image vertex received PPR mass"
+
+        all_images = sorted(
+            (
+                (image_id, float(scores[vertex]))
+                for image_id, vertex in index.image_vertex.items()
+            ),
+            key=lambda item: (-item[1], item[0]),
+        )
+        image_ppr = dict(all_images[:TOP_PPR])
+
+        all_passages = sorted(
+            (
+                (
+                    chunk_id,
+                    float(scores[
+                        backend.node_name_to_vertex_idx[chunk_id]
+                    ]),
+                )
+                for chunk_id in index.chunks
+            ),
+            key=lambda item: (-item[1], item[0]),
+        )
+        passage_ppr = dict(all_passages[:TOP_PPR])
+
+        evidence = select_graph_documents(index, scores)
+        document_ppr = {
+            item.doc_id: item.score for item in evidence
+        }
+
+        if not evidence:
+            reason = (
+                "no passage or image vertex received positive PPR mass"
+            )
+
     route = "graph"
     if not evidence:
         route = "fallback"
         evidence, empty_reason = fallback_evidence(index, question.text)
         reason = reason or empty_reason
 
-    result = RetrievalResult(question_id=question.qid, system="G", route=route, evidence=evidence)
+    result = RetrievalResult(
+        question_id=question.qid,
+        system="G",
+        route=route,
+        evidence=evidence,
+    )
     diagnostics = QueryDiagnostics(
-        question_id=question.qid, route=route, fallback_reason=reason if route == "fallback" else None,
-        beta=beta, text_available=text_part is not None, image_available=image_part is not None,
-        crop_available=crop_part is not None, text_reason=text.reason, query_truncated=truncated,
-        facts=[str(f) for f in text.facts], n_facts_scored=text.n_scored,
-        text_seeds=_top(text.weights, index.names), image_seeds=_top_items(image_seeds),
-        crop_entity_seeds=_top_items(crop_seeds), image_ppr=ppr_top,
-        selected_doc_ids=[e.doc_id for e in evidence], selected_image_ids=[e.image_id for e in evidence],
+        question_id=question.qid,
+        route=route,
+        fallback_reason=reason if route == "fallback" else None,
+        beta=beta,
+        text_available=text_part is not None,
+        image_available=image_part is not None,
+        crop_available=crop_part is not None,
+        text_reason=text.reason,
+        query_truncated=truncated,
+        facts=[str(fact) for fact in text.facts],
+        n_facts_scored=text.n_scored,
+        text_seeds=_top(text.weights, index.names),
+        image_seeds=_top_items(image_seeds),
+        crop_entity_seeds=_top_items(crop_seeds),
+        image_ppr=image_ppr,
+        passage_ppr=passage_ppr,
+        document_ppr=document_ppr,
+        selected_doc_ids=[item.doc_id for item in evidence],
+        selected_image_ids=[item.image_id for item in evidence],
     )
     return result, diagnostics
 
