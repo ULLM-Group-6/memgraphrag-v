@@ -121,7 +121,7 @@ def context(args):
     return config, Artifacts(Path(args.artifacts).expanduser().resolve())
 
 
-def selection(artifacts, split, limit):
+def selection(artifacts, split, limit, shard_index=0, shard_count=1):
     from memgraphrag_v.schemas import QuestionRecord
     rows = [QuestionRecord.model_validate(row) for row in read_rows(artifacts.questions)]
     selected = [q for q in rows if q.split == split]
@@ -129,6 +129,11 @@ def selection(artifacts, split, limit):
         selected = selected[:limit]
     if not selected:
         raise ValueError(f"No questions for split {split!r}")
+    if shard_count < 1 or not 0 <= shard_index < shard_count:
+        raise ValueError("Invalid question shard index/count")
+    selected = selected[shard_index::shard_count]
+    if not selected:
+        raise ValueError("Empty question shard; reduce shard-count")
     return selected
 
 
@@ -302,6 +307,8 @@ def run_contract(args, config, artifacts, questions):
                 "preparation_sha256": sha(artifacts.root / "preparation.json"),
                 "questions": [[q.qid, q.question] for q in questions],
                 "runner_sha256": sha(__file__)}
+    if getattr(args, "shard_count", 1) > 1:
+        contract["shard"] = {"index": args.shard_index, "count": args.shard_count}
     path = run_dir / "run.json"
     if path.exists() and read_json(path) != contract:
         raise ValueError("Run settings changed; choose a new --run-id")
@@ -315,7 +322,7 @@ def encode_queries(args):
     import numpy as np
     from memgraphrag_v.visual_indexing import load_encoder, encoder_meta
     config, artifacts = context(args)
-    questions = selection(artifacts, args.split, args.limit)
+    questions = selection(artifacts, args.split, args.limit, args.shard_index, args.shard_count)
     run_dir, contract = run_contract(args, config, artifacts, questions)
     meta_path = run_dir / "query_vectors.json"
     if meta_path.exists():
@@ -365,7 +372,7 @@ def retrieve(args):
     from memgraphrag_v.retrieval import Question
     from memgraphrag_v.visual_indexing import encoder_meta
     config, artifacts = context(args)
-    questions = selection(artifacts, args.split, args.limit)
+    questions = selection(artifacts, args.split, args.limit, args.shard_index, args.shard_count)
     run_dir, contract = run_contract(args, config, artifacts, questions)
     cache = read_json(run_dir / "query_vectors.json")
     if cache["contract_sha256"] != stamp(contract) or cache["encoder"] != encoder_meta(config.visual_encoder):
@@ -480,7 +487,7 @@ def read_answers(args):
     from PIL import Image
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
     config, artifacts = context(args)
-    questions = selection(artifacts, args.split, args.limit)
+    questions = selection(artifacts, args.split, args.limit, args.shard_index, args.shard_count)
     run_dir, contract = run_contract(args, config, artifacts, questions)
     rows = read_rows(run_dir / "retrieval_details.jsonl")
     if [r["question_id"] for r in rows] != [q.qid for q in questions]:
@@ -581,7 +588,8 @@ def orchestrate(args):
             command += ["--llm-base-url", args.llm_base_url]
         subprocess.run(command, check=True)
     query_args = [*common, "--run-id", args.run_id, "--split", args.split,
-                  "--limit", str(args.limit)]
+                  "--limit", str(args.limit), "--shard-index", str(args.shard_index),
+                  "--shard-count", str(args.shard_count)]
     if args.beta is not None:
         query_args += ["--beta", str(args.beta)]
     for name, python in (("queries", args.vision_python), ("retrieve", args.text_python),
@@ -618,6 +626,8 @@ def main(argv=None):
             p.add_argument("--split", choices=["dev", "test"], default="dev")
             p.add_argument("--limit", type=int, default=0)
             p.add_argument("--beta", type=float)
+            p.add_argument("--shard-index", type=int, default=0)
+            p.add_argument("--shard-count", type=int, default=1)
         if command in ("read", "run"):
             p.add_argument("--reader-model", default=DEFAULT_READER_CACHE)
             p.add_argument("--max-new-tokens", type=int, default=128)
@@ -637,8 +647,13 @@ def main(argv=None):
         parser.error("max-new-tokens must be positive")
     if getattr(args, "max_pixels", 256 * 28 * 28) < 256 * 28 * 28:
         parser.error("max-pixels must be at least 256*28*28")
+    if not 0 <= getattr(args, "shard_index", 0) < getattr(args, "shard_count", 1):
+        parser.error("Require 0 <= shard-index < shard-count")
+    if args.command == "run" and args.shard_count != 1:
+        parser.error("Use the parallel launcher for shards; run also writes the shared index")
     args.action(args)
 
 
 if __name__ == "__main__":
     main()
+
