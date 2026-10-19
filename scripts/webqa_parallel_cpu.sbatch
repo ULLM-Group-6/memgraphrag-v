@@ -1,10 +1,11 @@
 #!/bin/bash
 # Validation, merging and stage stamps need no GPU/model loading.
 #SBATCH --job-name=webqa-par-cpu
-#SBATCH --partition=rome
+#SBATCH --partition=gpu_a100
+#SBATCH --gpus-per-node=1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=18
 #SBATCH --mem=28G
 #SBATCH --time=02:00:00
 #SBATCH --output=webqa-par-cpu-%j.log
