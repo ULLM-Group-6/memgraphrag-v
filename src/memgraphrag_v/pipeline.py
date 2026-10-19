@@ -104,8 +104,10 @@ logger = logging.getLogger(__name__)
 
 MEMGRAPHRAG_COMMIT = "49f20cec41290c95209724d33ec527f72449d300"
 STAGES = ("text", "ground", "embed", "assemble")
-OPENIE_FAILURE_LIMIT = 5
-"""Chunks OpenIE may fail on before the text stage stops (more than this is fatal)."""
+OPENIE_FAILURE_LIMIT = int(os.environ.get("MGRV_OPENIE_FAILURE_LIMIT", "5"))
+"""Chunks OpenIE may fail on before the text stage stops (more than this is fatal).
+``MGRV_OPENIE_FAILURE_LIMIT`` raises it as a last resort: the failed chunks are
+then left out of the graph and listed in ``openie_failures.json``."""
 
 
 class StaleIndexError(RuntimeError):
