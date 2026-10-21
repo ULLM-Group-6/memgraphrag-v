@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Five allocations, one GPU at a time; model work stays in existing environments."""
+"""Conditional embedding attempts, dedicated assembly, then tuning and test."""
 from __future__ import annotations
 
 import argparse
@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import signal
 import time
 
 CODE = ("submit_webqa_sequential.sh", "webqa_sequential.sbatch",
@@ -34,8 +35,8 @@ def signature(run_id):
             "code": {name: sha(Path(__file__).parent / name) for name in CODE}}
 
 
-def check_previous(previous):
-    """afterany permits continuation after a timeout, but never hides real failures."""
+def check_previous(previous, root=None, registration=None):
+    """Only time exhaustion can start the backup embedding attempt."""
     if previous == "-":
         return
     if not previous.isdigit():
@@ -52,15 +53,24 @@ def check_previous(previous):
             state = state.split()[0].rstrip("+")
             if user != os.environ["USER"]:
                 raise RuntimeError("Predecessor belongs to a different user")
-            if state == "TIMEOUT" or (state == "COMPLETED" and code == "0:0"):
-                log(f"Previous indexing slice {previous}: {state}; continuing saved progress")
+            yielded = False
+            if state == "FAILED" and code == "75:0" and root is not None:
+                marker = Path(root) / "index/parallel-v2/sequential-v1/attempts" / f"{previous}.json"
+                if marker.exists():
+                    value = json.loads(marker.read_text())
+                    yielded = (value.get("state") == "INCOMPLETE_TIME_BUDGET"
+                               and value.get("job_id") == previous
+                               and value.get("attempt") == 1
+                               and value.get("registration_sha256") == sha(registration))
+            if state == "TIMEOUT" or yielded:
+                log(f"Previous embedding attempt {previous}: {state} ({code}); continuing saved progress")
                 return
             if state not in ("RUNNING", "COMPLETING", "PENDING"):
-                raise RuntimeError(f"Previous indexing job {previous} ended {state} ({code}); inspect its log")
+                raise RuntimeError(f"Previous embedding job {previous} ended {state} ({code}); backup refused. Inspect its log")
         # Accounting can briefly lag behind dependency release. No unsafe fallback.
         if attempt < 5:
             time.sleep(5)
-    raise RuntimeError(f"No completed/timeout accounting record for {previous}; inspect before retrying")
+    raise RuntimeError(f"No eligible timeout/checkpoint accounting record for {previous}; inspect before retrying")
 
 
 @contextmanager
@@ -88,6 +98,39 @@ class Coordinator:
         self.logs.mkdir(parents=True, exist_ok=True)
         self.number = 0
 
+    def status(self, state, message):
+        """Human-readable log plus a marker proving an intentional checkpoint exit."""
+        log(message)
+        directory = self.root / "index/parallel-v2/sequential-v1/attempts"
+        directory.mkdir(parents=True, exist_ok=True)
+        job = os.environ["SLURM_JOB_ID"]
+        path = directory / f"{job}.json"
+        value = {"job_id": job, "mode": self.args.mode, "attempt": self.args.attempt,
+                 "state": state, "message": message, "run_id": self.args.run_id,
+                 "registration_sha256": sha(self.args.registration), "time": time.time()}
+        temporary = path.with_suffix(".tmp")
+        with temporary.open("w") as file:
+            json.dump(value, file, indent=2)
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(temporary, path)
+
+    def timeout_warning(self, *_):
+        if self.args.mode == "embed":
+            suffix = ("Backup attempt may resume saved checkpoints." if self.args.attempt == 1 else
+                      "If this job times out, BOTH embedding windows are exhausted; assembly, tuning and test MUST NOT START.")
+            # Logging only: a batch finishing in the final two minutes may still succeed.
+            log("TIME LIMIT APPROACHING; embedding completion not yet confirmed. " + suffix)
+
+    def interrupted(self, signum, _frame):
+        if self.args.mode == "embed":
+            message = "EMBEDDING INTERRUPTED: this job did not exit successfully; assembly remains blocked. "
+            if self.args.attempt == 2:
+                message += "Both embedding attempts ended without success. Inspect sacct for TIMEOUT versus failure/cancellation; resume from saved checkpoints."
+            # Avoid buffered I/O reentrancy in a signal handler.
+            os.write(2, (time.strftime("%Y-%m-%dT%H:%M:%S%z ") + message + "\n").encode())
+        raise SystemExit(128 + signum)
+
     def step(self, action, worker=0, candidate=0):
         self.number += 1
         if action == "embed-checkpointed":
@@ -111,43 +154,41 @@ class Coordinator:
         log(f"DONE {action}")
         return True
 
-    def yield_index(self):
-        if self.args.last_index == 1:
-            raise RuntimeError("Index still incomplete after the last slice; tuning is blocked. "
-                               "Resume indexing with the same artifacts and run ID.")
-        log("Index slice finished at a checkpoint; next queued indexing job will continue")
-
-    def index(self):
+    def embed(self):
         stages = json.loads((self.root / "index/manifest.json").read_text())["stages"]
         if "ground" not in stages:
             raise RuntimeError("This continuation requires your already completed ground stage")
-        if "assemble" in stages:
-            # Existing implementation verifies cached outputs and dependencies.
-            self.step("assemble")
-            log("Index already complete and validated; this slice has no new indexing work")
-            return
-        if "embed" not in stages and not self.step("embed-checkpointed"):
-            self.yield_index()
-            return
-        for action in ("embed-finalize", "assemble"):
-            # Start canonical writes only with >=40 min to the HARD 3h limit.
-            # This is a margin, not a guarantee of their duration.
-            if time.time() + 1800 >= self.deadline:
-                self.yield_index()
-                return
-            self.step(action)
-        log("INDEX COMPLETE; all subsequent index slices will only validate/reuse it")
+        if not self.step("embed-checkpointed"):
+            suffix = ("Backup embedding attempt will resume; assembly stays blocked." if self.args.attempt == 1 else
+                      "BOTH embedding windows exhausted with work remaining. Assembly, tuning and test MUST NOT START. Resume embedding with the same artifacts/run ID.")
+            self.status("INCOMPLETE_TIME_BUDGET", "Embedding stopped at a saved checkpoint before the time limit. " + suffix)
+            return YIELD
+        self.status("EMBED_COMPLETE", "EMBEDDING COMPLETE: exiting successfully now; release assembly and skip any backup attempt.")
+        return 0
+
+    def assemble(self):
+        # Complete worker checkpoints are required and verified by the finalizer.
+        # No encoding is performed in this six-hour allocation.
+        self.step("embed-finalize")
+        self.step("assemble")
+        self.status("INDEX_COMPLETE", "INDEX COMPLETE: finalization and graph assembly succeeded; tuning may start.")
+        return 0
 
     def run(self):
         saved = json.loads(Path(self.args.registration).read_text())
         if saved != signature(self.args.run_id):
             raise RuntimeError("Sequential scripts/config/paths changed after submission; inspect before running")
-        check_previous(self.args.previous)
+        if self.args.mode == "embed" and self.args.attempt == 2:
+            check_previous(self.args.previous, self.root, self.args.registration)
+        if hasattr(signal, "SIGUSR1"):
+            signal.signal(signal.SIGUSR1, self.timeout_warning)
+        signal.signal(signal.SIGTERM, self.interrupted)
         with chain_lock(self.root):
             self.step("prepare-auto")
-            if self.args.mode == "index":
-                self.index()
-                return
+            if self.args.mode == "embed":
+                return self.embed()
+            if self.args.mode == "assemble":
+                return self.assemble()
             stages = json.loads((self.root / "index/manifest.json").read_text())["stages"]
             if not {"text", "ground", "embed", "assemble"}.issubset(stages):
                 raise RuntimeError("Index is incomplete; tuning/test cannot start")
@@ -162,6 +203,7 @@ class Coordinator:
                     self.step("test-qa", worker)
                 self.step("test-collect")
             log(f"COMPLETED {self.args.mode}")
+            return 0
 
 
 def main():
@@ -169,9 +211,9 @@ def main():
     parser.add_argument("command", choices=("register", "run"))
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--registration", required=True)
-    parser.add_argument("--mode", choices=("index", "tune", "test"))
+    parser.add_argument("--mode", choices=("embed", "assemble", "tune", "test"))
     parser.add_argument("--previous", default="-")
-    parser.add_argument("--last-index", type=int, choices=(0, 1), default=0)
+    parser.add_argument("--attempt", type=int, choices=(0, 1, 2), default=0)
     args = parser.parse_args()
     if args.command == "register":
         path = Path(args.registration)
@@ -182,8 +224,10 @@ def main():
     else:
         if args.mode is None:
             parser.error("run requires --mode")
-        Coordinator(args).run()
+        if args.mode == "embed" and (args.attempt == 0 or (args.attempt == 2 and args.previous == "-")):
+            parser.error("embed needs attempt 1 or 2; attempt 2 also requires --previous")
+        return Coordinator(args).run()
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -1,11 +1,11 @@
 #!/bin/bash
-# Usage: bash scripts/submit_webqa_sequential.sh RUN_ID [index|tune|test]
-# index: three continuation slices -> dev beta tuning -> final test QA.
+# Usage: bash scripts/submit_webqa_sequential.sh RUN_ID [index|assemble|tune|test]
+# index: 5h embed -> optional 5h backup; success -> 6h assembly -> 3h tune -> 3h test.
 set -euo pipefail
 RUN_ID=${1:?Supply the existing run ID, e.g. webqa-tuned-v1}
 START=${2:-index}
 [[ "$RUN_ID" =~ ^[A-Za-z0-9._-]+$ ]] || { echo 'Invalid run ID'; exit 2; }
-[[ "$START" =~ ^(index|tune|test)$ ]] || { echo 'Invalid start'; exit 2; }
+[[ "$START" =~ ^(index|assemble|tune|test)$ ]] || { echo 'Invalid start'; exit 2; }
 [[ -z "${SLURM_JOB_ID:-}" ]] || { echo 'Submit from a login shell, outside an allocation'; exit 2; }
 : "${MGRV_ARTIFACTS:?Use your ORIGINAL artifacts directory}"
 : "${MGRV_TEXT_PYTHON:?}"
@@ -47,35 +47,44 @@ REGISTRATION="$WORK/sequential-v1/submission-$STAMP.json"
 "$MGRV_TEXT_PYTHON" scripts/webqa_sequential.py register --run-id "$RUN_ID" --registration "$REGISTRATION"
 if [[ -s "$WORK/jobs.tsv" ]]; then cp "$WORK/jobs.tsv" "$WORK/jobs-before-sequential-$STAMP.tsv"; fi
 : > "$WORK/jobs.tsv"
-PREVIOUS=
+LAST_JOB=
 submit() {
-  local mode=$1 label=$2 dependency=$3 last=$4 predecessor=- job
+  local mode=$1 label=$2 limit=$3 dependency=$4 predecessor=${5:--} attempt=${6:-0} job
   local dep=()
-  if [[ -n "$PREVIOUS" ]]; then
-    dep=(--dependency="$dependency:$PREVIOUS")
-    # Only indexing continuation accepts TIMEOUT and needs an accounting gate.
-    if [[ "$mode" == index ]]; then predecessor=$PREVIOUS; fi
+  if [[ -n "$dependency" ]]; then
+    dep=(--dependency="$dependency")
   fi
   # CLI resource values also prevent exported SBATCH_* variables from silently
-  # changing the requested allocation. All five jobs request identical resources.
+  # changing the request. --signal reaches the Python coordinator before timeout.
   if ! job=$(sbatch --parsable --export=ALL --kill-on-invalid-dep=yes --no-requeue \
     --partition=gpu_a100 --nodes=1 --ntasks=1 --cpus-per-task=9 --gpus-per-node=1 \
-    --mem=96G --time=03:00:00 --job-name="webqa-seq-$label" "${dep[@]}" \
-    scripts/webqa_sequential.sbatch "$mode" "$RUN_ID" "$REGISTRATION" "$predecessor" "$last"); then
+    --mem=96G --time="$limit" --signal=B:USR1@120 --job-name="webqa-seq-$label" "${dep[@]}" \
+    scripts/webqa_sequential.sbatch "$mode" "$RUN_ID" "$REGISTRATION" "$predecessor" "$attempt"); then
     echo "Submission failed; inspect already accepted jobs in $WORK/jobs.tsv before retrying." >&2
     return 1
   fi
-  PREVIOUS=${job%%;*}
-  [[ "$PREVIOUS" =~ ^[0-9]+$ ]] || { echo "Unexpected sbatch response: $job"; exit 2; }
-  printf '%s\t%s\n' "$label" "$PREVIOUS" | tee -a "$WORK/jobs.tsv"
+  LAST_JOB=${job%%;*}
+  [[ "$LAST_JOB" =~ ^[0-9]+$ ]] || { echo "Unexpected sbatch response: $job"; exit 2; }
+  printf '%s\t%s\n' "$label" "$LAST_JOB" | tee -a "$WORK/jobs.tsv"
 }
 if [[ "$START" == index ]]; then
-  submit index index-1 afterany 0
-  submit index index-2 afterany 0
-  submit index index-3 afterany 1
+  submit embed embed-1 04:00:00 '' - 1
+  FIRST=$LAST_JOB
+  submit embed embed-2 04:00:00 "afternotok:$FIRST" "$FIRST" 2
+  SECOND=$LAST_JOB
+  # OR dependency: assembly needs successful completion of EITHER attempt.
+  # If FIRST succeeds, SECOND is impossible and Slurm cancels it without running.
+  submit assemble assemble 06:00:00 "afterok:$FIRST?afterok:$SECOND"
+elif [[ "$START" == assemble ]]; then
+  submit assemble assemble 06:00:00 ''
 fi
-if [[ "$START" != test ]]; then submit tune tune afterok 0; fi
-submit test test afterok 0
-echo 'Submitted sequential continuation. At most ONE GPU runs in this chain.'
+if [[ "$START" != test ]]; then
+  DEP=${LAST_JOB:+afterok:$LAST_JOB}
+  submit tune tune 03:00:00 "$DEP"
+fi
+DEP=${LAST_JOB:+afterok:$LAST_JOB}
+submit test test 03:00:00 "$DEP"
+echo 'Submitted conditional continuation. At most ONE GPU runs in this chain.'
 echo "Job IDs: $WORK/jobs.tsv"
-echo 'Three hours per job is a limit, not a guarantee that each phase will finish.'
+echo 'Embedding: up to 5h + optional 5h. Assembly: 6h. Tune/test: 3h each.'
+echo 'Assembly requires embedding SUCCESS; checkpoint exit 75 or two timeouts never release it.'
