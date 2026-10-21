@@ -129,9 +129,10 @@ class Predecessors(unittest.TestCase):
         with patch.dict(os.environ, {"USER": "me"}), patch.object(seq.subprocess, "run", return_value=result):
             seq.check_previous("123")
 
-    def test_completed_and_timeout_allowed(self):
-        self.check("COMPLETED")
+    def test_timeout_allowed_but_success_must_skip_backup(self):
         self.check("TIMEOUT", "0:15")
+        with self.assertRaises(RuntimeError):
+            self.check("COMPLETED")
 
     def test_failure_cancel_oom_refused(self):
         for state in ("FAILED", "CANCELLED by 123", "OUT_OF_MEMORY", "NODE_FAIL"):
@@ -144,8 +145,28 @@ class Predecessors(unittest.TestCase):
 
     def test_missing_accounting_fails_closed(self):
         with patch.object(seq.subprocess, "run", return_value=NS(stdout="")), patch.object(seq.time, "sleep"):
-            with self.assertRaisesRegex(RuntimeError, "No completed"):
+            with self.assertRaisesRegex(RuntimeError, "No eligible"):
                 seq.check_previous("123")
+
+    def test_checkpoint_exit_needs_matching_intent_marker(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp:
+            root = Path(temp)
+            registration = root / 'registration.json'
+            registration.write_text('{}')
+            path = root / 'index/parallel-v2/sequential-v1/attempts/123.json'
+            path.parent.mkdir(parents=True)
+            result = NS(stdout='123|me|FAILED|75:0|\n')
+            with patch.dict(os.environ, {'USER': 'me'}), patch.object(seq.subprocess, 'run', return_value=result):
+                with self.assertRaises(RuntimeError):
+                    seq.check_previous('123', root, registration)
+                marker = {'job_id': '123', 'attempt': 1, 'state': 'INCOMPLETE_TIME_BUDGET',
+                          'registration_sha256': seq.sha(registration)}
+                path.write_text(json.dumps(marker))
+                seq.check_previous('123', root, registration)
+                marker['registration_sha256'] = 'different submission'
+                path.write_text(json.dumps(marker))
+                with self.assertRaises(RuntimeError):
+                    seq.check_previous('123', root, registration)
 
 
 class Workflow(unittest.TestCase):
@@ -157,11 +178,13 @@ class Workflow(unittest.TestCase):
         self.set_stages("text", "ground")
         self.c = object.__new__(seq.Coordinator)
         self.c.root = self.root
-        self.c.args = NS(mode="index", run_id="webqa-tuned-v1", last_index=0, previous="-",
+        self.c.args = NS(mode="embed", run_id="webqa-tuned-v1", attempt=1, previous="-",
                          registration=str(self.root / "registration.json"))
         self.c.deadline = seq.time.time() + 10000
         self.calls = []
         self.c.step = lambda action, worker=0, candidate=0: self.calls.append((action, worker, candidate)) or True
+        self.statuses = []
+        self.c.status = lambda state, message: self.statuses.append((state, message))
 
     def tearDown(self):
         self.temp.cleanup()
@@ -169,34 +192,79 @@ class Workflow(unittest.TestCase):
     def set_stages(self, *names):
         self.manifest.write_text(json.dumps({"stages": {name: {} for name in names}}))
 
-    def test_index_order(self):
-        self.c.index()
-        self.assertEqual([x[0] for x in self.calls], ["embed-checkpointed", "embed-finalize", "assemble"])
+    def test_embedding_success_exits_without_assembly(self):
+        self.assertEqual(self.c.embed(), 0)
+        self.assertEqual([x[0] for x in self.calls], ["embed-checkpointed"])
+        self.assertEqual(self.statuses[-1][0], 'EMBED_COMPLETE')
 
     def test_finished_index_is_reused(self):
         self.set_stages("text", "ground", "embed", "assemble")
-        self.c.index()
-        self.assertEqual([x[0] for x in self.calls], ["assemble"])
+        self.c.embed()
+        self.assertEqual([x[0] for x in self.calls], ["embed-checkpointed"])
 
-    def test_yield_last_index_blocks_tuning(self):
+    def test_both_incomplete_attempts_exit_nonzero_and_block_assembly(self):
         self.c.step = lambda *args, **kwargs: False
-        self.c.index()  # Intermediate slice is a successful checkpointed yield.
-        self.c.args.last_index = 1
-        with self.assertRaisesRegex(RuntimeError, "Index still incomplete"):
-            self.c.index()
+        self.assertEqual(self.c.embed(), 75)
+        self.c.args.attempt = 2
+        self.assertEqual(self.c.embed(), 75)
+        self.assertIn('BOTH embedding windows exhausted', self.statuses[-1][1])
+        self.assertIn('MUST NOT START', self.statuses[-1][1])
 
-    def test_canonical_writes_wait_for_time(self):
-        self.set_stages("text", "ground", "embed")
-        self.c.deadline = seq.time.time() + 100
-        self.c.index()
+    def test_assembly_allocation_never_encodes(self):
+        self.assertEqual(self.c.assemble(), 0)
+        self.assertEqual([x[0] for x in self.calls], ["embed-finalize", "assemble"])
+        self.assertEqual(self.statuses[-1][0], 'INDEX_COMPLETE')
+
+    def test_finalization_error_prevents_assembly(self):
+        def fail(action, *args):
+            self.calls.append(action)
+            raise RuntimeError('missing worker checkpoint')
+        self.c.step = fail
+        with self.assertRaisesRegex(RuntimeError, 'missing worker'):
+            self.c.assemble()
+        self.assertEqual(self.calls, ['embed-finalize'])
+        self.assertEqual(self.statuses, [])
+
+    def test_status_marker_persists_intent(self):
+        Path(self.c.args.registration).write_text('{}')
+        with patch.dict(os.environ, {'SLURM_JOB_ID': '123'}):
+            seq.Coordinator.status(self.c, 'INCOMPLETE_TIME_BUDGET', 'checkpoint saved')
+        value = json.loads((self.root / 'index/parallel-v2/sequential-v1/attempts/123.json').read_text())
+        self.assertEqual(value['state'], 'INCOMPLETE_TIME_BUDGET')
+        self.assertEqual(value['registration_sha256'], seq.sha(self.c.args.registration))
+
+    def test_timeout_warning_for_second_attempt(self):
+        self.c.args.attempt = 2
+        with patch.object(seq, 'log') as log:
+            self.c.timeout_warning()
+        self.assertIn('BOTH embedding windows', log.call_args.args[0])
+
+    def test_second_attempt_termination_logs_blocked_assembly(self):
+        self.c.args.attempt = 2
+        with patch.object(seq.os, 'write') as write, self.assertRaises(SystemExit) as stopped:
+            self.c.interrupted(15, None)
+        self.assertEqual(stopped.exception.code, 143)
+        self.assertIn(b'Both embedding attempts ended without success', write.call_args.args[1])
+
+    def test_backup_rejects_real_failure_before_preparation(self):
+        self.c.args.attempt = 2
+        self.c.args.previous = '123'
+        Path(self.c.args.registration).write_text('{}')
+        with patch.object(seq, 'signature', return_value={}), patch.object(seq, 'check_previous', side_effect=RuntimeError('failed predecessor')):
+            with self.assertRaises(RuntimeError):
+                self.c.run()
         self.assertEqual(self.calls, [])
 
     def run_mode(self, mode):
         self.c.args.mode = mode
         Path(self.c.args.registration).write_text("{}")
-        with patch.object(seq, "signature", return_value={}), patch.object(seq, "check_previous"), \
+        with patch.object(seq, "signature", return_value={}), patch.object(seq, "check_previous"), patch.object(seq.signal, 'signal'), \
              patch.object(seq, "chain_lock", return_value=nullcontext()):
-            self.c.run()
+            return self.c.run()
+
+    def test_run_propagates_incomplete_exit_code(self):
+        self.c.step = lambda action, *args: action != 'embed-checkpointed'
+        self.assertEqual(self.run_mode('embed'), 75)
 
     def test_tuning_all_candidates_serial_then_select(self):
         self.set_stages("text", "ground", "embed", "assemble")

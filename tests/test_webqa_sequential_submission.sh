@@ -40,19 +40,30 @@ bash -n scripts/webqa_sequential.sbatch
 bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 > "$TMP/output"
 test "$(wc -l < "$TMP/calls")" -eq 5
 ! sed -n '1p' "$TMP/calls" | grep -q -- '--dependency='
-sed -n '2p' "$TMP/calls" | grep -q -- '--dependency=afterany:1001'
-sed -n '3p' "$TMP/calls" | grep -q -- '--dependency=afterany:1002'
+sed -n '2p' "$TMP/calls" | grep -Fq -- '--dependency=afternotok:1001'
+sed -n '3p' "$TMP/calls" | grep -Fq -- '--dependency=afterok:1001?afterok:1002'
 sed -n '4p' "$TMP/calls" | grep -q -- '--dependency=afterok:1003'
 sed -n '5p' "$TMP/calls" | grep -q -- '--dependency=afterok:1004'
-sed -n '2p' "$TMP/calls" | grep -q '1001 0$'
-sed -n '3p' "$TMP/calls" | grep -q '1002 1$'
-test "$(grep -c -- '--cpus-per-task=9 --gpus-per-node=1 --mem=96G --time=03:00:00' "$TMP/calls")" -eq 5
+sed -n '1p' "$TMP/calls" | grep -q -- '--time=05:00:00'
+sed -n '2p' "$TMP/calls" | grep -q -- '--time=05:00:00'
+sed -n '3p' "$TMP/calls" | grep -q -- '--time=06:00:00'
+sed -n '2p' "$TMP/calls" | grep -q '1001 2$'
+sed -n '3p' "$TMP/calls" | grep -q 'webqa_sequential.sbatch assemble '
+test "$(grep -c -- '--cpus-per-task=9 --gpus-per-node=1 --mem=96G' "$TMP/calls")" -eq 5
+test "$(grep -c -- '--time=03:00:00' "$TMP/calls")" -eq 2
+test "$(grep -c -- '--kill-on-invalid-dep=yes' "$TMP/calls")" -eq 5
+test "$(grep -c -- '--signal=B:USR1@120' "$TMP/calls")" -eq 5
 test "$(wc -l < "$MGRV_ARTIFACTS/index/parallel-v2/jobs.tsv")" -eq 5
 echo 1001 > "$TMP/active"
 if bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 > "$TMP/refused" 2>&1; then
   echo 'ERROR: active old chain was ignored'; exit 1
 fi
 : > "$TMP/active"
+: > "$TMP/calls"
+bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 assemble > "$TMP/assemble"
+test "$(wc -l < "$TMP/calls")" -eq 3
+sed -n '1p' "$TMP/calls" | grep -q 'webqa_sequential.sbatch assemble '
+! sed -n '1p' "$TMP/calls" | grep -q -- '--dependency='
 : > "$TMP/calls"
 bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 tune > "$TMP/tune"
 test "$(wc -l < "$TMP/calls")" -eq 2
@@ -68,4 +79,4 @@ if bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 > "$TMP/partial" 2>&1;
   echo 'ERROR: submission failure ignored'; exit 1
 fi
 test "$(wc -l < "$MGRV_ARTIFACTS/index/parallel-v2/jobs.tsv")" -eq 1
-echo "Submission checks passed: five serial jobs, resources, timeout/success dependencies, resume modes, active/partial-chain guards. Fixture: $TMP"
+echo "Submission checks passed: 5h/5h/6h/3h/3h, conditional backup, OR success dependency, resume modes, active/partial-chain guards. Fixture: $TMP"
