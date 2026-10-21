@@ -12,7 +12,8 @@ import subprocess
 import time
 
 CODE = ("submit_webqa_sequential.sh", "webqa_sequential.sbatch",
-        "webqa_sequential.py", "webqa_embed_checkpointed.py")
+        "webqa_sequential.py", "webqa_embed_checkpointed.py", "webqa_fast_stage.py",
+        "webqa_fast_validation.py", "webqa_validation_cache.py", "webqa_fast_qa.py")
 YIELD = 75
 
 
@@ -92,9 +93,9 @@ class Coordinator:
         if action == "embed-checkpointed":
             command = [os.environ["MGRV_VISION_PYTHON"], "scripts/webqa_embed_checkpointed.py",
                        "--config", os.environ["MGRV_RUN_CONFIG"], "--artifacts", str(self.root),
-                       "--deadline", str(self.deadline)]
+                       "--deadline", str(self.deadline), "--run-id", self.args.run_id]
         else:
-            command = [os.environ["MGRV_TEXT_PYTHON"], "scripts/webqa_parallel.py", action,
+            command = [os.environ["MGRV_TEXT_PYTHON"], "scripts/webqa_fast_stage.py", action,
                        "--config", os.environ["MGRV_RUN_CONFIG"], "--artifacts", str(self.root),
                        "--run-id", self.args.run_id, "--split", "dev",
                        "--worker", str(worker), "--candidate", str(candidate)]

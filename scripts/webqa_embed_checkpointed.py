@@ -21,10 +21,12 @@ class SliceFinished(Exception):
 def resume_kind(api, items, kind, config, artifacts, directory, segments,
                 identity, encode, empty, deadline, clock=time.time):
     """Injectable checkpoint loop; no model imports needed to test recovery."""
+    started = time.monotonic()
+    print(time.strftime("%Y-%m-%dT%H:%M:%S%z"), f"Checking {kind} checkpoints: {directory}", flush=True)
     result = api.saved_set(directory, identity)
     if result is not None:
         api.check_set(result, items, kind, config, artifacts)
-        print(f"Reusing complete {directory}", flush=True)
+        print(f"Reusing complete {directory}; checked in {time.monotonic() - started:.1f}s", flush=True)
         return result
     parts = []
     for start in range(0, len(items), SEGMENT_SIZE):
@@ -44,6 +46,9 @@ def resume_kind(api, items, kind, config, artifacts, directory, segments,
             print(f"Saved {kind}: {start + len(batch)}/{len(items)} ({directory})", flush=True)
         else:
             api.check_set(part, batch, kind, config, artifacts)
+            if start % (8 * SEGMENT_SIZE) == 0:
+                print(time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+                      f"Reused {kind} through {start + len(batch)}/{len(items)}", flush=True)
         parts.append(part)
     if clock() >= deadline:
         raise SliceFinished()
@@ -59,18 +64,28 @@ def main():
     parser.add_argument("--config", required=True)
     parser.add_argument("--artifacts", required=True)
     parser.add_argument("--deadline", type=float, required=True)
+    parser.add_argument("--run-id", required=True)
     args = parser.parse_args()
-    import webqa_parallel as api
-    config, artifacts = api.runner.context(args)
+    from webqa_validation_cache import HashCache, log, timed
+    from webqa_fast_validation import ValidatedRun, CachedEmbeddings
+    with timed("embedding imports/config"):
+        import webqa_parallel as api
+        config, artifacts = api.runner.context(args)
     work = artifacts.index_dir / "parallel-v2"
     held = []
     dim = None
 
     def encode(items, kind):
+        # Authoritative hashes come from the original plan/grounding records,
+        # not from whatever bytes happen to be present when encoding starts.
+        with timed(f"validate {len(items)} {kind} inputs"):
+            run.validate_inputs(items, kind)
         if not held:
-            held.append(api.visual.load_encoder(config.visual_encoder, artifacts, "cuda"))
-        return api.embed_files(items, kind, held[0], artifacts.root,
-                               api.visual.encoder_meta(config.visual_encoder))
+            with timed("load EVA once for this job"):
+                held.append(api.visual.load_encoder(config.visual_encoder, artifacts, "cuda"))
+        with timed(f"encode {len(items)} {kind} inputs"):
+            return api.embed_files(items, kind, held[0], artifacts.root,
+                                   api.visual.encoder_meta(config.visual_encoder))
 
     def empty(kind):
         if dim is None:
@@ -81,24 +96,19 @@ def main():
 
     try:
         # Exclusive phase lock: this helper processes both workers sequentially.
-        with api.lock(work / "phase.lock"):
-            images = api.read_jsonl(artifacts.image_manifest, api.ImageRecord)
-            if len(images) < api.WORKERS or len({i.image_id for i in images}) != len(images):
-                raise ValueError("Need at least two unique images")
-            plan = api.snapshot(config, artifacts, images)
-            if api.runner.read_json(work / "plan.json") != plan:
-                raise ValueError("Inputs/settings/code changed since the original plan")
-            ground = api.checked_stage(artifacts, config, "ground")
-            if "embed" in api.p._read_manifest(artifacts)["stages"]:
-                print("Embedding stage already stamped; finalizer will verify it", flush=True)
+        with api.lock(work / "phase.lock"), HashCache(work / "sequential-v1/validation-v2/hashes.sqlite3") as cache:
+            run = ValidatedRun(api, config, artifacts, args.run_id, cache).prepare()
+            cached = CachedEmbeddings(run)
+            if "embed" in run.manifest["stages"]:
+                log("Embedding stage already stamped; finalizer will verify it")
                 return 0
             for worker in range(api.WORKERS):
-                items = api.embedding_items(artifacts, api.partition(images, worker))
+                items = run.items(worker)
                 dim = None
                 for kind in ("image", "crop"):
-                    identity = {"plan": api.runner.stamp(plan), "ground": ground,
+                    identity = {"plan": api.runner.stamp(run.plan), "ground": run.ground,
                                 "worker": worker, "kind": kind}
-                    result = resume_kind(api, items[kind], kind, config, artifacts,
+                    result = resume_kind(cached, items[kind], kind, config, artifacts,
                         work / "embeddings" / str(worker) / kind,
                         work / "sequential-v1" / "segments" / str(worker) / kind,
                         identity, encode, empty, args.deadline)

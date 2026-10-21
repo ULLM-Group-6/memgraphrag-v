@@ -22,7 +22,8 @@ for python in "$MGRV_TEXT_PYTHON" "$MGRV_VISION_PYTHON" "$MGRV_READER_PYTHON"; d
   test -x "$python" || { echo "Missing Python: $python"; exit 2; }
 done
 for file in scripts/webqa_sequential.sbatch scripts/webqa_sequential.py \
-  scripts/webqa_embed_checkpointed.py scripts/webqa_parallel.py scripts/webqa_run.py \
+  scripts/webqa_embed_checkpointed.py scripts/webqa_validation_cache.py scripts/webqa_fast_validation.py \
+  scripts/webqa_fast_stage.py scripts/webqa_fast_qa.py scripts/webqa_parallel.py scripts/webqa_run.py \
   scripts/webqa_tuning.py "$MGRV_ARTIFACTS/index/manifest.json" "$MGRV_RUN_CONFIG"; do
   test -f "$file" || { echo "Missing file: $file"; exit 2; }
 done
