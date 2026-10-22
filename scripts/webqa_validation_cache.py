@@ -34,6 +34,12 @@ def timed(label):
 def token(value):
     return [value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns]
 
+def same_cached_file(saved, current):
+    return (
+        len(saved) == 5
+        and len(current) == 5
+        and saved[1:] == current[1:]
+    )
 
 def absolute(path):
     return os.path.abspath(os.fspath(path))
@@ -86,7 +92,7 @@ class HashCache:
             raise ValueError(f"Not a regular file: {key}")
         state = token(before)
         row = self.db.execute("SELECT token, sha FROM hashes WHERE path=?", (key,)).fetchone()
-        if row and json.loads(row[0]) == state:
+        if row and same_cached_file(json.loads(row[0]), state):
             self.hits += 1
             return row[1]
         if before.st_size >= 256 * 1024 * 1024:
@@ -138,7 +144,7 @@ def receipt_valid(receipt, context):
         return False
     for path, expected in receipt["dependencies"].items():
         try:
-            if token(os.stat(path)) != expected:
+            if not same_cached_file(expected, token(os.stat(path))):
                 return False
         except OSError:
             return False
