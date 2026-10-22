@@ -18,7 +18,7 @@ ATTEMPT=${5:-0}
 # The launcher submits matching limits. Leave ten minutes for checkpoint cleanup.
 case "$MODE" in
   embed) WINDOW=14400 ;;
-  assemble) WINDOW=21600 ;;
+  assemble) WINDOW=28800 ;;
   tune|test) WINDOW=10800 ;;
   *) echo "Unknown mode: $MODE"; exit 2 ;;
 esac

@@ -74,9 +74,9 @@ if [[ "$START" == index ]]; then
   SECOND=$LAST_JOB
   # OR dependency: assembly needs successful completion of EITHER attempt.
   # If FIRST succeeds, SECOND is impossible and Slurm cancels it without running.
-  submit assemble assemble 06:00:00 "afterok:$FIRST?afterok:$SECOND"
+  submit assemble assemble 08:00:00 "afterok:$FIRST?afterok:$SECOND"
 elif [[ "$START" == assemble ]]; then
-  submit assemble assemble 06:00:00 ''
+  submit assemble assemble 08:00:00 ''
 fi
 if [[ "$START" != test ]]; then
   DEP=${LAST_JOB:+afterok:$LAST_JOB}
