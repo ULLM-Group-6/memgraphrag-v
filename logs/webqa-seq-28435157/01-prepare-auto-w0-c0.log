@@ -1,0 +1,21 @@
+2026-10-21T19:15:56+0200 START imports/config for prepare-auto
+2026-10-21T19:15:57+0200 DONE imports/config for prepare-auto: 1.0s
+2026-10-21T19:15:58+0200 START preparation receipt check
+2026-10-21T19:16:02+0200 DONE preparation receipt check: 4.6s
+2026-10-21T19:16:02+0200 START validate preparation metadata/text (image/crop bytes deferred to batches)
+2026-10-21T19:16:04+0200 START verify text outputs using cached hashes
+2026-10-21T19:16:10+0200 DONE verify text outputs using cached hashes: 5.2s
+2026-10-21T19:16:10+0200 START read grounding records (no masks or crop bytes)
+2026-10-21T19:17:02+0200 Grounding metadata: 500/4221 images
+2026-10-21T19:17:50+0200 Grounding metadata: 1000/4221 images
+2026-10-21T19:18:23+0200 Grounding metadata: 1500/4221 images
+2026-10-21T19:19:20+0200 Grounding metadata: 2000/4221 images
+2026-10-21T19:20:15+0200 Grounding metadata: 2500/4221 images
+2026-10-21T19:21:03+0200 Grounding metadata: 3000/4221 images
+2026-10-21T19:21:47+0200 Grounding metadata: 3500/4221 images
+2026-10-21T19:22:25+0200 Grounding metadata: 4000/4221 images
+2026-10-21T19:22:45+0200 DONE read grounding records (no masks or crop bytes): 395.6s
+Tuning: 425/480 eligible dev questions; test: 120
+2026-10-21T19:22:57+0200 DONE validate preparation metadata/text (image/crop bytes deferred to batches): 415.1s
+2026-10-21T19:22:57+0200 Preparation ready; following steps can share this verified receipt
+2026-10-21T19:22:57+0200 Hash cache totals: 26 files read, 0 hashes reused

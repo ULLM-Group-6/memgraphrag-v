@@ -1,0 +1,42 @@
+Sat Oct 17 19:54:22 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-40GB          On  |   00000000:31:00.0 Off |                    0 |
+| N/A   30C    P0             47W /  400W |       0MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [01:02<03:07, 62.50s/it]Loading checkpoint shards:  50%|█████     | 2/4 [01:39<01:34, 47.33s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [02:14<00:41, 41.62s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:23<00:00, 29.09s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:23<00:00, 35.98s/it]
+2026-10-17 19:57:18,041 INFO Loading templates from directory: /gpfs/home2/scur0465/memgraphrag-v/external/MemGraphRAG/code/src/prompts/templates
+2026-10-17 19:57:18,067 INFO Loaded graph from /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/graph.graphml with 1123 nodes, 5319 edges
+2026-10-17 19:57:21,185 INFO We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2026-10-17 19:57:23,552 INFO Loaded 303 records from /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/chunk_embeddings/vdb_chunk.parquet
+2026-10-17 19:57:23,643 INFO Loaded 683 records from /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/entity_embeddings/vdb_entity.parquet
+2026-10-17 19:57:23,705 INFO Loaded 613 records from /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/fact_embeddings/vdb_fact.parquet
+2026-10-17 19:57:23,705 INFO Loading templates from directory: /gpfs/home2/scur0465/memgraphrag-v/external/MemGraphRAG/code/src/prompts/templates
+2026-10-17 19:57:23,784 INFO Encoding 1 queries for query_to_fact.
+2026-10-17 19:57:24,136 INFO Encoding 1 queries for query_to_passage.
+2026-10-17 19:57:24,354 INFO Encoding 1 queries for query_to_fact.
+2026-10-17 19:57:24,366 INFO Encoding 1 queries for query_to_passage.
+2026-10-17 19:57:24,418 INFO Encoding 1 queries for query_to_fact.
+2026-10-17 19:57:24,430 INFO Encoding 1 queries for query_to_passage.
+2026-10-17 19:57:24,574 INFO Encoding 1 queries for query_to_fact.
+2026-10-17 19:57:24,588 INFO Encoding 1 queries for query_to_passage.
+2026-10-17 19:57:24,621 INFO Encoding 1 queries for query_to_fact.
+2026-10-17 19:57:24,633 INFO Encoding 1 queries for query_to_passage.
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:02<00:11,  2.95s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:06<00:10,  3.51s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:10<00:06,  3.37s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:14<00:03,  3.77s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:14<00:00,  2.54s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:14<00:00,  2.96s/it]
+/gpfs/home2/scur0465/memgraphrag-v/.venv/lib/python3.11/site-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `1e-06` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(

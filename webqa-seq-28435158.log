@@ -1,0 +1,6 @@
+2026-10-21T23:07:02+0200 Previous embedding attempt 28435157: FAILED (75:0); continuing saved progress
+2026-10-21T23:07:02+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28435158/01-prepare-auto-w0-c0.log
+2026-10-21T23:08:00+0200 DONE prepare-auto
+2026-10-21T23:08:00+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28435158/02-embed-checkpointed-w0-c0.log
+2026-10-22T02:44:29+0200 DONE embed-checkpointed
+2026-10-22T02:44:29+0200 EMBEDDING COMPLETE: exiting successfully now; release assembly and skip any backup attempt.

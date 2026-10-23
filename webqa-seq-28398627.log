@@ -1,0 +1,5 @@
+2026-10-21T03:14:07+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28398627/01-prepare-auto-w0-c0.log
+2026-10-21T03:31:46+0200 DONE prepare-auto
+2026-10-21T03:31:46+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28398627/02-embed-checkpointed-w0-c0.log
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-10-21T06:13:54.034] error: *** JOB 28398627 ON gcn49 CANCELLED AT 2026-10-21T06:13:54 DUE TO TIME LIMIT ***

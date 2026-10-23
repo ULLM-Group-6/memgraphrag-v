@@ -1,0 +1,3 @@
+python: /gpfs/home2/scur0465/memgraphrag-v/.venv/bin/python  artifacts: /scratch-shared/scur0465/mgrv-webqa-full-v1
+2026-10-18 14:50:40,690 INFO stage ground: running
+[2026-10-18T14:50:48.005] error: *** JOB 28260347 ON gcn15 CANCELLED AT 2026-10-18T14:50:48 DUE TO TIME LIMIT ***
