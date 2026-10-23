@@ -1,0 +1,12 @@
+{
+  "plan": "28cf99f0d2899e8ed9ab324c27992438e618ea3ebe7d0d229a7309c81c2760ac",
+  "files": {
+    "retrieval.jsonl": "4fe45491acead6864cd0a9a7d4b941b0ee8802dced031acf1b3ad672f36c97a7",
+    "diagnostics.jsonl": "a8368a0d8b3a3a6aa9828c24c239a1b929187b87d93317aa9b6bc78efd503750",
+    "retrieval_details.jsonl": "a52b966a9401ce0312ce69be84fe65d22c6de656bd9a8127df8ed49ed3d56cac",
+    "labels.jsonl": "a49c45f53275da6940d1999ad033e78504c830cdf48c5ee8b2c9c09513a4c407",
+    "run.json": "8d2a78147c364e3ffded298daef7bb1474dac11d902935ebfbed1bd430afb983",
+    "retrieval_completed.json": "614e0abc0c83ede97bfd5bba3855217a3d56e1ee9a95715bce1963e39ff18626",
+    "retrieval_provenance.json": "7c74e223ca36b0ce7c6ddfe5d8bde585860b802598c26380b7614d719421f93f"
+  }
+}

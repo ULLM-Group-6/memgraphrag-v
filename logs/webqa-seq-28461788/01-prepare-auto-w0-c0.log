@@ -1,0 +1,8 @@
+2026-10-22T08:52:29+0200 START imports/config for prepare-auto
+2026-10-22T08:52:30+0200 DONE imports/config for prepare-auto: 0.6s
+2026-10-22T08:52:31+0200 START preparation receipt check
+2026-10-22T08:53:37+0200 DONE preparation receipt check: 65.3s
+2026-10-22T08:53:37+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-22T08:53:38+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-22T08:53:38+0200 Preparation ready; following steps can share this verified receipt
+2026-10-22T08:53:38+0200 Hash cache totals: 0 files read, 0 hashes reused

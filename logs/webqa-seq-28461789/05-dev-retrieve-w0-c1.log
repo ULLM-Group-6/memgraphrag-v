@@ -1,0 +1,75 @@
+2026-10-22T10:41:23+0200 START imports/config for dev-retrieve
+2026-10-22T10:41:23+0200 DONE imports/config for dev-retrieve: 0.3s
+2026-10-22T10:41:23+0200 START preparation receipt check
+2026-10-22T10:41:25+0200 DONE preparation receipt check: 2.1s
+2026-10-22T10:41:25+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-22T10:41:26+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-22T10:41:27+0200 START queries: dev worker=0, beta=0.5
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [04:53<14:41, 293.67s/it]Loading checkpoint shards:  50%|█████     | 2/4 [07:25<07:00, 210.23s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [09:27<02:50, 170.14s/it]Loading checkpoint shards: 100%|██████████| 4/4 [10:19<00:00, 123.32s/it]Loading checkpoint shards: 100%|██████████| 4/4 [10:19<00:00, 154.87s/it]
+2026-10-22T10:52:07+0200 DONE queries: dev worker=0, beta=0.5: 640.4s
+2026-10-22T10:52:07+0200 START retrieve: dev worker=0, beta=0.5
+2026-10-22T10:52:07+0200 START retrieval worker
+2026-10-22T10:52:11+0200 START preparation receipt check
+2026-10-22T10:53:32+0200 DONE preparation receipt check: 81.4s
+2026-10-22T10:53:32+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-22T10:53:33+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-22T10:53:33+0200 START validate query index using cached hashes
+2026-10-22T10:53:36+0200 START verify text outputs using cached hashes
+2026-10-22T10:53:36+0200 DONE verify text outputs using cached hashes: 0.0s
+2026-10-22T10:53:36+0200 START verify ground outputs using cached hashes
+2026-10-22T10:54:06+0200 Ground artifact audit: 100/4221 images
+2026-10-22T10:54:14+0200 Ground artifact audit: 200/4221 images
+2026-10-22T10:54:26+0200 Ground artifact audit: 300/4221 images
+2026-10-22T10:54:40+0200 Ground artifact audit: 400/4221 images
+2026-10-22T10:55:13+0200 Ground artifact audit: 500/4221 images
+2026-10-22T10:55:43+0200 Ground artifact audit: 600/4221 images
+2026-10-22T10:55:53+0200 Ground artifact audit: 700/4221 images
+2026-10-22T10:56:23+0200 Ground artifact audit: 800/4221 images
+2026-10-22T10:56:49+0200 Ground artifact audit: 900/4221 images
+2026-10-22T10:56:56+0200 Ground artifact audit: 1000/4221 images
+2026-10-22T10:57:02+0200 Ground artifact audit: 1100/4221 images
+2026-10-22T10:57:15+0200 Ground artifact audit: 1200/4221 images
+2026-10-22T10:57:49+0200 Ground artifact audit: 1300/4221 images
+2026-10-22T10:58:13+0200 Ground artifact audit: 1400/4221 images
+2026-10-22T10:58:17+0200 Ground artifact audit: 1500/4221 images
+2026-10-22T10:58:28+0200 Ground artifact audit: 1600/4221 images
+2026-10-22T10:58:41+0200 Ground artifact audit: 1700/4221 images
+2026-10-22T10:58:52+0200 Ground artifact audit: 1800/4221 images
+2026-10-22T10:59:02+0200 Ground artifact audit: 1900/4221 images
+2026-10-22T10:59:18+0200 Ground artifact audit: 2000/4221 images
+2026-10-22T11:00:02+0200 Ground artifact audit: 2100/4221 images
+2026-10-22T11:00:46+0200 Ground artifact audit: 2200/4221 images
+2026-10-22T11:00:57+0200 Ground artifact audit: 2300/4221 images
+2026-10-22T11:01:06+0200 Ground artifact audit: 2400/4221 images
+2026-10-22T11:01:36+0200 Ground artifact audit: 2500/4221 images
+2026-10-22T11:01:44+0200 Ground artifact audit: 2600/4221 images
+2026-10-22T11:02:12+0200 Ground artifact audit: 2700/4221 images
+2026-10-22T11:02:31+0200 Ground artifact audit: 2800/4221 images
+2026-10-22T11:03:09+0200 Ground artifact audit: 2900/4221 images
+2026-10-22T11:03:20+0200 Ground artifact audit: 3000/4221 images
+2026-10-22T11:03:54+0200 Ground artifact audit: 3100/4221 images
+2026-10-22T11:04:00+0200 Ground artifact audit: 3200/4221 images
+2026-10-22T11:04:17+0200 Ground artifact audit: 3300/4221 images
+2026-10-22T11:04:42+0200 Ground artifact audit: 3400/4221 images
+2026-10-22T11:05:04+0200 Ground artifact audit: 3500/4221 images
+2026-10-22T11:05:11+0200 Ground artifact audit: 3600/4221 images
+2026-10-22T11:05:19+0200 Ground artifact audit: 3700/4221 images
+2026-10-22T11:05:42+0200 Ground artifact audit: 3800/4221 images
+2026-10-22T11:05:59+0200 Ground artifact audit: 3900/4221 images
+2026-10-22T11:06:09+0200 Ground artifact audit: 4000/4221 images
+2026-10-22T11:06:14+0200 Ground artifact audit: 4100/4221 images
+2026-10-22T11:06:33+0200 Ground artifact audit: 4200/4221 images
+2026-10-22T11:06:34+0200 DONE verify ground outputs using cached hashes: 777.6s
+2026-10-22T11:06:34+0200 START verify embed outputs using cached hashes
+2026-10-22T11:06:34+0200 DONE verify embed outputs using cached hashes: 0.1s
+2026-10-22T11:06:34+0200 START verify assemble outputs using cached hashes
+2026-10-22T11:06:34+0200 DONE verify assemble outputs using cached hashes: 0.2s
+2026-10-22T11:06:34+0200 DONE validate query index using cached hashes: 780.7s
+2026-10-22T11:06:34+0200 START load saved image/crop vectors
+2026-10-22T11:06:49+0200 DONE load saved image/crop vectors: 15.0s
+2026-10-22T11:06:49+0200 START load text backend and retrieval graph
+2026-10-22T11:08:45+0200 DONE load text backend and retrieval graph: 115.9s
+2026-10-22T11:08:46+0200 Hash cache totals: 0 files read, 115288 hashes reused
+2026-10-22T11:24:36+0200 DONE retrieval worker: 1948.1s
+2026-10-22T11:24:37+0200 DONE retrieve: dev worker=0, beta=0.5: 1949.5s
+2026-10-22T11:24:56+0200 Hash cache totals: 0 files read, 0 hashes reused

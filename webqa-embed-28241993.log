@@ -1,0 +1,22 @@
+2026-10-17 19:49:47,458 INFO stage embed: running
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:58<02:54, 58.19s/it]Loading checkpoint shards:  50%|█████     | 2/4 [01:34<01:30, 45.16s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [02:11<00:41, 41.35s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:21<00:00, 29.27s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:21<00:00, 35.45s/it]
+2026-10-17 19:52:50,343 INFO stage assemble: running
+Loading memory structure from: /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/memory.json
+Loaded: 485 schemas, 614 facts, 297 passages
+2026-10-17 19:52:56,468 INFO Loading templates from directory: /gpfs/home2/scur0465/memgraphrag-v/external/MemGraphRAG/code/src/prompts/templates
+2026-10-17 19:53:00,421 INFO We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2026-10-17 19:53:02,666 INFO Loaded 303 records from /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/chunk_embeddings/vdb_chunk.parquet
+2026-10-17 19:53:02,666 INFO Loading templates from directory: /gpfs/home2/scur0465/memgraphrag-v/external/MemGraphRAG/code/src/prompts/templates
+2026-10-17 19:53:02,676 INFO Inserting 683 new records, 0 records already exist.
+Batch Encoding:   0%|          | 0/683 [00:00<?, ?it/s]Batch Encoding:   1%|          | 8/683 [00:00<00:25, 26.13it/s]Batch Encoding:  11%|█         | 72/683 [00:00<00:02, 214.76it/s]Batch Encoding:  20%|█▉        | 136/683 [00:00<00:01, 343.90it/s]Batch Encoding:  29%|██▉       | 200/683 [00:00<00:01, 431.55it/s]Batch Encoding:  39%|███▊      | 264/683 [00:00<00:00, 489.08it/s]Batch Encoding:  48%|████▊     | 328/683 [00:00<00:00, 532.36it/s]Batch Encoding:  57%|█████▋    | 392/683 [00:00<00:00, 564.38it/s]Batch Encoding:  67%|██████▋   | 456/683 [00:01<00:00, 584.67it/s]Batch Encoding:  76%|███████▌  | 520/683 [00:01<00:00, 600.52it/s]Batch Encoding:  87%|████████▋ | 592/683 [00:01<00:00, 615.41it/s]Batch Encoding:  96%|█████████▌| 656/683 [00:01<00:00, 619.03it/s]Batch Encoding: 688it [00:01, 491.61it/s]                         
+2026-10-17 19:53:04,089 INFO Saving new records.
+2026-10-17 19:53:04,156 INFO Saved 683 records to /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/entity_embeddings/vdb_entity.parquet
+2026-10-17 19:53:04,157 INFO Inserting 613 new records, 0 records already exist.
+Batch Encoding:   0%|          | 0/613 [00:00<?, ?it/s]Batch Encoding:   9%|▉         | 56/613 [00:00<00:01, 543.16it/s]Batch Encoding:  18%|█▊        | 112/613 [00:00<00:00, 552.48it/s]Batch Encoding:  29%|██▊       | 176/613 [00:00<00:00, 565.65it/s]Batch Encoding:  39%|███▉      | 240/613 [00:00<00:00, 554.85it/s]Batch Encoding:  50%|████▉     | 304/613 [00:00<00:00, 569.85it/s]Batch Encoding:  60%|██████    | 368/613 [00:00<00:00, 564.68it/s]Batch Encoding:  70%|███████   | 432/613 [00:00<00:00, 566.17it/s]Batch Encoding:  81%|████████  | 496/613 [00:00<00:00, 567.92it/s]Batch Encoding:  91%|█████████▏| 560/613 [00:00<00:00, 562.21it/s]Batch Encoding: 616it [00:01, 562.09it/s]                         
+2026-10-17 19:53:05,255 INFO Saving new records.
+2026-10-17 19:53:05,317 INFO Saved 613 records to /gpfs/scratch1/shared/scur0465/mgrv-webqa-smoke-1017/index/text/qwen2.5-7b-instruct__scratch-shared_scur0465_mgrv-model-cache_models_bge-large-en-v1.5/fact_embeddings/vdb_fact.parquet
+KNN for Queries:   0%|          | 0/1 [00:00<?, ?it/s]KNN for Queries: 100%|██████████| 1/1 [00:00<00:00,  5.68it/s]KNN for Queries: 100%|██████████| 1/1 [00:00<00:00,  5.67it/s]
+2026-10-17 19:53:05,561 INFO graph saving deferred until the multimodal graph is complete
+2026-10-17 19:53:05,564 INFO Writing graph with 1123 nodes, 5319 edges
+2026-10-17 19:53:05,623 INFO Saving graph completed!
+2026-10-17 19:53:05,750 INFO visual structure: {'images': 50, 'image_vertices': 50, 'unusable_images': 0, 'image_passage_edges': 100, 'image_entity_edges': 243, 'detections_used': 641}

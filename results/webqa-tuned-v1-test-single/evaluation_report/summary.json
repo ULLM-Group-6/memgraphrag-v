@@ -1,0 +1,79 @@
+{
+  "questions": 120,
+  "gold_document_groups": 17,
+  "group_sizes": [
+    43,
+    16,
+    1,
+    1,
+    2,
+    11,
+    1,
+    9,
+    1,
+    7,
+    1,
+    2,
+    2,
+    18,
+    1,
+    2,
+    2
+  ],
+  "metrics": {
+    "Document-ID Recall@5": {
+      "value": 0.675,
+      "n": 120,
+      "ci95": [
+        0.44442883895131086,
+        0.8135073260073259
+      ]
+    },
+    "Supplied-image Recall@5": {
+      "value": 0.6375,
+      "n": 120,
+      "ci95": [
+        0.44442883895131086,
+        0.7523901098901098
+      ]
+    },
+    "Answer containment accuracy (heuristic)": {
+      "value": 0.008333333333333333,
+      "n": 120,
+      "ci95": [
+        0.0,
+        0.03334269662921343
+      ]
+    }
+  },
+  "answer_success_count": 120,
+  "statuses": {
+    "ok": 120
+  },
+  "routes": {
+    "graph": 120
+  },
+  "review_categories": {
+    "gold_evidence_ids_present_reader_or_metric_review": 67,
+    "gold_documents_found_but_gold_images_missing": 6,
+    "some_gold_documents_missing": 14,
+    "no_gold_document_retrieved": 32,
+    "containment_match": 1
+  },
+  "bootstrap": {
+    "resamples": 2000,
+    "seed": 42,
+    "method": "95% percentile; sample shared-gold-document connected components with replacement; question-weighted mean"
+  },
+  "selected_beta": 0.25,
+  "system": "G-augmented",
+  "input_sha256": {
+    "evaluation_inputs.jsonl": "599dfbc0f818a813dfbf1c7e41a6967c9f41889c5ad747a8751a88ebbc655671",
+    "answers.jsonl": "359fcba2e4326fa8222a326cd19aac1e0c29b1df0f31b4d805e872be7d2b0cc6",
+    "labels.jsonl": "328f2c33af3b39c701a8f18eb46ff052510001330627b977064a1885f1bcc8c4",
+    "retrieval.jsonl": "b878d561766f0b06e1a65e666fe6cacf4e4bbae109a8d06f4c415fe7142beb95",
+    "run.json": "f6592ab8864fbe451b469df2e0595f0c6b0d3daa000c9290347baf50f810cb87",
+    "completed.json": "57ce229a0a7c766975b4e590643ccd68eda0e1a9a2dbf15e8cb4b7c729755ba6"
+  },
+  "evaluator_sha256": "9c8ed1b41fe92254a66fe86f2d551b8996bd50a7fbbfa5c08e526054806d189e"
+}

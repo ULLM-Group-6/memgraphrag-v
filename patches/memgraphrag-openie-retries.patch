@@ -1,0 +1,143 @@
+--- a/code/src/information_extraction/openie_openai.py
++++ b/code/src/information_extraction/openie_openai.py
+@@ -51,6 +51,84 @@
+     return payload
+ 
+ 
++def _extract_triples_from_response(real_response):
++    """Accept JSON objects or lists, requiring three strings per triple."""
++    if not isinstance(real_response, str):
++        raise ValueError("Triple response must be text")
++    start = re.search(r"[\[{]", real_response)
++    if start is None:
++        raise ValueError("Triple response contains no JSON object or list")
++    try:
++        payload, _ = json.JSONDecoder().raw_decode(real_response[start.start():])
++    except json.JSONDecodeError as exc:
++        raise ValueError(f"Invalid triple JSON: {exc.msg}") from exc
++    if isinstance(payload, dict):
++        if "triples" not in payload:
++            raise ValueError("Triple JSON object has no triples field")
++        payload = payload["triples"]
++    if not isinstance(payload, list):
++        raise ValueError("Triples must be a list")
++    for index, triple in enumerate(payload):
++        if not isinstance(triple, list) or len(triple) != 3:
++            raise ValueError(f"Triple {index} must contain exactly three strings")
++        if any(not isinstance(item, str) or not item.strip() for item in triple):
++            raise ValueError(f"Triple {index} contains a non-string or empty value")
++    return payload
++
++
++def _infer_openie_with_validation(llm_model, messages, parser, kind):
++    """Reuse the original cache; retry invalid output with two new prompts."""
++    rules = (
++        'Return {"named_entities": ["entity name"]}. Every item must be a string.'
++        if kind == "named_entities" else
++        'Return {"triples": [["subject", "relation", "object"]]}. '
++        'Every triple must have exactly three nonempty strings. '
++        'Do not use null, booleans, nested objects or lists as triple elements. '
++        'Express supported numerical values as strings. '
++        'Omit relationships whose subject, relation or object is unknown.'
++    )
++    attempts = []
++    last_error = ""
++    for attempt in range(3):
++        request = messages
++        if attempt:
++            correction = (
++                f"Extraction validation retry {attempt}/2. The previous output failed validation: "
++                f"{last_error}. Redo the extraction using ONLY the original paragraph above. "
++                "Do not invent facts, examples or missing information. "
++                "Return JSON only, without comments, explanations or markdown. "
++                f"{rules} Use an empty list if the paragraph supports no entries."
++            )
++            request = messages + [{"role": "user", "content": correction}]
++        raw, metadata = "", {}
++        try:
++            raw, response_metadata, cache_hit = llm_model.infer(messages=request)
++            metadata = dict(response_metadata or {})
++            metadata["cache_hit"] = cache_hit
++        except Exception as exc:
++            # Transport/API failures remain failures; this loop only repairs
++            # invalid extraction output, not server availability problems.
++            metadata["error"] = f"{type(exc).__name__}: {exc}"
++            attempts.append(dict(metadata))
++            metadata["extraction_attempts"] = attempts
++            return raw, metadata, None
++        try:
++            if metadata.get("finish_reason") != "stop":
++                raise ValueError(f"Incomplete extraction: finish_reason={metadata.get('finish_reason')!r}")
++            parsed = parser(raw)
++        except ValueError as exc:
++            last_error = str(exc)
++            metadata["error"] = last_error
++            attempts.append(dict(metadata))
++            logger.warning("OpenIE %s validation attempt %s/3 failed: %s", kind, attempt + 1, last_error)
++        else:
++            attempts.append(dict(metadata))
++            metadata["extraction_attempts"] = attempts
++            return raw, metadata, parsed
++    metadata["extraction_attempts"] = attempts
++    return raw, metadata, None
++
++
+ class OpenIE:
+     def __init__(self, llm_model: CacheOpenAI):
+         # Init prompt template manager
+@@ -63,16 +141,11 @@
+         raw_response = ""
+         metadata = {}
+         try:
+-            # LLM INFERENCE
+-            raw_response, metadata, cache_hit = self.llm_model.infer(
+-                messages=ner_input_message,
+-            )
+-            metadata['cache_hit'] = cache_hit
+-            if metadata['finish_reason'] == 'length':
+-                real_response = fix_broken_generated_json(raw_response)
+-            else:
+-                real_response = raw_response
+-            extracted_entities = _extract_ner_from_response(real_response)
++            raw_response, metadata, extracted_entities = _infer_openie_with_validation(
++                self.llm_model, ner_input_message, _extract_ner_from_response, "named_entities"
++            )
++            if "error" in metadata:
++                raise ValueError(metadata["error"])
+             unique_entities = list(dict.fromkeys(extracted_entities))
+ 
+         except Exception as e:
+@@ -94,11 +167,6 @@
+         )
+ 
+     def triple_extraction(self, chunk_key: str, passage: str, named_entities: List[str]) -> TripleRawOutput:
+-        def _extract_triples_from_response(real_response):
+-            pattern = r'\{[^{}]*"triples"\s*:\s*\[[^\]]*\][^{}]*\}'
+-            match = re.search(pattern, real_response, re.DOTALL)
+-            return eval(match.group())["triples"]
+-
+         # PREPROCESSING
+         messages = self.prompt_template_manager.render(
+             name='triple_extraction',
+@@ -109,16 +177,11 @@
+         raw_response = ""
+         metadata = {}
+         try:
+-            # LLM INFERENCE
+-            raw_response, metadata, cache_hit = self.llm_model.infer(
+-                messages=messages,
+-            )
+-            metadata['cache_hit'] = cache_hit
+-            if metadata['finish_reason'] == 'length':
+-                real_response = fix_broken_generated_json(raw_response)
+-            else:
+-                real_response = raw_response
+-            extracted_triples = _extract_triples_from_response(real_response)
++            raw_response, metadata, extracted_triples = _infer_openie_with_validation(
++                self.llm_model, messages, _extract_triples_from_response, "triples"
++            )
++            if "error" in metadata:
++                raise ValueError(metadata["error"])
+             triplets = filter_invalid_triples(triples=extracted_triples)
+ 
+         except Exception as e:

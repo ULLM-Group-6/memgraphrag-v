@@ -16,6 +16,8 @@ dependencies = [
 
 [project.optional-dependencies]
 # GPU node only. transformers is pinned to the version EVA-CLIP-8B was smoke-tested with.
+# The combined pipeline's text stage runs against MemGraphRAG's own environment instead
+# (torch 2.5.1, transformers 4.45.2); see docs/interfaces.md, "Combined pipeline".
 eva = ["torch>=2.1", "transformers==4.49.0"]
 dev = ["pytest>=7"]
 

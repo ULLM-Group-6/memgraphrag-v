@@ -1,0 +1,7 @@
+2026-10-21T06:14:41+0200 Previous indexing slice 28398627: TIMEOUT; continuing saved progress
+2026-10-21T06:14:41+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28398628/01-prepare-auto-w0-c0.log
+2026-10-21T06:28:30+0200 DONE prepare-auto
+2026-10-21T06:28:31+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28398628/02-embed-checkpointed-w0-c0.log
+srun: error: gcn27: task 0: Exited with exit code 75
+srun: Terminating StepId=28398628.1
+2026-10-21T09:05:04+0200 Index slice finished at a checkpoint; next queued indexing job will continue

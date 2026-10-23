@@ -1,7 +1,8 @@
 # MemGraphRAG-V experiment configuration (schema: src/memgraphrag_v/config.py).
 # null = not decided yet. A test evaluation refuses to start while any null
 # remains (ExperimentConfig.require_frozen()).
-# Do not put machine paths here: set MGRV_ARTIFACTS instead.
+# Do not put machine paths here: set MGRV_ARTIFACTS (and the variables listed
+# in docs/interfaces.md) instead.
 
 dataset:
   name: webqa                # our subset: 480 dev (graph-building) + 120 test questions
@@ -14,15 +15,36 @@ visual_encoder:              # MG2's EVA-CLIP, smoke-tested on an A100
   batch_size: 16
   max_text_tokens: 77
 
-sam3:
-  threshold: null            # to be defined (plan task 4)
+sam3:                        # MG2's SAM3 wrapper, entity-name prompts
+  threshold: 0.5             # detections below this confidence are dropped
+  min_crop_size: 10          # MG2 skips smaller crops
+  prompt_batch_size: 1
+  device: 0
+
+text:                        # MemGraphRAG text index; other settings keep the upstream defaults
+  llm_name: null             # name served by the OpenAI-compatible endpoint; to be decided
+  llm_base_url: ""           # empty: provider default; the API key comes from OPENAI_API_KEY
+  embedding_model: BAAI/bge-large-en-v1.5   # MGRV_TEXT_EMBEDDING_MODEL overrides (e.g. an offline snapshot)
+  embedding_batch_size: 8
+  chunk_size: 256
+  chunk_overlap: 32
+  memory_max_workers: 8
+  ontology_filter_mode: absolute
+  ontology_min_frequency: 1
+  ontology_low_percent: 20.0
 
 retrieval:
   top_k_candidates: 20
   visual_mix: 0.5            # visual seeds = 0.5 image + 0.5 crop-entity
-  beta_grid: [0.25, 0.5, 0.75]
-  beta: null                 # tuned on dev Recall@5, frozen before test
+  beta_grid: [0.25, 0.5, 0.75]   # candidates for tuning; nothing tunes
+  beta: null                 # explicit run setting (--beta overrides); no default is claimed
   n_docs: 5
   text_budget_tokens: 256
+  passage_node_weight: 0.05  # upstream default
+  linking_top_k: 5           # upstream default
+  skip_fact_rerank: true
+  fact_similarity_threshold: 0.4
+  use_raw_threshold_filter: true
+  damping: 0.5               # upstream default; restart probability = 1 - damping
 
 artifacts_root: null         # per machine via MGRV_ARTIFACTS

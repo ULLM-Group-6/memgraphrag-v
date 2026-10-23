@@ -1,61 +1,130 @@
 # MemGraphRAG-V
 
-Extending [MemGraphRAG](https://arxiv.org/abs/2606.00610) to natively index and retrieve **images**, reusing parts of [MG²-RAG](https://arxiv.org/abs/2604.04969).
+MemGraphRAG-V extends [MemGraphRAG](https://github.com/XMUDeepLIT/MemGraphRAG) with native image evidence for graph-based retrieval and question answering. It combines textual memory, SAM3 entity grounding, EVA-CLIP visual embeddings and Personalized PageRank (PPR), followed by a Qwen2.5-VL reader.
 
-2AMM20 Research Topics in Data Mining (TU/e) group project · 9-page ACM paper due **23 Oct 2026**.
+Developed for **2AMM20 Research Topics in Data Mining, TU/e**. The implemented pipeline and completed WebQA experiments are on [`combined-memgraphrag-v`](https://github.com/ULLM-Group-6/memgraphrag-v/tree/combined-memgraphrag-v).
 
-**Status (29 Sep 2026):** research and planning only — no code yet. Both upstream codebases have been audited with stubbed models; nothing has been run on real models or Snellius yet.
+## How it works
 
-## The idea in one paragraph
+1. **Text:** index WebQA snippets, original image captions and generated image descriptions with MemGraphRAG; extract entities, facts and memory schemas.
+2. **Ground:** prompt SAM3 with entity names associated with each image. Save detections, masks and crops; retain detections with confidence at least 0.5.
+3. **Embed:** use EVA-CLIP-8B to embed whole images and grounded crops. Crop matches seed existing entity nodes; crops are not graph nodes.
+4. **Assemble:** extend the textual graph with image nodes, image–passage edges and confidence-weighted image–entity edges.
+5. **Retrieve and answer:** combine normalized text and visual seeds as `s = (1 - beta) * s_text + beta * s_visual`, then run PPR. Image and crop-entity components are separately normalized and equally weighted when both are available. The current selector ranks documents by their highest passage or image PPR score, returning up to five documents. Dense passage retrieval is the fallback when graph retrieval yields no usable evidence.
 
-Both base systems are forks of HippoRAG: they build a graph of entities and passages and rank passages with Personalized PageRank (PPR) from *seed* nodes matched to the question. We keep MemGraphRAG's text pipeline (schema/fact/passage memory with conflict resolution) unchanged, then attach image nodes and SAM3 object crops to its entity nodes. Which entities get grounded in images is decided by MemGraphRAG's **schema types** (e.g. animals, buildings) rather than MG²-RAG's six named-entity labels — this is our main contribution. At query time, CLIP matches between the question and images become extra PPR seeds (`s = normalise(s_text + λ·s_visual)`). The main baseline is captioning every image and indexing captions as text. Details: [docs/method.md](docs/method.md).
+The reader receives original images and original WebQA text, with a 256-token text budget per document. Generated descriptions are used for indexing, not supplied to the multimodal reader.
 
-## Getting started
+## Data and models
 
-1. Read [docs/method.md](docs/method.md) (15 min), then skim the summary of the [audit report](docs/audit/audit-report.md) ([PDF](docs/audit/audit-report.pdf)).
-2. Pick a workstream:
+The WebQA subset contains **4,221 images**, **12,080 base text records** (including original captions), and **4,221 additional generated descriptions**. `dataset/` contains manifests and question files; image files and model weights must be obtained separately.
 
-| # | Workstream | Guide | Needs |
-|---|---|---|---|
-| 1 | Snellius smoke test — a real MemGraphRAG run (gate: **2 Oct**) | [tasks/01-snellius-smoke-test.md](docs/tasks/01-snellius-smoke-test.md) | Snellius account, LLM API key or vLLM |
-| 2 | Verify and explore each paper's methodology on its own | [tasks/02-paper-verification.md](docs/tasks/02-paper-verification.md) | The papers + a clone of each repo |
-| 3 | Probe the project plan and its assumptions | [tasks/03-plan-probing.md](docs/tasks/03-plan-probing.md) | method.md, audit report |
-| 4 | Find missed information and published papers | [tasks/04-literature-search.md](docs/tasks/04-literature-search.md) | Scholar / arXiv |
+There are 480 build/development questions and 120 test questions. Beta selection uses 425 eligible development questions, excluding 55 that share gold evidence with test questions. All 120 test questions require image evidence.
 
-3. Record findings in the task file or a new doc under `docs/`, and open an issue for anything that contradicts the audit or the plan.
+Text processing uses **Qwen2.5-7B-Instruct** through local vLLM and **BAAI/bge-large-en-v1.5** embeddings. Vision uses **SAM3** through [MG2-RAG](https://github.com/Daboolu/MG2-RAG), **EVA-CLIP-8B** with the `openai/clip-vit-large-patch14` processor, and **Qwen2.5-VL-7B-Instruct** for descriptions and reading.
 
-## Repo map
+## Setup
 
-```
-src/memgraphrag_v/            WebQA images + manifests, schemas, EVA-CLIP embeddings, whole-image retrieval,
-                              dummy dataset, JSONL I/O, artifact layout, config
-configs/default.yaml          experiment config; null = still to be decided
-scripts/                      EVA-CLIP download, MG2 parity check, Snellius jobs (system D, dummy run), run report
-tests/                        pytest suite (`pip install -e ".[dev]" && pytest -q`)
-docs/
-├── method.md                 proposed method, evaluation, timeline, caveats
-├── implementation_tasks.md   timeline tasks [01]–[25] (tracked on the project board)
-├── interfaces.md             files retrieval reads and writes: manifests, embeddings, retrieval output, Snellius setup
-├── audit/
-│   ├── audit-report.md       full paper-vs-code audit of both repos (with evidence tags)
-│   ├── audit-report.pdf      same, typeset
-│   └── evidence/             stub-run summaries, HF model/dataset sizes, LLM cost estimate
-└── tasks/                    one guide per workstream (see table above)
+Run from the repository root. Keep separate text (PyTorch 2.5.1 / Transformers 4.45.2), vision (PyTorch 2.7.0 / Transformers 4.49.0), and vLLM environments. Install upstream dependencies as well as this package:
+
+```bash
+# Text environment, after installing MemGraphRAG dependencies:
+python -m pip install -e '.[dev]'
+
+# Vision environment, alongside the required SAM3/model dependencies:
+python -m pip install -e '.[eva,dev]'
 ```
 
-## Upstream
+Use MemGraphRAG commit `49f20cec41290c95209724d33ec527f72449d300` and MG2-RAG commit `91f0eed`. Apply the MemGraphRAG patches in `patches/` in this order: `ner-json`, `openie-retries`, `openie-triple-repair`, `triple-prompt`, `memory-json`, `conflict-context` (all prefixed `memgraphrag-`). They adapt extraction parsing, retries and memory processing for the local model.
 
-| | Paper | Code | Licence |
-|---|---|---|---|
-| MemGraphRAG | [arXiv 2606.00610](https://arxiv.org/abs/2606.00610) | [XMUDeepLIT/MemGraphRAG](https://github.com/XMUDeepLIT/MemGraphRAG) | MIT |
-| MG²-RAG | [arXiv 2604.04969](https://arxiv.org/abs/2604.04969) | [Daboolu/MG2-RAG](https://github.com/Daboolu/MG2-RAG) | MIT (vendored SAM3 has its own licence) |
+Set these variables to your own absolute paths before submitting jobs:
 
-## Ground rules
+| Variables | Point to |
+|---|---|
+| `MGRV_ARTIFACTS` | Persistent output/checkpoint directory |
+| `MGRV_RUN_CONFIG` | `configs/webqa_run.yaml` |
+| `MGRV_TEXT_PYTHON`, `MGRV_VISION_PYTHON` | Text and vision Python executables |
+| `MGRV_GROUND_PYTHON`, `MGRV_READER_PYTHON` | Grounding and reader Python executables; may use the vision environment |
+| `MGRV_MEMGRAPHRAG`, `MGRV_MG2_RAG` | Upstream checkouts |
+| `MGRV_SAM3_CHECKPOINT` | SAM3 checkpoint file |
+| `MGRV_TEXT_EMBEDDING_MODEL`, `MGRV_TEXT_LLM_MODEL` | Local BGE and Qwen2.5-7B model directories |
+| `MGRV_READER_MODEL` | Local Qwen2.5-VL-7B model directory |
+| `MGRV_EVA_MODELS` | Directory containing `EVA-CLIP-8B/` and `clip-vit-large-patch14/` |
+| `MGRV_VLLM` | vLLM executable |
 
-- **No secrets in this repo** (API keys, Snellius reservation names, credentials). It is public.
-- **Don't commit** papers' PDFs, model checkpoints, datasets or images — link to them.
-- Tag claims like the audit does: **[V-run]** verified by running, **[V-read]** verified by reading code/paper, **[I]** inferred.
-- Ask the group before large downloads (> a few GB) or paid API runs; the cost/size table is in [audit §3.3](docs/audit/audit-report.md#33-download-and-cost-plan-waiting-for-your-go-ahead).
+Use `OPENAI_API_KEY=dummy` for the local text server. Set all paths explicitly; older scripts contain shared-user defaults.
 
-## Dataset
-The dataset folder contains the extracted text manifest, image manifest, and caption manifest, which provides visual descriptions of the images. The TSV file containing all the images has been uploaded to https://drive.google.com/file/d/1Nq5QOP6h8vP2Bdb4bC8sktdcHM1KYqmY. The extracted dataset is a subset of the original dataset https://github.com/WebQnA/WebQA 
+## Running the pipeline
+
+### Prepare and index
+
+Unpack WebQA images using `dataset/unpack_tsv.py`, adjusting its input/output paths. Then prepare the artifacts:
+
+```bash
+"$MGRV_TEXT_PYTHON" scripts/webqa_run.py prepare \
+  --dataset dataset --images /absolute/path/to/images \
+  --artifacts "$MGRV_ARTIFACTS"
+```
+
+Inside an allocated GPU job, start the local text vLLM server and run the text stage, then stop that server before running grounding:
+
+```bash
+"$MGRV_TEXT_PYTHON" scripts/webqa_run.py index \
+  --config "$MGRV_RUN_CONFIG" --artifacts "$MGRV_ARTIFACTS" \
+  --stages text --llm-base-url http://127.0.0.1:8000/v1
+
+"$MGRV_GROUND_PYTHON" scripts/webqa_run.py index \
+  --config "$MGRV_RUN_CONFIG" --artifacts "$MGRV_ARTIFACTS" --stages ground
+```
+
+`scripts/webqa_combined.sbatch` contains the vLLM startup and staged execution commands. GPU work belongs in a compute allocation, not on a login node.
+
+### Continue embedding, assemble and tune
+
+After grounding is complete, the checkpointed continuation launcher submits embedding, assembly, development tuning and testing:
+
+```bash
+bash scripts/submit_webqa_sequential.sh webqa-tuned-v1 index
+```
+
+Limits are **4 hours embedding + optional 4-hour backup**, **8 hours assembly**, and **3 hours each for tuning/testing** (older comments say 5/6 hours). Only one GPU job runs at a time. Assembly requires completed embeddings. Preserve artifact paths and run IDs to resume checkpoints; assembly is not checkpointed midway.
+
+Tuning compares beta values `0.25`, `0.50`, `0.75` by eligible-development Recall@5, breaking ties toward smaller beta. It saves `tuning_summary.json` and a frozen test configuration, overriding the provisional base-YAML beta.
+
+### Final single-worker test
+
+The released run used this launcher after tuning, with block-wise vision attention to reduce memory use. It handles all 120 questions. Use it instead of the chain's standard test job; do not schedule both against the same run.
+
+```bash
+sbatch scripts/webqa_test_single_lowmem.sbatch \
+  webqa-tuned-v1 webqa-tuned-v1-test-single
+```
+
+To queue before tuning finishes, add `--dependency=afterok:TUNING_JOB_ID --kill-on-invalid-dep=yes` to `sbatch`.
+
+## Results and offline evaluation
+
+The final test run selected **beta = 0.25** and achieved **67.50% Document-ID Recall@5** and **63.75% supplied-image Recall@5**. Its paired recall difference against the caption-augmented dense baseline has a confidence interval containing zero. The build run also scored 0% on text questions, so the image-only test result should not be generalized to mixed workloads. Lexical answer matching is a heuristic, not semantic answer accuracy.
+
+Saved outputs include document rankings (`retrieval.jsonl`), references (`labels.jsonl`), answers and reader evidence (`answers.jsonl`), evaluation inputs, settings and completion/provenance records. Evaluate the committed test results locally without a GPU:
+
+```bash
+python evaluation/evaluate_webqa.py results/webqa-tuned-v1-test-single \
+  --output output/webqa-evaluation
+```
+
+This writes recall scores, grouped-bootstrap 95% intervals, per-question results and examples for manual review. See [results/README.md](results/README.md) for baseline comparisons and additional metrics. Large test diagnostics are available in the [WebQA results release](https://github.com/ULLM-Group-6/memgraphrag-v/releases/tag/webqa-test-results-v1); the evaluator does not require that archive.
+
+## Repository map and checks
+
+| Directory | Contents |
+|---|---|
+| `src/memgraphrag_v/` | Schemas, indexing, grounding, embeddings and retrieval |
+| `scripts/` | Runners, checkpoint helpers, Slurm launchers and optional diagnostics |
+| `configs/`, `dataset/`, `patches/` | Configuration, dataset manifests and upstream adaptations |
+| `evaluation/`, `results/`, `evaluation_results/` | Evaluation tools, multimodal outputs and baseline results |
+| `tests/` | Unit, regression and submission checks |
+| `docs/` | Methodology and development notes; some earlier planning notes are historical |
+
+Run Python checks in the configured environment with `python -m pytest -q`. Shell submission checks in `tests/` use mocked scheduling; they do not run the GPU pipeline. Optional `scripts/check_*.py`, `smoke_eva_clip.py` and `show_retrieval.py` support diagnostics rather than normal execution.
+
+Model weights and images are external dependencies. Keep credentials and machine-specific paths outside Git, and follow the respective upstream code, model and dataset licences.

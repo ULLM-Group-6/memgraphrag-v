@@ -1,0 +1,6 @@
+2026-10-21T09:06:04+0200 Previous indexing slice 28398628: COMPLETED; continuing saved progress
+2026-10-21T09:06:04+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28398629/01-prepare-auto-w0-c0.log
+2026-10-21T09:16:42+0200 DONE prepare-auto
+2026-10-21T09:16:42+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28398629/02-embed-checkpointed-w0-c0.log
+[2026-10-21T12:06:15.015] error: *** JOB 28398629 ON gcn27 CANCELLED AT 2026-10-21T12:06:15 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

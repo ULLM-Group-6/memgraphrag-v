@@ -1,0 +1,16 @@
+diff --git a/code/src/MemGraphRAG.py b/code/src/MemGraphRAG.py
+index bf09ef6..a32a5d8 100644
+--- a/code/src/MemGraphRAG.py
++++ b/code/src/MemGraphRAG.py
+@@ -778,6 +778,11 @@ class MemGraphRAG:
+                         # is returned unresolved below.
+                         logger.warning("Conflict resolution: unparseable answer for facts %s: %s", component, exc)
+                         continue
++                    if "maximum context length" in message:
++                        # The prompt exceeds the model's window: retry without
++                        # passage evidence, else leave the component unresolved.
++                        logger.warning("Conflict resolution: prompt too long for facts %s (attempt %s)", component, attempt)
++                        continue
+                     if "content_filter" not in message and "content management policy" not in message:
+                         raise
+             return {"component_fact_ids": component, "resolved_triples": [],

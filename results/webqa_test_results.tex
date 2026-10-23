@@ -1,0 +1,67 @@
+% WebQA test-set results for MemGraphRAG-V (run: webqa-tuned-v1-test-single, beta = 0.25).
+% Sources: evaluation/evaluate_webqa.py -> evaluation_report/summary.json, per_question.csv;
+% baselines: evaluation_results/webqa_run_{T,C}/recall_test.json (origin/main).
+% Requires in the preamble: \usepackage{booktabs}
+% Both tables fit one column of the ACM sigconf layout.
+% Use with \input{webqa_test_results} or paste the parts you need.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{lrc}
+    \toprule
+    Metric & \% & 95\% CI \\
+    \midrule
+    Document-ID Recall@5             & 67.50 & [44.44, 81.35] \\
+    Supplied-image Recall@5          & 63.75 & [44.44, 75.24] \\
+    \midrule
+    Short-answer match$^{a}$         & 28.33 & [19.56, 33.70] \\
+    Reference containment$^{b}$      &  0.83 & [0.00, 3.33] \\
+    Abstained (``Insufficient evidence'') & 50.00 & [42.34, 64.84] \\
+    \bottomrule
+  \end{tabular}
+  \caption{MemGraphRAG-V on the WebQA test split ($N=120$, $\beta=0.25$ chosen on the
+  development split). Intervals: grouped bootstrap over 17 shared-gold-document groups
+  (2{,}000 resamples, seed 42).
+  $^{a}$Normalized prediction appears in the reference sentence; abstentions count as wrong.
+  $^{b}$Normalized reference sentence appears in the prediction. Both are lexical heuristics,
+  not judged accuracy.}
+  \label{tab:webqa-test}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lrrcc}
+    \toprule
+    Baseline & Base & $\Delta$ & 95\% CI of $\Delta$ & $+/{=}/-$ \\
+    \midrule
+    Text-only dense (T)  & 41.25 & $+26.25$ & [$-3.41$, $+45.00$] & 48/59/13 \\
+    Caption dense (C)    & 59.17 &  $+8.33$ & [$-9.20$, $+19.05$] & 24/81/15 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Document-ID Recall@5 (\%) of MemGraphRAG-V (67.50) against dense-retrieval baselines
+  on the same 120 test questions. $\Delta$: paired per-question difference, grouped bootstrap over
+  the same 17 groups. $+/{=}/-$: questions where MemGraphRAG-V finds more, equally many, or fewer
+  gold documents.}
+  \label{tab:webqa-paired}
+\end{table}
+
+% Suggested text for the results section:
+On the 120 WebQA test questions, MemGraphRAG-V reaches a mean Document-ID Recall@5 of 67.50\%
+(95\% grouped-bootstrap interval [44.44\%, 81.35\%]; 17 shared-gold-document groups) and a
+supplied-image Recall@5 of 63.75\% (Table~\ref{tab:webqa-test}). Compared on the same questions,
+it improves recall by $+26.25$ points over text-only dense retrieval and by
+$+8.33$ points over caption-augmented dense retrieval (Table~\ref{tab:webqa-paired}). Both paired
+intervals include zero, so with only 17 independent document groups these improvements are
+indicative rather than statistically established.
+
+The reader answered ``Insufficient evidence'' for 60 of the 120 questions, including 28 for which
+all gold documents had been retrieved, and otherwise produced short answers (median one word).
+WebQA references are full sentences, so checking whether the reference appears in the prediction
+matches only one answer (0.83\%). Checking the reverse direction, whether the short prediction
+appears in the reference, matches 34 answers (28.33\%). Both are lexical heuristics: the second
+misses near-synonyms (``fish'' for ``catfish'') and neither is a judged accuracy. Reader
+abstention, not retrieval alone, is therefore the main limit on answer quality.

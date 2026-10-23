@@ -1,0 +1,750 @@
+{
+  "contract_sha256": "ec7d4f668de45f28d1c01e7dd17721476698290cdf74632698e86dc0bc25561b",
+  "vectors_sha256": "e32c82106f95d35da0568b853a616a465b870be231878b37832c0e47f1987e1c",
+  "encoder": {
+    "encoder": "BAAI/EVA-CLIP-8B",
+    "revision": "0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9",
+    "processor": "openai/clip-vit-large-patch14",
+    "processor_revision": "32bd64288804d66eefd0ccbe215aa642df71cc41"
+  },
+  "rows": [
+    {
+      "qid": "d5bc0d5a0dba11ecb1e81171463288e9",
+      "text": "Does Beale St have fewer than four light-up neon signs?",
+      "truncated": false,
+      "eva_seconds": 0.5324895350004226
+    },
+    {
+      "qid": "d5cd2cde0dba11ecb1e81171463288e9",
+      "text": "Are there more than three businesses on Beale Street in Memphis that have neon signs?",
+      "truncated": false,
+      "eva_seconds": 0.02891664600065269
+    },
+    {
+      "qid": "d5c3c2de0dba11ecb1e81171463288e9",
+      "text": "Which business on Beale Street in Memphis have guitar shaped signs?",
+      "truncated": false,
+      "eva_seconds": 0.02449354999953357
+    },
+    {
+      "qid": "d5c5b8d20dba11ecb1e81171463288e9",
+      "text": "What type of lights are used on business signs along Beale St. in Memphis, TN?",
+      "truncated": false,
+      "eva_seconds": 0.02314037300129712
+    },
+    {
+      "qid": "d5c11c960dba11ecb1e81171463288e9",
+      "text": "What guitar brand is on the Hard Rock Cafe sign on Beale Street in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.022598933001063415
+    },
+    {
+      "qid": "d5c401ae0dba11ecb1e81171463288e9",
+      "text": "Is the Hard Rock Cafe guitar sign on Beale Street vertical or horizontal?",
+      "truncated": false,
+      "eva_seconds": 0.036852514000202063
+    },
+    {
+      "qid": "d5c008c40dba11ecb1e81171463288e9",
+      "text": "What musical instrument can be found on the sign of the Hard Rock Cafe in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.02287107600022864
+    },
+    {
+      "qid": "d5caacac0dba11ecb1e81171463288e9",
+      "text": "What instrument appears on the sign for the Hard Rock Cafe in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.023925978999614017
+    },
+    {
+      "qid": "d5ce828c0dba11ecb1e81171463288e9",
+      "text": "Do both the Beale Street Gifts and Memphis Music signs light up at night?",
+      "truncated": false,
+      "eva_seconds": 0.022688166000079946
+    },
+    {
+      "qid": "d5c5fb620dba11ecb1e81171463288e9",
+      "text": "What shape is on the neon Silky O'Sullivan's sign in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.022348196000166354
+    },
+    {
+      "qid": "d5cbffbc0dba11ecb1e81171463288e9",
+      "text": "What business on Beale Street in Memphis has a striped awning over the entrance?",
+      "truncated": false,
+      "eva_seconds": 0.02261967999947956
+    },
+    {
+      "qid": "d5cb892e0dba11ecb1e81171463288e9",
+      "text": "On the mural of a person's hand on on Beale Street in Memphis, what item is the person holding?",
+      "truncated": false,
+      "eva_seconds": 0.024274823001178447
+    },
+    {
+      "qid": "d5c291d40dba11ecb1e81171463288e9",
+      "text": "What cafe next to a tap room on Beale Street has a Blues Patio?",
+      "truncated": false,
+      "eva_seconds": 0.022510189999593422
+    },
+    {
+      "qid": "d5cd06320dba11ecb1e81171463288e9",
+      "text": "What word is vertically oriented on the light blue sign on the exterior wall of the King's Palace Cafe on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.028909553999255877
+    },
+    {
+      "qid": "d5ceaf640dba11ecb1e81171463288e9",
+      "text": "How many awnings are in front of King's Palace Cafe?",
+      "truncated": false,
+      "eva_seconds": 0.022286850999080343
+    },
+    {
+      "qid": "d5c4c8b40dba11ecb1e81171463288e9",
+      "text": "What are the two main colors of the awning in front of King's Palace Cafe?",
+      "truncated": false,
+      "eva_seconds": 0.02246818200001144
+    },
+    {
+      "qid": "d5bf8a8e0dba11ecb1e81171463288e9",
+      "text": "What is the Tap Room business sign shaped like?",
+      "truncated": false,
+      "eva_seconds": 0.022213821999685024
+    },
+    {
+      "qid": "d5cd290a0dba11ecb1e81171463288e9",
+      "text": "Is there a Rum Boogle Cafe and a Black Diamond on Beale Street in Memphis, TN?",
+      "truncated": false,
+      "eva_seconds": 0.022549310000613332
+    },
+    {
+      "qid": "d5bf93c60dba11ecb1e81171463288e9",
+      "text": "What octagonal sign appears in front of the Gibson Showcase on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.022416637000787887
+    },
+    {
+      "qid": "d5cb3b860dba11ecb1e81171463288e9",
+      "text": "Is there a dome on top of the Gibson showcase building on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.02234436800063122
+    },
+    {
+      "qid": "d5c91c480dba11ecb1e81171463288e9",
+      "text": "How many cables hold up to shelter on the front facade of the Gibson showcase building on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.022561783000128344
+    },
+    {
+      "qid": "d5ce86b00dba11ecb1e81171463288e9",
+      "text": "Do tall street lights appear on different areas of Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.022161734999826876
+    },
+    {
+      "qid": "d5c153000dba11ecb1e81171463288e9",
+      "text": "Does the Hard Rock Cafe sign depict more guitars than the Rum Boogie Cafe sign?",
+      "truncated": false,
+      "eva_seconds": 0.022455807998994715
+    },
+    {
+      "qid": "d5caff900dba11ecb1e81171463288e9",
+      "text": "The Rum Boogie cafe on Beale Street in Memphis, TN has how many guitars on its sign?",
+      "truncated": false,
+      "eva_seconds": 0.022351286999764852
+    },
+    {
+      "qid": "d5c2700a0dba11ecb1e81171463288e9",
+      "text": "How many guitars are on the Rum Boogie Cafe sign on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.02379924100023345
+    },
+    {
+      "qid": "d5cace6c0dba11ecb1e81171463288e9",
+      "text": "What instruments are depicted in the top half of the square neon sign for the Rum Boogie Cafe on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.023799948998203035
+    },
+    {
+      "qid": "d5c8cb120dba11ecb1e81171463288e9",
+      "text": "Are parts of Beale Street in Memphis closed to vehicular traffic during both the day and the night?",
+      "truncated": false,
+      "eva_seconds": 0.022551286998350406
+    },
+    {
+      "qid": "d5c5743a0dba11ecb1e81171463288e9",
+      "text": "Which business on Beale Street in Memphis have animals on their neon signs?",
+      "truncated": false,
+      "eva_seconds": 0.023775650000970927
+    },
+    {
+      "qid": "d5bbdf920dba11ecb1e81171463288e9",
+      "text": "What animal is depicted on the sign next to Miss Polly's on Beale Street?",
+      "truncated": false,
+      "eva_seconds": 0.022406476999094593
+    },
+    {
+      "qid": "d5c02c1e0dba11ecb1e81171463288e9",
+      "text": "Which is closer to the \"Miss Pollys Soul City Cafe\" sign on Beale Street in Tennessee: the white sign with \"Beale Street\" on it or the sign with \"General Store\" on it?",
+      "truncated": false,
+      "eva_seconds": 0.023948239999299403
+    },
+    {
+      "qid": "d5c998b20dba11ecb1e81171463288e9",
+      "text": "What is the shape of the neon signboard for Johnny Creole Kitchen on Beale Street, Memphis, Shelby County, TN?",
+      "truncated": false,
+      "eva_seconds": 0.02281382900036988
+    },
+    {
+      "qid": "d5c165200dba11ecb1e81171463288e9",
+      "text": "The sign on Johnny's Creole Kitchen in Memphis is designed to look like a what?",
+      "truncated": false,
+      "eva_seconds": 0.022451815999374958
+    },
+    {
+      "qid": "d5ceeb8c0dba11ecb1e81171463288e9",
+      "text": "The sign for Johnny's Creole Kitchen features a fish wearing what on its head?",
+      "truncated": false,
+      "eva_seconds": 0.022553568000148516
+    },
+    {
+      "qid": "d5ce196e0dba11ecb1e81171463288e9",
+      "text": "Which businesses on Beale Street in Memphis have a music genre in their name?",
+      "truncated": false,
+      "eva_seconds": 0.022291785999186686
+    },
+    {
+      "qid": "d5cd9d400dba11ecb1e81171463288e9",
+      "text": "Are all sections of Beale Street in Memphis paved with bricks?",
+      "truncated": false,
+      "eva_seconds": 0.02219457700084604
+    },
+    {
+      "qid": "d5cc467a0dba11ecb1e81171463288e9",
+      "text": "Does the sign for both B.B. King's Blues Club and King's Palace Cafe in Memphis Light up at night?",
+      "truncated": false,
+      "eva_seconds": 0.022415105000618496
+    },
+    {
+      "qid": "d5cf03740dba11ecb1e81171463288e9",
+      "text": "On Beale Street in downtown Memphis, what is the speed limit sign attached to?",
+      "truncated": false,
+      "eva_seconds": 0.022437935998823377
+    },
+    {
+      "qid": "d5c447ea0dba11ecb1e81171463288e9",
+      "text": "What type of sign does Memphis Music use to advertise its location on Beale Street in downtown Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.022467411999969045
+    },
+    {
+      "qid": "d5c0ef820dba11ecb1e81171463288e9",
+      "text": "How many road signs are on the MATA Trolley bridge at Beale Street in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.022428482001487282
+    },
+    {
+      "qid": "d5c996a00dba11ecb1e81171463288e9",
+      "text": "Is The Peabody Hotel in Memphis taller than the surrounding buildings?",
+      "truncated": false,
+      "eva_seconds": 0.022367077999660978
+    },
+    {
+      "qid": "d5c5296c0dba11ecb1e81171463288e9",
+      "text": "What are several of the buildings' exteriors made of on Beale Street in Memphis, TN?",
+      "truncated": false,
+      "eva_seconds": 0.022449891999713145
+    },
+    {
+      "qid": "d5c897460dba11ecb1e81171463288e9",
+      "text": "Which sign is wider: The Hard Rock Cafe sign on Beale Street or the Gibson Beale Street Showcase sign?",
+      "truncated": false,
+      "eva_seconds": 0.0225839390004694
+    },
+    {
+      "qid": "d5c9f6cc0dba11ecb1e81171463288e9",
+      "text": "Is there only one sign on Beale Street in Memphis that has red, white and blue neon lights?",
+      "truncated": false,
+      "eva_seconds": 0.02243699199971161
+    },
+    {
+      "qid": "d5cc67c20dba11ecb1e81171463288e9",
+      "text": "What businesses display neon signs on Beale Street in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.022343324999383185
+    },
+    {
+      "qid": "d5c5b2060dba11ecb1e81171463288e9",
+      "text": "Between the \"Home of the Blues Beale St. Gifts\" sign and the \"Hard Rock Cafe\" sign on Beale Street, which sign is taller?",
+      "truncated": false,
+      "eva_seconds": 0.02400082699932682
+    },
+    {
+      "qid": "d5c170920dba11ecb1e81171463288e9",
+      "text": "Is the Beale St. Gifts sign lit up both day and night?",
+      "truncated": false,
+      "eva_seconds": 0.02371908799977973
+    },
+    {
+      "qid": "d5c1702e0dba11ecb1e81171463288e9",
+      "text": "Is the sign for Beale St. Gifts illuminated at night but not during the day?",
+      "truncated": false,
+      "eva_seconds": 0.022402331000193954
+    },
+    {
+      "qid": "d5cc29c40dba11ecb1e81171463288e9",
+      "text": "What symbols appear above the words \"BEALE ST.\" on the sign from Beale St. Gifts in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.0224738509987219
+    },
+    {
+      "qid": "d5c5baa80dba11ecb1e81171463288e9",
+      "text": "Is the text on the \"Home of the Blues Beale St. Gifts\" sign and the \"Hard Rock Cafe\" sign different colors?",
+      "truncated": false,
+      "eva_seconds": 0.022652420000667917
+    },
+    {
+      "qid": "d5c289f00dba11ecb1e81171463288e9",
+      "text": "Does Beale St. in Memphis, TN have posted speed limit signs?",
+      "truncated": false,
+      "eva_seconds": 0.023750265001581283
+    },
+    {
+      "qid": "d5cca9bc0dba11ecb1e81171463288e9",
+      "text": "Is the neon signboard for Gifts on Beale St. Memphis USA lit during the day?",
+      "truncated": false,
+      "eva_seconds": 0.022349845999997342
+    },
+    {
+      "qid": "d5c08d440dba11ecb1e81171463288e9",
+      "text": "Which building maintains a more consistent width from bottom to top, Medical Arts Building 1011, Ouellette Avenue or the Gibson Showcase building?",
+      "truncated": false,
+      "eva_seconds": 0.02410942300048191
+    },
+    {
+      "qid": "d5c476e80dba11ecb1e81171463288e9",
+      "text": "Where does the name of the building appear on the Medical Arts Building 1011, Ouellette Avenue?",
+      "truncated": false,
+      "eva_seconds": 0.02262206100022013
+    },
+    {
+      "qid": "d5bf1dd80dba11ecb1e81171463288e9",
+      "text": "Which section of the Medical Arts Building 1011, Ouellette Avenue has the most windows?",
+      "truncated": false,
+      "eva_seconds": 0.02253866899991408
+    },
+    {
+      "qid": "d5bccce00dba11ecb1e81171463288e9",
+      "text": "What is the shape of the neon signboards for HRC in der Beale St. (Memphis, TN) and B.B. King's Blues club on Beale Street, Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.023259596000571037
+    },
+    {
+      "qid": "d5c6731c0dba11ecb1e81171463288e9",
+      "text": "What are the signs for Sign for B.B. King's Blues club and the Hard Rock Cafe both designed to look like?",
+      "truncated": false,
+      "eva_seconds": 0.022498717999042128
+    },
+    {
+      "qid": "d5cb7e5c0dba11ecb1e81171463288e9",
+      "text": "Can the signs for the Gibson Beale Street Showcase and B.B. King's Blues Club light up at night?",
+      "truncated": false,
+      "eva_seconds": 0.022386582000763156
+    },
+    {
+      "qid": "d5bf63420dba11ecb1e81171463288e9",
+      "text": "Do Beale Street and Rodeo Drive both have buildings of at least two stories high?",
+      "truncated": false,
+      "eva_seconds": 0.02241887600030168
+    },
+    {
+      "qid": "d5c531a00dba11ecb1e81171463288e9",
+      "text": "Is Via Rodeo closed to vehicular traffic?",
+      "truncated": false,
+      "eva_seconds": 0.022235168999031885
+    },
+    {
+      "qid": "d5bee89a0dba11ecb1e81171463288e9",
+      "text": "How many light fixtures are installed at the base of the Dome on top of the Stefano Ricci building on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022555781999471947
+    },
+    {
+      "qid": "d5c8d2880dba11ecb1e81171463288e9",
+      "text": "How many palm trees are in front of the Chanel store on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022377269000571687
+    },
+    {
+      "qid": "d5c9afc80dba11ecb1e81171463288e9",
+      "text": "Does the Stefano Ricci building on Rodeo Drive have lights installed at the base of the Dome on top of the building?",
+      "truncated": false,
+      "eva_seconds": 0.022380402000635513
+    },
+    {
+      "qid": "d5ccc3840dba11ecb1e81171463288e9",
+      "text": "At what point on the human body does the bottom of the sculpture on Rodeo Drive end?",
+      "truncated": false,
+      "eva_seconds": 0.022491751000416116
+    },
+    {
+      "qid": "d5cf388a0dba11ecb1e81171463288e9",
+      "text": "Is the front of the pedestal under the statue on Rodeo Drive straight or sloped?",
+      "truncated": false,
+      "eva_seconds": 0.022457613000369747
+    },
+    {
+      "qid": "d5cebbc60dba11ecb1e81171463288e9",
+      "text": "Are all the sides of the base of the naked body sculpture without arms on Rodeo Drive absolutely vertical?",
+      "truncated": false,
+      "eva_seconds": 0.022503987998788944
+    },
+    {
+      "qid": "d5cd24320dba11ecb1e81171463288e9",
+      "text": "What color is the statue on rodeo drive?",
+      "truncated": false,
+      "eva_seconds": 0.022108719000243582
+    },
+    {
+      "qid": "d5c620240dba11ecb1e81171463288e9",
+      "text": "At what point on the human body does the top of the sculpture on Rodeo Drive begin?",
+      "truncated": false,
+      "eva_seconds": 0.02235965900035808
+    },
+    {
+      "qid": "d5c0f5680dba11ecb1e81171463288e9",
+      "text": "Does Rodeo Drive have lamp posts and hanging flower baskets along both sides of the street?",
+      "truncated": false,
+      "eva_seconds": 0.02243813300083275
+    },
+    {
+      "qid": "d5c9e97a0dba11ecb1e81171463288e9",
+      "text": "Are there any parts of Rodeo Drive that are pedestrian-only?",
+      "truncated": false,
+      "eva_seconds": 0.022148678999656113
+    },
+    {
+      "qid": "d5c8e4b20dba11ecb1e81171463288e9",
+      "text": "What color is the sign for Via Rodeo and N. Rodeo Dr.?",
+      "truncated": false,
+      "eva_seconds": 0.023693134000495775
+    },
+    {
+      "qid": "d5bf55780dba11ecb1e81171463288e9",
+      "text": "What shape are both the corners of the building that is behind the statue on Rodeo Drive and the Van Cleef & Arpels store on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022765714000342996
+    },
+    {
+      "qid": "d5c873e20dba11ecb1e81171463288e9",
+      "text": "What kind of trees does the landscaping on Rodeo Drive utilize?",
+      "truncated": false,
+      "eva_seconds": 0.022239100000660983
+    },
+    {
+      "qid": "d5caa0d60dba11ecb1e81171463288e9",
+      "text": "Do palm trees grow in the center divide of Rodeo Drive in Beverly Hills?",
+      "truncated": false,
+      "eva_seconds": 0.022361044999342994
+    },
+    {
+      "qid": "d5cd24000dba11ecb1e81171463288e9",
+      "text": "Are both the Chanel and the Van Cleef & Arpels stores on Rodeo drive white?",
+      "truncated": false,
+      "eva_seconds": 0.022369596999851638
+    },
+    {
+      "qid": "d5c8c7ca0dba11ecb1e81171463288e9",
+      "text": "How many windows openings are above the front door of Van Cleef & Arpels on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022423181999329245
+    },
+    {
+      "qid": "d5c0a5040dba11ecb1e81171463288e9",
+      "text": "Is there at least two different places on Rodeo Drive where a Lamppost can be found directly in between two palm trees?",
+      "truncated": false,
+      "eva_seconds": 0.02255789300033939
+    },
+    {
+      "qid": "d5c1cc900dba11ecb1e81171463288e9",
+      "text": "What is the largest word on the outside of the Gianfranco Ferre building on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.02253363499949046
+    },
+    {
+      "qid": "d5cd7e000dba11ecb1e81171463288e9",
+      "text": "What color is the topmost part of the Gianfranco Ferre on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022301833998426446
+    },
+    {
+      "qid": "d5cbe3240dba11ecb1e81171463288e9",
+      "text": "Is the dome on top of the Gianfranco Ferre building on Rodeo Drive smooth?",
+      "truncated": false,
+      "eva_seconds": 0.022348455000610556
+    },
+    {
+      "qid": "d5c77f8c0dba11ecb1e81171463288e9",
+      "text": "What type of tree is most common on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022075363000112702
+    },
+    {
+      "qid": "d5ce02e40dba11ecb1e81171463288e9",
+      "text": "Is the Louis Vuitton  store on Rodeo Drive completely transparent at night?",
+      "truncated": false,
+      "eva_seconds": 0.022337360000165063
+    },
+    {
+      "qid": "d5bfde760dba11ecb1e81171463288e9",
+      "text": "Is there street parking along the entire street of Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022139991999210906
+    },
+    {
+      "qid": "d5c27e2e0dba11ecb1e81171463288e9",
+      "text": "What color does the city paint the curb to prevent people from parking their vehicles on certain parts of Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.023897760000181734
+    },
+    {
+      "qid": "d5ccd1080dba11ecb1e81171463288e9",
+      "text": "Are the sidewalks on Rodeo Drive a uniform width?",
+      "truncated": false,
+      "eva_seconds": 0.022155827999085886
+    },
+    {
+      "qid": "d5bee84a0dba11ecb1e81171463288e9",
+      "text": "What is planted in the median on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022171408998474362
+    },
+    {
+      "qid": "d5caeeec0dba11ecb1e81171463288e9",
+      "text": "Where can you sit outside on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.02205734100061818
+    },
+    {
+      "qid": "d5cd2d060dba11ecb1e81171463288e9",
+      "text": "Are both Rodeo Drive and Via Rodeo Drive paved with bricks?",
+      "truncated": false,
+      "eva_seconds": 0.021985465000398108
+    },
+    {
+      "qid": "d5c2823e0dba11ecb1e81171463288e9",
+      "text": "Are the streets in front of the Hard Rock Cafe on Beale Street wider than the streets in front of the US Bank building in Beverly Hills?",
+      "truncated": false,
+      "eva_seconds": 0.02280015600081242
+    },
+    {
+      "qid": "d5c07a0c0dba11ecb1e81171463288e9",
+      "text": "What kind of trees are most common in Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022119590001238976
+    },
+    {
+      "qid": "d5cc0dae0dba11ecb1e81171463288e9",
+      "text": "Does the Ermenegildo Zegna have more or fewer awnings over its windows than the store across the street from in on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.02395605799938494
+    },
+    {
+      "qid": "d5c8766c0dba11ecb1e81171463288e9",
+      "text": "What kinds of decorations are used on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022190584999407292
+    },
+    {
+      "qid": "d5c997d60dba11ecb1e81171463288e9",
+      "text": "What color is the exterior lettering of the Stefano Ricci store on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022380723999958718
+    },
+    {
+      "qid": "d5c4efec0dba11ecb1e81171463288e9",
+      "text": "What holiday decorations have appeared on Rodeo Drive?",
+      "truncated": false,
+      "eva_seconds": 0.022127010000986047
+    },
+    {
+      "qid": "d5c9e6c80dba11ecb1e81171463288e9",
+      "text": "Is there a walkway to the right of Stefano Ricci building and the Gianfranco Ferre building?",
+      "truncated": false,
+      "eva_seconds": 0.022438650001276983
+    },
+    {
+      "qid": "d5c84bd80dba11ecb1e81171463288e9",
+      "text": "Do the Chanel boutique on Rodeo Drive and the Versace store in Vienna both spell out their company name in all capital letters?",
+      "truncated": false,
+      "eva_seconds": 0.022681110000121407
+    },
+    {
+      "qid": "d5c7c3660dba11ecb1e81171463288e9",
+      "text": "Do the signs on the front of the building of both the Dixie Greyhound bus lines company on Main Street in Memphis and the Blues Cafe on Beale Street in Memphis have red letters?",
+      "truncated": false,
+      "eva_seconds": 0.023218103000544943
+    },
+    {
+      "qid": "d5ceccec0dba11ecb1e81171463288e9",
+      "text": "How many Greyhound company logos are on the the front of the Dixie Greyhound bus lines complex on Main Street in Memphis?",
+      "truncated": false,
+      "eva_seconds": 0.02255553100076213
+    },
+    {
+      "qid": "d5cbc7900dba11ecb1e81171463288e9",
+      "text": "What brand of basketball was used during the Stanford University Cardinals versus University of San Diego Torendos in San Francisco match in 2019?",
+      "truncated": false,
+      "eva_seconds": 0.023031646998788347
+    },
+    {
+      "qid": "d5c4855c0dba11ecb1e81171463288e9",
+      "text": "Did Isaac White and Artis Gilmore both wear knee pads when they played basketball?",
+      "truncated": false,
+      "eva_seconds": 0.02256037799998012
+    },
+    {
+      "qid": "d5c0a18a0dba11ecb1e81171463288e9",
+      "text": "What kind of hairstyle did Artis Gilmore have while with the bulls?",
+      "truncated": false,
+      "eva_seconds": 0.0221861700010777
+    },
+    {
+      "qid": "d5c1dfd20dba11ecb1e81171463288e9",
+      "text": "Were basketball shorts shorter or longer in the 70's than the current day?",
+      "truncated": false,
+      "eva_seconds": 0.022467425998911494
+    },
+    {
+      "qid": "d5cb74a20dba11ecb1e81171463288e9",
+      "text": "Does James Harden of the Rockets ever wear a wristband during a game?",
+      "truncated": false,
+      "eva_seconds": 0.024000925999644096
+    },
+    {
+      "qid": "d5c64b940dba11ecb1e81171463288e9",
+      "text": "Was the hairstyle of Artis Gilmore in 1977 identical to the one that Goran Dragić had in 2011?",
+      "truncated": false,
+      "eva_seconds": 0.022818305998953292
+    },
+    {
+      "qid": "d5c7fade0dba11ecb1e81171463288e9",
+      "text": "Was there blue running down both sides of the Washington Wizards shorts in 2011?",
+      "truncated": false,
+      "eva_seconds": 0.02261657000053674
+    },
+    {
+      "qid": "d5c1e2de0dba11ecb1e81171463288e9",
+      "text": "Are the compression shorts that professional basketball players sometimes wear under their uniforms always the same length?",
+      "truncated": false,
+      "eva_seconds": 0.022826480000730953
+    },
+    {
+      "qid": "d5c81d3e0dba11ecb1e81171463288e9",
+      "text": "What color is present on the jersey shirts of both the players uniforms of the NBA teams the Phoenix Suns and the New York Knicks?",
+      "truncated": false,
+      "eva_seconds": 0.02270962900001905
+    },
+    {
+      "qid": "d5c5d9c00dba11ecb1e81171463288e9",
+      "text": "How many orange shooting sleeves did Carmelo Anthony wear when he played against the Wizards on March 1st, 2013?",
+      "truncated": false,
+      "eva_seconds": 0.022736591001375928
+    },
+    {
+      "qid": "d5c06dc80dba11ecb1e81171463288e9",
+      "text": "What color arm sleeves does Carmelo Anthony wear while he plays basketball?",
+      "truncated": false,
+      "eva_seconds": 0.02386201199988136
+    },
+    {
+      "qid": "d5c8a7ea0dba11ecb1e81171463288e9",
+      "text": "Which basketball team has a dark stripe leading to a white star on the side of the shorts?",
+      "truncated": false,
+      "eva_seconds": 0.022601007998673595
+    },
+    {
+      "qid": "d5ccfade0dba11ecb1e81171463288e9",
+      "text": "Can both LeBron James and Goran Dragic shoot left-handed layups?",
+      "truncated": false,
+      "eva_seconds": 0.02250965000166616
+    },
+    {
+      "qid": "d5c4d1060dba11ecb1e81171463288e9",
+      "text": "Does LeBron James always wear a sweatband on his head when he plays?",
+      "truncated": false,
+      "eva_seconds": 0.02243486499901337
+    },
+    {
+      "qid": "d5c55f860dba11ecb1e81171463288e9",
+      "text": "When Lebron James was on the Cleveland Cavaliers, how many times does the NBA logo appear on the front of his jersey that had \"XL\" on it?",
+      "truncated": false,
+      "eva_seconds": 0.022756709999157465
+    },
+    {
+      "qid": "d5c784b40dba11ecb1e81171463288e9",
+      "text": "How many wristbands did LeBron James wear on his right wrist when he played against the Washington Wizards on November 18th, 2009?",
+      "truncated": false,
+      "eva_seconds": 0.022726698000042234
+    },
+    {
+      "qid": "d5c8137a0dba11ecb1e81171463288e9",
+      "text": "How many wristbands was LeBron James wearing when he played against the Washington Wizards at the Verizon Center on November 21, 2014 in Washington, DC?",
+      "truncated": false,
+      "eva_seconds": 0.02281771900015883
+    },
+    {
+      "qid": "d5c2760e0dba11ecb1e81171463288e9",
+      "text": "When Mike Scott completed a lay-up against the Washington Wizards on April 13th, 2015, did he use the same hand that LeBron James used to complete a lay-up when he played against the Nets on February 27th, 2018?",
+      "truncated": false,
+      "eva_seconds": 0.023381135000818176
+    },
+    {
+      "qid": "d5c91cca0dba11ecb1e81171463288e9",
+      "text": "Which hand did Mike Scott use to complete a lay-up during an NBA game on April 13th, 2015?",
+      "truncated": false,
+      "eva_seconds": 0.0226154720003251
+    },
+    {
+      "qid": "d5c791200dba11ecb1e81171463288e9",
+      "text": "How many shooting sleeves did Mike Scott wear during the game against the Washington Wizards on April 12th, 2015?",
+      "truncated": false,
+      "eva_seconds": 0.022550155999851995
+    },
+    {
+      "qid": "d5c958b60dba11ecb1e81171463288e9",
+      "text": "What three letters were present on the front of the jersey worn by Mike Scott when he played against the Washington Wizards on April 13th, 2015?",
+      "truncated": false,
+      "eva_seconds": 0.022708499998771003
+    },
+    {
+      "qid": "d5c087680dba11ecb1e81171463288e9",
+      "text": "What amount of colors, at minimum, are worn on the armbands of NBA players during games?",
+      "truncated": false,
+      "eva_seconds": 0.02263366499937547
+    },
+    {
+      "qid": "d5c91a0e0dba11ecb1e81171463288e9",
+      "text": "Did the professional basketball team from Atlanta wear red uniforms during the 2015 NBA season?",
+      "truncated": false,
+      "eva_seconds": 0.02256758800103853
+    }
+  ],
+  "environment": {
+    "python": "3.11.3 (main, Aug 30 2024, 23:31:08) [GCC 12.3.0]",
+    "host": "gcn22.local.snellius.surf.nl",
+    "packages": {
+      "torch": "2.7.0+cu126",
+      "transformers": "4.49.0",
+      "numpy": "1.26.0",
+      "pydantic": "2.13.5",
+      "igraph": "0.11.8",
+      "Pillow": "12.3.0"
+    },
+    "gpus": [
+      "NVIDIA A100-SXM4-40GB"
+    ],
+    "repository_commit": "25ff93501b4b709c83a81efb97297157e6a9f90b",
+    "runner_sha256": "b1fb05978eb8a8f604e5803c74237109a66dab2aa599dd95de485bf2e3e81fb5",
+    "slurm_job_id": "28506717"
+  }
+}

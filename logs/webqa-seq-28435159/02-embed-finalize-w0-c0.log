@@ -1,0 +1,420 @@
+2026-10-22T02:53:51+0200 START imports/config for embed-finalize
+2026-10-22T02:53:52+0200 DONE imports/config for embed-finalize: 0.3s
+2026-10-22T02:53:52+0200 START preparation receipt check
+2026-10-22T02:53:56+0200 DONE preparation receipt check: 4.5s
+2026-10-22T02:53:56+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-22T02:53:57+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-22T02:56:41+0200 Hash cache: 256 files read, 0 hashes reused
+2026-10-22T02:59:48+0200 Hash cache: 512 files read, 0 hashes reused
+2026-10-22T03:01:54+0200 Hash cache: 768 files read, 0 hashes reused
+2026-10-22T03:03:53+0200 Hash cache: 1024 files read, 0 hashes reused
+2026-10-22T03:07:19+0200 Hash cache: 1280 files read, 0 hashes reused
+2026-10-22T03:09:51+0200 Hash cache: 1536 files read, 0 hashes reused
+2026-10-22T03:11:32+0200 Hash cache: 1792 files read, 0 hashes reused
+2026-10-22T03:13:37+0200 Hash cache: 2048 files read, 0 hashes reused
+2026-10-22T03:16:33+0200 Hash cache: 2304 files read, 0 hashes reused
+2026-10-22T03:18:30+0200 Hash cache: 2560 files read, 0 hashes reused
+2026-10-22T03:20:06+0200 Hash cache: 2816 files read, 0 hashes reused
+2026-10-22T03:22:52+0200 Hash cache: 3072 files read, 0 hashes reused
+2026-10-22T03:25:21+0200 Hash cache: 3328 files read, 0 hashes reused
+2026-10-22T03:27:26+0200 Hash cache: 3584 files read, 0 hashes reused
+2026-10-22T03:30:16+0200 Hash cache: 3840 files read, 0 hashes reused
+2026-10-22T03:34:21+0200 Hash cache: 4096 files read, 0 hashes reused
+2026-10-22T03:35:44+0200 START verify text outputs using cached hashes
+2026-10-22T03:35:46+0200 DONE verify text outputs using cached hashes: 2.3s
+2026-10-22T03:35:46+0200 START verify ground outputs using cached hashes
+2026-10-22T03:36:16+0200 Hash cache: 4352 files read, 5 hashes reused
+2026-10-22T03:37:19+0200 Hash cache: 4608 files read, 5 hashes reused
+2026-10-22T03:38:10+0200 Hash cache: 4864 files read, 5 hashes reused
+2026-10-22T03:39:12+0200 Hash cache: 5120 files read, 5 hashes reused
+2026-10-22T03:40:12+0200 Hash cache: 5376 files read, 5 hashes reused
+2026-10-22T03:41:54+0200 Hash cache: 5632 files read, 5 hashes reused
+2026-10-22T03:42:44+0200 Hash cache: 5888 files read, 5 hashes reused
+2026-10-22T03:43:44+0200 Hash cache: 6144 files read, 5 hashes reused
+2026-10-22T03:45:07+0200 Hash cache: 6400 files read, 5 hashes reused
+2026-10-22T03:46:44+0200 Hash cache: 6656 files read, 5 hashes reused
+2026-10-22T03:48:17+0200 Hash cache: 6912 files read, 5 hashes reused
+2026-10-22T03:48:18+0200 Ground artifact audit: 100/4221 images
+2026-10-22T03:48:54+0200 Hash cache: 7168 files read, 5 hashes reused
+2026-10-22T03:49:41+0200 Hash cache: 7424 files read, 5 hashes reused
+2026-10-22T03:50:25+0200 Hash cache: 7680 files read, 5 hashes reused
+2026-10-22T03:51:29+0200 Hash cache: 7936 files read, 5 hashes reused
+2026-10-22T03:52:36+0200 Hash cache: 8192 files read, 5 hashes reused
+2026-10-22T03:53:34+0200 Hash cache: 8448 files read, 5 hashes reused
+2026-10-22T03:54:16+0200 Hash cache: 8704 files read, 5 hashes reused
+2026-10-22T03:54:55+0200 Hash cache: 8960 files read, 5 hashes reused
+2026-10-22T03:55:47+0200 Hash cache: 9216 files read, 5 hashes reused
+2026-10-22T03:56:21+0200 Hash cache: 9472 files read, 5 hashes reused
+2026-10-22T03:56:58+0200 Hash cache: 9728 files read, 5 hashes reused
+2026-10-22T03:58:11+0200 Hash cache: 9984 files read, 5 hashes reused
+2026-10-22T03:58:23+0200 Ground artifact audit: 200/4221 images
+2026-10-22T03:59:04+0200 Hash cache: 10240 files read, 5 hashes reused
+2026-10-22T04:00:14+0200 Hash cache: 10496 files read, 5 hashes reused
+2026-10-22T04:01:57+0200 Hash cache: 10752 files read, 5 hashes reused
+2026-10-22T04:02:28+0200 Hash cache: 11008 files read, 5 hashes reused
+2026-10-22T04:03:04+0200 Hash cache: 11264 files read, 5 hashes reused
+2026-10-22T04:04:43+0200 Hash cache: 11520 files read, 5 hashes reused
+2026-10-22T04:06:17+0200 Hash cache: 11776 files read, 5 hashes reused
+2026-10-22T04:07:20+0200 Hash cache: 12032 files read, 5 hashes reused
+2026-10-22T04:07:53+0200 Hash cache: 12288 files read, 5 hashes reused
+2026-10-22T04:08:18+0200 Ground artifact audit: 300/4221 images
+2026-10-22T04:08:40+0200 Hash cache: 12544 files read, 5 hashes reused
+2026-10-22T04:09:44+0200 Hash cache: 12800 files read, 5 hashes reused
+2026-10-22T04:10:26+0200 Hash cache: 13056 files read, 5 hashes reused
+2026-10-22T04:10:46+0200 Hash cache: 13312 files read, 5 hashes reused
+2026-10-22T04:11:34+0200 Hash cache: 13568 files read, 5 hashes reused
+2026-10-22T04:12:46+0200 Hash cache: 13824 files read, 5 hashes reused
+2026-10-22T04:14:01+0200 Hash cache: 14080 files read, 5 hashes reused
+2026-10-22T04:14:56+0200 Hash cache: 14336 files read, 5 hashes reused
+2026-10-22T04:15:59+0200 Hash cache: 14592 files read, 5 hashes reused
+2026-10-22T04:16:53+0200 Hash cache: 14848 files read, 5 hashes reused
+2026-10-22T04:17:03+0200 Ground artifact audit: 400/4221 images
+2026-10-22T04:17:21+0200 Hash cache: 15104 files read, 5 hashes reused
+2026-10-22T04:18:01+0200 Hash cache: 15360 files read, 5 hashes reused
+2026-10-22T04:18:53+0200 Hash cache: 15616 files read, 5 hashes reused
+2026-10-22T04:19:16+0200 Hash cache: 15872 files read, 5 hashes reused
+2026-10-22T04:19:30+0200 Hash cache: 16128 files read, 5 hashes reused
+2026-10-22T04:20:04+0200 Hash cache: 16384 files read, 5 hashes reused
+2026-10-22T04:20:57+0200 Hash cache: 16640 files read, 5 hashes reused
+2026-10-22T04:21:54+0200 Hash cache: 16896 files read, 5 hashes reused
+2026-10-22T04:22:33+0200 Hash cache: 17152 files read, 5 hashes reused
+2026-10-22T04:23:12+0200 Hash cache: 17408 files read, 5 hashes reused
+2026-10-22T04:24:21+0200 Hash cache: 17664 files read, 5 hashes reused
+2026-10-22T04:24:50+0200 Hash cache: 17920 files read, 5 hashes reused
+2026-10-22T04:25:36+0200 Hash cache: 18176 files read, 5 hashes reused
+2026-10-22T04:25:39+0200 Ground artifact audit: 500/4221 images
+2026-10-22T04:26:33+0200 Hash cache: 18432 files read, 5 hashes reused
+2026-10-22T04:27:07+0200 Hash cache: 18688 files read, 5 hashes reused
+2026-10-22T04:27:45+0200 Hash cache: 18944 files read, 5 hashes reused
+2026-10-22T04:28:29+0200 Hash cache: 19200 files read, 5 hashes reused
+2026-10-22T04:29:00+0200 Hash cache: 19456 files read, 5 hashes reused
+2026-10-22T04:29:39+0200 Hash cache: 19712 files read, 5 hashes reused
+2026-10-22T04:30:56+0200 Hash cache: 19968 files read, 5 hashes reused
+2026-10-22T04:32:26+0200 Hash cache: 20224 files read, 5 hashes reused
+2026-10-22T04:33:46+0200 Hash cache: 20480 files read, 5 hashes reused
+2026-10-22T04:34:35+0200 Hash cache: 20736 files read, 5 hashes reused
+2026-10-22T04:34:42+0200 Ground artifact audit: 600/4221 images
+2026-10-22T04:35:44+0200 Hash cache: 20992 files read, 5 hashes reused
+2026-10-22T04:36:27+0200 Hash cache: 21248 files read, 5 hashes reused
+2026-10-22T04:37:08+0200 Hash cache: 21504 files read, 5 hashes reused
+2026-10-22T04:38:08+0200 Hash cache: 21760 files read, 5 hashes reused
+2026-10-22T04:38:56+0200 Hash cache: 22016 files read, 5 hashes reused
+2026-10-22T04:39:45+0200 Hash cache: 22272 files read, 5 hashes reused
+2026-10-22T04:40:42+0200 Hash cache: 22528 files read, 5 hashes reused
+2026-10-22T04:41:29+0200 Hash cache: 22784 files read, 5 hashes reused
+2026-10-22T04:42:46+0200 Hash cache: 23040 files read, 5 hashes reused
+2026-10-22T04:43:56+0200 Hash cache: 23296 files read, 5 hashes reused
+2026-10-22T04:44:31+0200 Hash cache: 23552 files read, 5 hashes reused
+2026-10-22T04:44:47+0200 Ground artifact audit: 700/4221 images
+2026-10-22T04:45:18+0200 Hash cache: 23808 files read, 5 hashes reused
+2026-10-22T04:46:26+0200 Hash cache: 24064 files read, 5 hashes reused
+2026-10-22T04:47:57+0200 Hash cache: 24320 files read, 5 hashes reused
+2026-10-22T04:49:30+0200 Hash cache: 24576 files read, 5 hashes reused
+2026-10-22T04:50:34+0200 Hash cache: 24832 files read, 5 hashes reused
+2026-10-22T04:51:32+0200 Hash cache: 25088 files read, 5 hashes reused
+2026-10-22T04:52:38+0200 Hash cache: 25344 files read, 5 hashes reused
+2026-10-22T04:53:38+0200 Hash cache: 25600 files read, 5 hashes reused
+2026-10-22T04:54:27+0200 Hash cache: 25856 files read, 5 hashes reused
+2026-10-22T04:55:10+0200 Ground artifact audit: 800/4221 images
+2026-10-22T04:56:02+0200 Hash cache: 26112 files read, 5 hashes reused
+2026-10-22T04:56:59+0200 Hash cache: 26368 files read, 5 hashes reused
+2026-10-22T04:57:26+0200 Hash cache: 26624 files read, 5 hashes reused
+2026-10-22T04:57:58+0200 Hash cache: 26880 files read, 5 hashes reused
+2026-10-22T04:58:20+0200 Hash cache: 27136 files read, 5 hashes reused
+2026-10-22T04:59:09+0200 Hash cache: 27392 files read, 5 hashes reused
+2026-10-22T04:59:42+0200 Hash cache: 27648 files read, 5 hashes reused
+2026-10-22T05:00:02+0200 Hash cache: 27904 files read, 5 hashes reused
+2026-10-22T05:00:37+0200 Hash cache: 28160 files read, 5 hashes reused
+2026-10-22T05:02:00+0200 Hash cache: 28416 files read, 5 hashes reused
+2026-10-22T05:03:16+0200 Hash cache: 28672 files read, 5 hashes reused
+2026-10-22T05:04:18+0200 Hash cache: 28928 files read, 5 hashes reused
+2026-10-22T05:04:57+0200 Hash cache: 29184 files read, 5 hashes reused
+2026-10-22T05:05:56+0200 Ground artifact audit: 900/4221 images
+2026-10-22T05:06:10+0200 Hash cache: 29440 files read, 5 hashes reused
+2026-10-22T05:07:20+0200 Hash cache: 29696 files read, 5 hashes reused
+2026-10-22T05:08:02+0200 Hash cache: 29952 files read, 5 hashes reused
+2026-10-22T05:09:21+0200 Hash cache: 30208 files read, 5 hashes reused
+2026-10-22T05:10:29+0200 Hash cache: 30464 files read, 5 hashes reused
+2026-10-22T05:12:09+0200 Hash cache: 30720 files read, 5 hashes reused
+2026-10-22T05:13:12+0200 Hash cache: 30976 files read, 5 hashes reused
+2026-10-22T05:14:43+0200 Hash cache: 31232 files read, 5 hashes reused
+2026-10-22T05:15:03+0200 Hash cache: 31488 files read, 5 hashes reused
+2026-10-22T05:15:43+0200 Ground artifact audit: 1000/4221 images
+2026-10-22T05:16:03+0200 Hash cache: 31744 files read, 5 hashes reused
+2026-10-22T05:17:14+0200 Hash cache: 32000 files read, 5 hashes reused
+2026-10-22T05:17:58+0200 Hash cache: 32256 files read, 5 hashes reused
+2026-10-22T05:19:14+0200 Hash cache: 32512 files read, 5 hashes reused
+2026-10-22T05:20:49+0200 Hash cache: 32768 files read, 5 hashes reused
+2026-10-22T05:21:33+0200 Hash cache: 33024 files read, 5 hashes reused
+2026-10-22T05:22:51+0200 Hash cache: 33280 files read, 5 hashes reused
+2026-10-22T05:23:48+0200 Hash cache: 33536 files read, 5 hashes reused
+2026-10-22T05:24:30+0200 Hash cache: 33792 files read, 5 hashes reused
+2026-10-22T05:25:12+0200 Hash cache: 34048 files read, 5 hashes reused
+2026-10-22T05:25:31+0200 Ground artifact audit: 1100/4221 images
+2026-10-22T05:26:29+0200 Hash cache: 34304 files read, 5 hashes reused
+2026-10-22T05:26:50+0200 Hash cache: 34560 files read, 5 hashes reused
+2026-10-22T05:27:20+0200 Hash cache: 34816 files read, 5 hashes reused
+2026-10-22T05:28:08+0200 Hash cache: 35072 files read, 5 hashes reused
+2026-10-22T05:28:41+0200 Hash cache: 35328 files read, 5 hashes reused
+2026-10-22T05:29:20+0200 Hash cache: 35584 files read, 5 hashes reused
+2026-10-22T05:30:40+0200 Hash cache: 35840 files read, 5 hashes reused
+2026-10-22T05:31:13+0200 Hash cache: 36096 files read, 5 hashes reused
+2026-10-22T05:31:42+0200 Hash cache: 36352 files read, 5 hashes reused
+2026-10-22T05:32:11+0200 Hash cache: 36608 files read, 5 hashes reused
+2026-10-22T05:33:16+0200 Ground artifact audit: 1200/4221 images
+2026-10-22T05:33:54+0200 Hash cache: 36864 files read, 5 hashes reused
+2026-10-22T05:34:22+0200 Hash cache: 37120 files read, 5 hashes reused
+2026-10-22T05:35:10+0200 Hash cache: 37376 files read, 5 hashes reused
+2026-10-22T05:36:33+0200 Hash cache: 37632 files read, 5 hashes reused
+2026-10-22T05:38:08+0200 Hash cache: 37888 files read, 5 hashes reused
+2026-10-22T05:39:14+0200 Hash cache: 38144 files read, 5 hashes reused
+2026-10-22T05:39:56+0200 Hash cache: 38400 files read, 5 hashes reused
+2026-10-22T05:40:26+0200 Hash cache: 38656 files read, 5 hashes reused
+2026-10-22T05:41:22+0200 Hash cache: 38912 files read, 5 hashes reused
+2026-10-22T05:42:04+0200 Hash cache: 39168 files read, 5 hashes reused
+2026-10-22T05:42:18+0200 Ground artifact audit: 1300/4221 images
+2026-10-22T05:43:09+0200 Hash cache: 39424 files read, 5 hashes reused
+2026-10-22T05:43:49+0200 Hash cache: 39680 files read, 5 hashes reused
+2026-10-22T05:44:19+0200 Hash cache: 39936 files read, 5 hashes reused
+2026-10-22T05:46:03+0200 Hash cache: 40192 files read, 5 hashes reused
+2026-10-22T05:47:11+0200 Hash cache: 40448 files read, 5 hashes reused
+2026-10-22T05:48:02+0200 Hash cache: 40704 files read, 5 hashes reused
+2026-10-22T05:49:32+0200 Hash cache: 40960 files read, 5 hashes reused
+2026-10-22T05:50:22+0200 Hash cache: 41216 files read, 5 hashes reused
+2026-10-22T05:51:10+0200 Hash cache: 41472 files read, 5 hashes reused
+2026-10-22T05:51:48+0200 Hash cache: 41728 files read, 5 hashes reused
+2026-10-22T05:51:52+0200 Ground artifact audit: 1400/4221 images
+2026-10-22T05:52:40+0200 Hash cache: 41984 files read, 5 hashes reused
+2026-10-22T05:53:43+0200 Hash cache: 42240 files read, 5 hashes reused
+2026-10-22T05:54:38+0200 Hash cache: 42496 files read, 5 hashes reused
+2026-10-22T05:55:28+0200 Hash cache: 42752 files read, 5 hashes reused
+2026-10-22T05:56:44+0200 Hash cache: 43008 files read, 5 hashes reused
+2026-10-22T05:57:40+0200 Hash cache: 43264 files read, 5 hashes reused
+2026-10-22T05:58:21+0200 Hash cache: 43520 files read, 5 hashes reused
+2026-10-22T05:58:57+0200 Hash cache: 43776 files read, 5 hashes reused
+2026-10-22T05:59:31+0200 Ground artifact audit: 1500/4221 images
+2026-10-22T05:59:52+0200 Hash cache: 44032 files read, 5 hashes reused
+2026-10-22T06:00:23+0200 Hash cache: 44288 files read, 5 hashes reused
+2026-10-22T06:01:06+0200 Hash cache: 44544 files read, 5 hashes reused
+2026-10-22T06:01:28+0200 Hash cache: 44800 files read, 5 hashes reused
+2026-10-22T06:02:38+0200 Hash cache: 45056 files read, 5 hashes reused
+2026-10-22T06:03:16+0200 Hash cache: 45312 files read, 5 hashes reused
+2026-10-22T06:04:11+0200 Hash cache: 45568 files read, 5 hashes reused
+2026-10-22T06:04:52+0200 Hash cache: 45824 files read, 5 hashes reused
+2026-10-22T06:05:22+0200 Hash cache: 46080 files read, 5 hashes reused
+2026-10-22T06:06:16+0200 Hash cache: 46336 files read, 5 hashes reused
+2026-10-22T06:06:39+0200 Ground artifact audit: 1600/4221 images
+2026-10-22T06:07:09+0200 Hash cache: 46592 files read, 5 hashes reused
+2026-10-22T06:08:05+0200 Hash cache: 46848 files read, 5 hashes reused
+2026-10-22T06:09:10+0200 Hash cache: 47104 files read, 5 hashes reused
+2026-10-22T06:10:08+0200 Hash cache: 47360 files read, 5 hashes reused
+2026-10-22T06:11:00+0200 Hash cache: 47616 files read, 5 hashes reused
+2026-10-22T06:11:31+0200 Hash cache: 47872 files read, 5 hashes reused
+2026-10-22T06:12:02+0200 Hash cache: 48128 files read, 5 hashes reused
+2026-10-22T06:13:05+0200 Hash cache: 48384 files read, 5 hashes reused
+2026-10-22T06:13:33+0200 Hash cache: 48640 files read, 5 hashes reused
+2026-10-22T06:14:05+0200 Ground artifact audit: 1700/4221 images
+2026-10-22T06:14:06+0200 Hash cache: 48896 files read, 5 hashes reused
+2026-10-22T06:14:35+0200 Hash cache: 49152 files read, 5 hashes reused
+2026-10-22T06:15:14+0200 Hash cache: 49408 files read, 5 hashes reused
+2026-10-22T06:15:50+0200 Hash cache: 49664 files read, 5 hashes reused
+2026-10-22T06:16:52+0200 Hash cache: 49920 files read, 5 hashes reused
+2026-10-22T06:17:51+0200 Hash cache: 50176 files read, 5 hashes reused
+2026-10-22T06:18:32+0200 Hash cache: 50432 files read, 5 hashes reused
+2026-10-22T06:19:19+0200 Hash cache: 50688 files read, 5 hashes reused
+2026-10-22T06:20:01+0200 Hash cache: 50944 files read, 5 hashes reused
+2026-10-22T06:20:38+0200 Hash cache: 51200 files read, 5 hashes reused
+2026-10-22T06:21:16+0200 Hash cache: 51456 files read, 5 hashes reused
+2026-10-22T06:22:07+0200 Ground artifact audit: 1800/4221 images
+2026-10-22T06:22:23+0200 Hash cache: 51712 files read, 5 hashes reused
+2026-10-22T06:22:44+0200 Hash cache: 51968 files read, 5 hashes reused
+2026-10-22T06:23:08+0200 Hash cache: 52224 files read, 5 hashes reused
+2026-10-22T06:23:46+0200 Hash cache: 52480 files read, 5 hashes reused
+2026-10-22T06:24:58+0200 Hash cache: 52736 files read, 5 hashes reused
+2026-10-22T06:25:54+0200 Hash cache: 52992 files read, 5 hashes reused
+2026-10-22T06:26:28+0200 Hash cache: 53248 files read, 5 hashes reused
+2026-10-22T06:27:23+0200 Hash cache: 53504 files read, 5 hashes reused
+2026-10-22T06:28:04+0200 Hash cache: 53760 files read, 5 hashes reused
+2026-10-22T06:28:39+0200 Hash cache: 54016 files read, 5 hashes reused
+2026-10-22T06:29:38+0200 Hash cache: 54272 files read, 5 hashes reused
+2026-10-22T06:30:22+0200 Ground artifact audit: 1900/4221 images
+2026-10-22T06:30:24+0200 Hash cache: 54528 files read, 5 hashes reused
+2026-10-22T06:31:37+0200 Hash cache: 54784 files read, 5 hashes reused
+2026-10-22T06:32:09+0200 Hash cache: 55040 files read, 5 hashes reused
+2026-10-22T06:32:50+0200 Hash cache: 55296 files read, 5 hashes reused
+2026-10-22T06:34:18+0200 Hash cache: 55552 files read, 5 hashes reused
+2026-10-22T06:35:41+0200 Hash cache: 55808 files read, 5 hashes reused
+2026-10-22T06:36:14+0200 Hash cache: 56064 files read, 5 hashes reused
+2026-10-22T06:37:02+0200 Hash cache: 56320 files read, 5 hashes reused
+2026-10-22T06:37:52+0200 Hash cache: 56576 files read, 5 hashes reused
+2026-10-22T06:38:28+0200 Hash cache: 56832 files read, 5 hashes reused
+2026-10-22T06:39:13+0200 Hash cache: 57088 files read, 5 hashes reused
+2026-10-22T06:39:24+0200 Ground artifact audit: 2000/4221 images
+2026-10-22T06:40:00+0200 Hash cache: 57344 files read, 5 hashes reused
+2026-10-22T06:40:38+0200 Hash cache: 57600 files read, 5 hashes reused
+2026-10-22T06:41:36+0200 Hash cache: 57856 files read, 5 hashes reused
+2026-10-22T06:42:02+0200 Hash cache: 58112 files read, 5 hashes reused
+2026-10-22T06:42:43+0200 Hash cache: 58368 files read, 5 hashes reused
+2026-10-22T06:43:17+0200 Hash cache: 58624 files read, 5 hashes reused
+2026-10-22T06:44:18+0200 Hash cache: 58880 files read, 5 hashes reused
+2026-10-22T06:45:56+0200 Hash cache: 59136 files read, 5 hashes reused
+2026-10-22T06:47:04+0200 Hash cache: 59392 files read, 5 hashes reused
+2026-10-22T06:47:52+0200 Hash cache: 59648 files read, 5 hashes reused
+2026-10-22T06:49:35+0200 Hash cache: 59904 files read, 5 hashes reused
+2026-10-22T06:49:41+0200 Ground artifact audit: 2100/4221 images
+2026-10-22T06:51:01+0200 Hash cache: 60160 files read, 5 hashes reused
+2026-10-22T06:51:52+0200 Hash cache: 60416 files read, 5 hashes reused
+2026-10-22T06:52:34+0200 Hash cache: 60672 files read, 5 hashes reused
+2026-10-22T06:53:14+0200 Hash cache: 60928 files read, 5 hashes reused
+2026-10-22T06:53:49+0200 Hash cache: 61184 files read, 5 hashes reused
+2026-10-22T06:54:38+0200 Hash cache: 61440 files read, 5 hashes reused
+2026-10-22T06:55:43+0200 Hash cache: 61696 files read, 5 hashes reused
+2026-10-22T06:56:05+0200 Hash cache: 61952 files read, 5 hashes reused
+2026-10-22T06:56:29+0200 Hash cache: 62208 files read, 5 hashes reused
+2026-10-22T06:57:28+0200 Hash cache: 62464 files read, 5 hashes reused
+2026-10-22T06:58:00+0200 Hash cache: 62720 files read, 5 hashes reused
+2026-10-22T06:58:00+0200 Ground artifact audit: 2200/4221 images
+2026-10-22T06:58:40+0200 Hash cache: 62976 files read, 5 hashes reused
+2026-10-22T06:59:26+0200 Hash cache: 63232 files read, 5 hashes reused
+2026-10-22T06:59:55+0200 Hash cache: 63488 files read, 5 hashes reused
+2026-10-22T07:00:58+0200 Hash cache: 63744 files read, 5 hashes reused
+2026-10-22T07:01:41+0200 Hash cache: 64000 files read, 5 hashes reused
+2026-10-22T07:02:26+0200 Hash cache: 64256 files read, 5 hashes reused
+2026-10-22T07:02:58+0200 Hash cache: 64512 files read, 5 hashes reused
+2026-10-22T07:03:37+0200 Hash cache: 64768 files read, 5 hashes reused
+2026-10-22T07:04:11+0200 Hash cache: 65024 files read, 5 hashes reused
+2026-10-22T07:04:39+0200 Hash cache: 65280 files read, 5 hashes reused
+2026-10-22T07:05:33+0200 Hash cache: 65536 files read, 5 hashes reused
+2026-10-22T07:05:40+0200 Ground artifact audit: 2300/4221 images
+2026-10-22T07:06:15+0200 Hash cache: 65792 files read, 5 hashes reused
+2026-10-22T07:07:37+0200 Hash cache: 66048 files read, 5 hashes reused
+2026-10-22T07:08:38+0200 Hash cache: 66304 files read, 5 hashes reused
+2026-10-22T07:09:52+0200 Hash cache: 66560 files read, 5 hashes reused
+2026-10-22T07:10:41+0200 Hash cache: 66816 files read, 5 hashes reused
+2026-10-22T07:11:41+0200 Hash cache: 67072 files read, 5 hashes reused
+2026-10-22T07:12:43+0200 Hash cache: 67328 files read, 5 hashes reused
+2026-10-22T07:13:39+0200 Hash cache: 67584 files read, 5 hashes reused
+2026-10-22T07:14:31+0200 Hash cache: 67840 files read, 5 hashes reused
+2026-10-22T07:15:55+0200 Ground artifact audit: 2400/4221 images
+2026-10-22T07:15:59+0200 Hash cache: 68096 files read, 5 hashes reused
+2026-10-22T07:16:49+0200 Hash cache: 68352 files read, 5 hashes reused
+2026-10-22T07:17:38+0200 Hash cache: 68608 files read, 5 hashes reused
+2026-10-22T07:17:47+0200 Hash cache: 68864 files read, 5 hashes reused
+2026-10-22T07:18:23+0200 Hash cache: 69120 files read, 5 hashes reused
+2026-10-22T07:19:26+0200 Hash cache: 69376 files read, 5 hashes reused
+2026-10-22T07:20:09+0200 Hash cache: 69632 files read, 5 hashes reused
+2026-10-22T07:20:52+0200 Hash cache: 69888 files read, 5 hashes reused
+2026-10-22T07:21:33+0200 Hash cache: 70144 files read, 5 hashes reused
+2026-10-22T07:22:04+0200 Hash cache: 70400 files read, 5 hashes reused
+2026-10-22T07:22:48+0200 Hash cache: 70656 files read, 5 hashes reused
+2026-10-22T07:23:32+0200 Hash cache: 70912 files read, 5 hashes reused
+2026-10-22T07:24:09+0200 Hash cache: 71168 files read, 5 hashes reused
+2026-10-22T07:24:31+0200 Ground artifact audit: 2500/4221 images
+2026-10-22T07:24:46+0200 Hash cache: 71424 files read, 5 hashes reused
+2026-10-22T07:25:26+0200 Hash cache: 71680 files read, 5 hashes reused
+2026-10-22T07:26:01+0200 Hash cache: 71936 files read, 5 hashes reused
+2026-10-22T07:26:51+0200 Hash cache: 72192 files read, 5 hashes reused
+2026-10-22T07:27:29+0200 Hash cache: 72448 files read, 5 hashes reused
+2026-10-22T07:28:20+0200 Hash cache: 72704 files read, 5 hashes reused
+2026-10-22T07:28:56+0200 Hash cache: 72960 files read, 5 hashes reused
+2026-10-22T07:29:54+0200 Hash cache: 73216 files read, 5 hashes reused
+2026-10-22T07:30:44+0200 Hash cache: 73472 files read, 5 hashes reused
+2026-10-22T07:31:58+0200 Hash cache: 73728 files read, 5 hashes reused
+2026-10-22T07:32:26+0200 Ground artifact audit: 2600/4221 images
+2026-10-22T07:32:55+0200 Hash cache: 73984 files read, 5 hashes reused
+2026-10-22T07:33:53+0200 Hash cache: 74240 files read, 5 hashes reused
+2026-10-22T07:34:41+0200 Hash cache: 74496 files read, 5 hashes reused
+2026-10-22T07:35:37+0200 Hash cache: 74752 files read, 5 hashes reused
+2026-10-22T07:37:11+0200 Hash cache: 75008 files read, 5 hashes reused
+2026-10-22T07:38:27+0200 Hash cache: 75264 files read, 5 hashes reused
+2026-10-22T07:38:49+0200 Hash cache: 75520 files read, 5 hashes reused
+2026-10-22T07:40:06+0200 Hash cache: 75776 files read, 5 hashes reused
+2026-10-22T07:41:15+0200 Hash cache: 76032 files read, 5 hashes reused
+2026-10-22T07:42:00+0200 Ground artifact audit: 2700/4221 images
+2026-10-22T07:42:06+0200 Hash cache: 76288 files read, 5 hashes reused
+2026-10-22T07:42:37+0200 Hash cache: 76544 files read, 5 hashes reused
+2026-10-22T07:43:43+0200 Hash cache: 76800 files read, 5 hashes reused
+2026-10-22T07:44:23+0200 Hash cache: 77056 files read, 5 hashes reused
+2026-10-22T07:45:35+0200 Hash cache: 77312 files read, 5 hashes reused
+2026-10-22T07:45:53+0200 Hash cache: 77568 files read, 5 hashes reused
+2026-10-22T07:46:40+0200 Hash cache: 77824 files read, 5 hashes reused
+2026-10-22T07:47:31+0200 Hash cache: 78080 files read, 5 hashes reused
+2026-10-22T07:48:31+0200 Hash cache: 78336 files read, 5 hashes reused
+2026-10-22T07:49:17+0200 Hash cache: 78592 files read, 5 hashes reused
+2026-10-22T07:49:32+0200 Ground artifact audit: 2800/4221 images
+2026-10-22T07:50:08+0200 Hash cache: 78848 files read, 5 hashes reused
+2026-10-22T07:50:48+0200 Hash cache: 79104 files read, 5 hashes reused
+2026-10-22T07:51:43+0200 Hash cache: 79360 files read, 5 hashes reused
+2026-10-22T07:52:30+0200 Hash cache: 79616 files read, 5 hashes reused
+2026-10-22T07:53:56+0200 Hash cache: 79872 files read, 5 hashes reused
+2026-10-22T07:54:43+0200 Hash cache: 80128 files read, 5 hashes reused
+2026-10-22T07:55:02+0200 Hash cache: 80384 files read, 5 hashes reused
+2026-10-22T07:56:00+0200 Hash cache: 80640 files read, 5 hashes reused
+2026-10-22T07:56:54+0200 Hash cache: 80896 files read, 5 hashes reused
+2026-10-22T07:57:40+0200 Hash cache: 81152 files read, 5 hashes reused
+2026-10-22T07:57:48+0200 Ground artifact audit: 2900/4221 images
+2026-10-22T07:58:12+0200 Hash cache: 81408 files read, 5 hashes reused
+2026-10-22T07:59:04+0200 Hash cache: 81664 files read, 5 hashes reused
+2026-10-22T07:59:42+0200 Hash cache: 81920 files read, 5 hashes reused
+2026-10-22T08:00:12+0200 Hash cache: 82176 files read, 5 hashes reused
+2026-10-22T08:01:08+0200 Hash cache: 82432 files read, 5 hashes reused
+2026-10-22T08:01:39+0200 Hash cache: 82688 files read, 5 hashes reused
+2026-10-22T08:02:21+0200 Hash cache: 82944 files read, 5 hashes reused
+2026-10-22T08:02:55+0200 Hash cache: 83200 files read, 5 hashes reused
+2026-10-22T08:04:02+0200 Hash cache: 83456 files read, 5 hashes reused
+2026-10-22T08:05:40+0200 Hash cache: 83712 files read, 5 hashes reused
+2026-10-22T08:06:35+0200 Ground artifact audit: 3000/4221 images
+2026-10-22T08:07:16+0200 Hash cache: 83968 files read, 5 hashes reused
+2026-10-22T08:08:34+0200 Hash cache: 84224 files read, 5 hashes reused
+2026-10-22T08:09:10+0200 Hash cache: 84480 files read, 5 hashes reused
+2026-10-22T08:09:35+0200 Hash cache: 84736 files read, 5 hashes reused
+2026-10-22T08:10:49+0200 Hash cache: 84992 files read, 5 hashes reused
+2026-10-22T08:11:23+0200 Hash cache: 85248 files read, 5 hashes reused
+2026-10-22T08:12:23+0200 Hash cache: 85504 files read, 5 hashes reused
+2026-10-22T08:13:03+0200 Hash cache: 85760 files read, 5 hashes reused
+2026-10-22T08:13:46+0200 Hash cache: 86016 files read, 5 hashes reused
+2026-10-22T08:14:37+0200 Hash cache: 86272 files read, 5 hashes reused
+2026-10-22T08:14:51+0200 Ground artifact audit: 3100/4221 images
+2026-10-22T08:15:24+0200 Hash cache: 86528 files read, 5 hashes reused
+2026-10-22T08:16:03+0200 Hash cache: 86784 files read, 5 hashes reused
+2026-10-22T08:16:26+0200 Hash cache: 87040 files read, 5 hashes reused
+2026-10-22T08:17:48+0200 Hash cache: 87296 files read, 5 hashes reused
+2026-10-22T08:18:18+0200 Hash cache: 87552 files read, 5 hashes reused
+2026-10-22T08:18:54+0200 Hash cache: 87808 files read, 5 hashes reused
+2026-10-22T08:19:22+0200 Hash cache: 88064 files read, 5 hashes reused
+2026-10-22T08:20:21+0200 Hash cache: 88320 files read, 5 hashes reused
+2026-10-22T08:20:54+0200 Hash cache: 88576 files read, 5 hashes reused
+2026-10-22T08:21:57+0200 Hash cache: 88832 files read, 5 hashes reused
+2026-10-22T08:22:48+0200 Hash cache: 89088 files read, 5 hashes reused
+2026-10-22T08:23:06+0200 Ground artifact audit: 3200/4221 images
+2026-10-22T08:23:17+0200 Hash cache: 89344 files read, 5 hashes reused
+2026-10-22T08:24:01+0200 Hash cache: 89600 files read, 5 hashes reused
+2026-10-22T08:24:41+0200 Hash cache: 89856 files read, 5 hashes reused
+2026-10-22T08:25:16+0200 Hash cache: 90112 files read, 5 hashes reused
+2026-10-22T08:25:43+0200 Hash cache: 90368 files read, 5 hashes reused
+2026-10-22T08:26:16+0200 Hash cache: 90624 files read, 5 hashes reused
+2026-10-22T08:27:24+0200 Hash cache: 90880 files read, 5 hashes reused
+2026-10-22T08:28:28+0200 Hash cache: 91136 files read, 5 hashes reused
+2026-10-22T08:29:25+0200 Hash cache: 91392 files read, 5 hashes reused
+2026-10-22T08:29:44+0200 Hash cache: 91648 files read, 5 hashes reused
+2026-10-22T08:30:22+0200 Hash cache: 91904 files read, 5 hashes reused
+2026-10-22T08:31:03+0200 Hash cache: 92160 files read, 5 hashes reused
+2026-10-22T08:31:29+0200 Hash cache: 92416 files read, 5 hashes reused
+2026-10-22T08:32:17+0200 Ground artifact audit: 3300/4221 images
+2026-10-22T08:32:26+0200 Hash cache: 92672 files read, 5 hashes reused
+2026-10-22T08:33:26+0200 Hash cache: 92928 files read, 5 hashes reused
+2026-10-22T08:34:21+0200 Hash cache: 93184 files read, 5 hashes reused
+2026-10-22T08:35:31+0200 Hash cache: 93440 files read, 5 hashes reused
+2026-10-22T08:36:56+0200 Hash cache: 93696 files read, 5 hashes reused
+2026-10-22T08:37:35+0200 Hash cache: 93952 files read, 5 hashes reused
+2026-10-22T08:38:28+0200 Hash cache: 94208 files read, 5 hashes reused
+2026-10-22T08:39:25+0200 Hash cache: 94464 files read, 5 hashes reused
+2026-10-22T08:40:23+0200 Hash cache: 94720 files read, 5 hashes reused
+2026-10-22T08:41:18+0200 Hash cache: 94976 files read, 5 hashes reused
+2026-10-22T08:41:50+0200 Ground artifact audit: 3400/4221 images
+2026-10-22T08:42:10+0200 Hash cache: 95232 files read, 5 hashes reused
+2026-10-22T08:43:05+0200 Hash cache: 95488 files read, 5 hashes reused
+2026-10-22T08:43:43+0200 Hash cache: 95744 files read, 5 hashes reused
+2026-10-22T08:44:20+0200 Hash cache: 96000 files read, 5 hashes reused
+2026-10-22T08:45:24+0200 Hash cache: 96256 files read, 5 hashes reused
+[2026-10-22T08:45:36.019] error: *** STEP 28435159.1 ON gcn60 CANCELLED AT 2026-10-22T08:45:36 DUE TO TIME LIMIT ***

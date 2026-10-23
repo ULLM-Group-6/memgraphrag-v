@@ -1,0 +1,56 @@
+{
+  "index": {
+    "index_manifest_sha256": "353c4e47644cc52a8cebe11bab6f178b624b9cedaf6ac0c054124034f82167d7",
+    "graph_sha256": "b2b3944f9e68d47714f16e97e31fa6372a738c20cfa8b03a5c16b9558a49db6c",
+    "config_hash": "f5244ac691a11efb7beaa8632a3f1afa5d411d2a05d0f4922fcd45058010b4f7",
+    "memgraphrag_commit": "49f20cec41290c95209724d33ec527f72449d300",
+    "text": {
+      "llm_name": "qwen2.5-7b-instruct",
+      "embedding_model": "/scratch-shared/scur0465/mgrv-model-cache/models/bge-large-en-v1.5"
+    },
+    "visual_encoder": {
+      "encoder": "BAAI/EVA-CLIP-8B",
+      "revision": "0e4dca944e8ece27eb9dfe4a488c0ed0c4644fc9",
+      "processor": "openai/clip-vit-large-patch14",
+      "processor_revision": "32bd64288804d66eefd0ccbe215aa642df71cc41"
+    },
+    "validation_policy": "SHA-256 reused only for unchanged device/inode/size/mtime_ns/ctime_ns"
+  },
+  "environment": {
+    "python": "3.11.3 (main, Aug 30 2024, 23:31:08) [GCC 12.3.0]",
+    "host": "gcn34.local.snellius.surf.nl",
+    "packages": {
+      "torch": "2.5.1",
+      "transformers": "4.45.2",
+      "numpy": "2.4.6",
+      "pydantic": "2.10.4",
+      "igraph": "0.11.8",
+      "Pillow": "12.3.0"
+    },
+    "gpus": [
+      "NVIDIA A100-SXM4-40GB"
+    ],
+    "repository_commit": "71a221ca1a7b18fadbcc99408a59412dd8be1a4f",
+    "runner_sha256": "b1fb05978eb8a8f604e5803c74237109a66dab2aa599dd95de485bf2e3e81fb5",
+    "slurm_job_id": "28514250"
+  },
+  "latency_definition": "EVA query encode + graph retrieval compute in separate processes; excludes model/index loading, serialization and reader generation",
+  "question_encoder_environment": {
+    "python": "3.11.3 (main, Aug 30 2024, 23:31:08) [GCC 12.3.0]",
+    "host": "gcn22.local.snellius.surf.nl",
+    "packages": {
+      "torch": "2.7.0+cu126",
+      "transformers": "4.49.0",
+      "numpy": "1.26.0",
+      "pydantic": "2.13.5",
+      "igraph": "0.11.8",
+      "Pillow": "12.3.0"
+    },
+    "gpus": [
+      "NVIDIA A100-SXM4-40GB"
+    ],
+    "repository_commit": "25ff93501b4b709c83a81efb97297157e6a9f90b",
+    "runner_sha256": "b1fb05978eb8a8f604e5803c74237109a66dab2aa599dd95de485bf2e3e81fb5",
+    "slurm_job_id": "28506717"
+  }
+}

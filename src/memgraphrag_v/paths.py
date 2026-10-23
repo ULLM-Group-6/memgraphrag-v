@@ -2,8 +2,12 @@
 
 Everything lives under one root outside the repo, given by ``$MGRV_ARTIFACTS``
 (on Snellius: project space or /scratch-shared) or the config's
-``artifacts_root``. Copy the WebQA files from the ``dataset`` branch into ``webqa/``; ``webqa.py``
-unpacks the images into ``corpus/images/`` and writes ``manifests/``.
+``artifacts_root``. ``python -m memgraphrag_v.webqa`` turns the dataset
+branch's files (copied into ``webqa/``) into ``manifests/`` and unpacks the
+images into ``corpus/images/``.
+
+External code and checkpoints are located through environment variables, only
+when the requested operation needs them (``external_path``).
 """
 
 from __future__ import annotations
@@ -16,7 +20,29 @@ from pathlib import Path
 from .schemas import ImageRecord
 
 ENV_VAR = "MGRV_ARTIFACTS"
+MEMGRAPHRAG_ENV = "MGRV_MEMGRAPHRAG"
+"""Checkout of XMUDeepLIT/MemGraphRAG at the pinned commit (its ``code/`` folder is imported)."""
+MG2_ENV = "MGRV_MG2_RAG"
+"""Checkout of Daboolu/MG2-RAG at the pinned commit (provides ``sam3/`` and the SAM3 wrapper)."""
+SAM3_CHECKPOINT_ENV = "MGRV_SAM3_CHECKPOINT"
+"""SAM3 weights; default ``<artifacts>/models/sam3/sam3.pt``."""
+TEXT_EMBEDDING_ENV = "MGRV_TEXT_EMBEDDING_MODEL"
+"""Overrides ``text.embedding_model`` (e.g. with an offline snapshot path)."""
+OPENIE_FAILURES_FILE = "openie_failures.json"
+"""Chunks OpenIE failed on, written next to the OpenIE cache (``Artifacts.openie_failures``)."""
 EMBEDDING_KINDS = ("image", "crop", "query")
+
+
+def external_path(env_var: str, what: str) -> Path:
+    """An existing path from an environment variable, with an error that says
+    which variable to set."""
+    value = os.environ.get(env_var)
+    if not value:
+        raise RuntimeError(f"{what}: set {env_var}")
+    path = Path(value).expanduser()
+    if not path.exists():
+        raise FileNotFoundError(f"{what}: {path} (from {env_var}) does not exist")
+    return path
 
 
 @dataclass(frozen=True)
@@ -80,3 +106,53 @@ class Artifacts:
         if not re.fullmatch(r"[A-Za-z0-9._-]+", run_id):
             raise ValueError(f"run_id must match [A-Za-z0-9._-]+: {run_id!r}")
         return self.root / "runs" / run_id
+
+    # Combined index: MemGraphRAG text memory plus the visual additions.
+    # Image and crop vectors stay under embeddings/.
+    @property
+    def index_dir(self) -> Path:
+        return self.root / "index"
+
+    @property
+    def index_manifest(self) -> Path:
+        """Stage stamps (input/setting/output hashes) and provenance."""
+        return self.index_dir / "manifest.json"
+
+    @property
+    def text_dir(self) -> Path:
+        """MemGraphRAG's ``save_dir``: OpenIE cache, ``memory.json`` and, under
+        ``<llm>_<embedding>/``, the text stores and the final ``graph.graphml``."""
+        return self.index_dir / "text"
+
+    @property
+    def memory_path(self) -> Path:
+        return self.text_dir / "memory.json"
+
+    @property
+    def openie_failures(self) -> Path:
+        return self.text_dir / OPENIE_FAILURES_FILE
+
+    @property
+    def texts(self) -> Path:
+        return self.index_dir / "texts.jsonl"
+
+    @property
+    def chunks(self) -> Path:
+        return self.index_dir / "chunks.jsonl"
+
+    @property
+    def entities(self) -> Path:
+        return self.index_dir / "entities.jsonl"
+
+    @property
+    def indexed_images(self) -> Path:
+        return self.index_dir / "images.jsonl"
+
+    @property
+    def grounding_dir(self) -> Path:
+        """``records/`` (one ImageGrounding per image), ``masks/`` and ``crops/``."""
+        return self.index_dir / "grounding"
+
+    def relative(self, path: Path) -> str:
+        """``path`` relative to the root with forward slashes (as stored in records)."""
+        return Path(path).relative_to(self.root).as_posix()

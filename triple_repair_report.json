@@ -1,0 +1,232 @@
+{
+  "chunks_checked": 97,
+  "counts": {
+    "invalid_triple_shape": 77,
+    "non_string_triple_values": 2,
+    "valid_json_and_triple_shape": 8,
+    "invalid_json: Invalid \\uXXXX escape": 1,
+    "invalid_json: Expecting value": 3,
+    "invalid_json: Expecting ',' delimiter": 6
+  },
+  "with_triple_repair_patch": {
+    "dropped_triples": 77,
+    "kept_triples": 886,
+    "kept_some": 92,
+    "all_invalid_retry": 1,
+    "still_fails_retry: Invalid triple JSON: Expecting ',' delimiter": 3,
+    "still_fails_retry: Invalid triple JSON: Expecting value": 1
+  },
+  "examples": [
+    {
+      "chunk_id": "chunk-7e538e151e348e24822ae150673fcbd0",
+      "original_errors": [
+        "triples: Invalid triple JSON: Expecting ',' delimiter"
+      ],
+      "assessment": "invalid_triple_shape",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 504,
+        "completion_tokens": 67,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"dwyane wade\", \"played for\", \"miami heat\", \"in\", \"2007\"],\n    [\"dwyane wade\", \"played for\", \"miami heat\", \"in\", \"2008\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-93a4b11e46be70cea89099ac6e080629",
+      "original_errors": [
+        "triples: Invalid triple JSON: Expecting ',' delimiter"
+      ],
+      "assessment": "invalid_triple_shape",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 504,
+        "completion_tokens": 67,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"dwyane wade\", \"played for\", \"miami heat\", \"in\", \"2007\"],\n    [\"dwyane wade\", \"played for\", \"miami heat\", \"in\", \"2008\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-b5365cb1674724b3d485178aa31323e4",
+      "original_errors": [
+        "triples: Triple 0 contains a non-string or empty value"
+      ],
+      "assessment": "non_string_triple_values",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 529,
+        "completion_tokens": 113,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"dan marino\", \"was drafted as part of\", \"quarterback class of 1983\"],\n    [\"dan marino\", \"set numerous passing records\", null],\n    [\"dan marino\", \"was the face of\", \"dolphins\"],\n    [\"dolphins\", \"had dan marino as\", \"face of the team\"],\n    [\"dan marino\", \"retired from\", \"dolphins after the 1999 season\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-516ccf8022582a577510e561a0b3d26a",
+      "original_errors": [
+        "triples: Triple 0 contains a non-string or empty value"
+      ],
+      "assessment": "valid_json_and_triple_shape",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 520,
+        "completion_tokens": 71,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"dr. gerhard wiesinger\", \"is\", \"person\"],\n    [\"dirk nowitzki\", \"is\", \"person\"],\n    [\"michelle burton\", \"is\", \"person\"],\n    [\"\", \"year\", \"2017\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-a3a62fcb2d02f379f92475d6d10d6c75",
+      "original_errors": [
+        "triples: Triple 0 contains a non-string or empty value"
+      ],
+      "assessment": "invalid_json: Invalid \\uXXXX escape",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 572,
+        "completion_tokens": 216,
+        "finish_reason": "stop"
+      },
+      "response": "{\n    \"triples\": [\n        [\"\\u043b\\u044c\\u0432\\u0456\\u0432 \\u0433\\u0430\\u043b\\u0438\\u0446\\u044c\\u441\\u0440\\u0430\", \"located on\", \"\\u0432\\u0443\\u043b\\u044c\\u043a\\u0430 \\u0432\\u0443\\u043b.\"],\n        [\"\\u0432\\u0443\\u043b\\u044c\\u043a\\u0430 \\u0432\\u0443\\u043b.\", \"address\", \"\\u0432\\u0443\\u043b., 11 184\"]\n    ]\n}"
+    },
+    {
+      "chunk_id": "chunk-ef55dea5784b18198889d011005ea839",
+      "original_errors": [
+        "triples: Invalid triple JSON: Expecting ',' delimiter"
+      ],
+      "assessment": "invalid_json: Expecting value",
+      "repair_outcome": "all_invalid_retry",
+      "metadata": {
+        "prompt_tokens": 478,
+        "completion_tokens": 21,
+        "finish_reason": "stop"
+      },
+      "response": "{\"triples\": [\n            [\"Brock Lesnar\", \"returns\", None]\n    ]\n}"
+    },
+    {
+      "chunk_id": "chunk-6be80e307abb9fa3254930af883d463c",
+      "original_errors": [
+        "triples: Invalid triple JSON: Expecting ',' delimiter"
+      ],
+      "assessment": "invalid_json: Expecting ',' delimiter",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 635,
+        "completion_tokens": 215,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"summer paralympics\", \"will be held between\", \"24 August 2021\"^^xsd:date],\n    [\"summer paralympics\", \"will be held between\", \"5 September 2021\"^^xsd:date],\n    [\"summer paralympics\", \"will be held 16 days after\", \"olympics\"],\n    [\"2020 games\", \"are\", \"olympic games\"],\n    [\"2020 games\", \"will be held in\", \"japan\"],\n    [\"2020 games\", \"are the\", \"fourth olympic games to be held in japan\"],\n    [\"tokyo 1964\", \"is\", \"summer olympic games\"],\n    [\"sapporo 1972\", \"is\", \"winter olympic games\"],\n    [\"nagano 1998\", \"is\", \"winter olympic games\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-7525e071da79725f77df5ef8785f038d",
+      "original_errors": [
+        "triples: Triple 1 contains a non-string or empty value"
+      ],
+      "assessment": "invalid_json: Expecting value",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 507,
+        "completion_tokens": 55,
+        "finish_reason": "stop"
+      },
+      "response": "{\"triples\": [\n            [\"he\", \"had been doing\", \"preaching\"],\n            [\"he\", \"felt\", \"annoyed by the preaching\"],\n            [\"a song\", \"contains the line\", '\"too many people preaching practices\"']\n    ]\n}"
+    },
+    {
+      "chunk_id": "chunk-3abe91d93d7133a14e46e4011b356a68",
+      "original_errors": [
+        "triples: Triple 1 contains a non-string or empty value"
+      ],
+      "assessment": "invalid_json: Expecting ',' delimiter",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 540,
+        "completion_tokens": 136,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"the bears\", \"holds record for\", \"most individuals enshrined in the pro football hall of fame\"],\n    [\"36 inductees\", \"are part of\", \"pro football hall of fame\"],\n    [\"30 inductees\", \"made primary contribution to football with\", \"the bears\"],\n    [\"6 inductees\", \"contributed minor portion of their career with\", \"the bears\"],\n    [\"the bears\", \"is associated with\", \"bears\"]  // Note: The second \"bears\" here refers to the team, not a person or place.\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-eb4ba28eef147e4675203c95e3eb99e2",
+      "original_errors": [
+        "triples: Triple 2 contains a non-string or empty value"
+      ],
+      "assessment": "valid_json_and_triple_shape",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 500,
+        "completion_tokens": 43,
+        "finish_reason": "stop"
+      },
+      "response": "{\"triples\": [\n            [\"this match\", \"is an elimination-style match\", \"\"],\n            [\"wrestlers\", \"are eliminated\", \"one-by-one via pinfall or submission\"]\n    ]\n}"
+    },
+    {
+      "chunk_id": "chunk-b8286e0430b315a0e2cbc86377886bbb",
+      "original_errors": [
+        "triples: Triple 3 must contain exactly three strings"
+      ],
+      "assessment": "invalid_json: Expecting ',' delimiter",
+      "repair_outcome": "still_fails_retry: Invalid triple JSON: Expecting ',' delimiter",
+      "metadata": {
+        "prompt_tokens": 527,
+        "completion_tokens": 116,
+        "finish_reason": "stop"
+      },
+      "response": "{\"triples\": [\n            [\"swim leg\", \"can occur in\", \"any available body of water\"],\n            [\"swim leg\", \"can occur in\", \"natural body of water\"],\n            [\"swim leg\", \"can occur in\", \"swimming pool\"],\n            [\"swim leg\", \"considered as\", \"open water swimming\"] when_not_in_swimming_pool,\n            [\"open water swimming\", \"typically proceeds around\", \"series of marked buoys\"],\n            [\"open water swimming\", \"ends near\", \"transition area\"]\n    ]\n}"
+    },
+    {
+      "chunk_id": "chunk-54c85920c845bf8f4d4c10bc5925b1ce",
+      "original_errors": [
+        "triples: Triple 5 must contain exactly three strings"
+      ],
+      "assessment": "invalid_json: Expecting ',' delimiter",
+      "repair_outcome": "still_fails_retry: Invalid triple JSON: Expecting ',' delimiter",
+      "metadata": {
+        "prompt_tokens": 555,
+        "completion_tokens": 159,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"the heat\", \"finished as\", \"east's second seed\"],\n    [\"james\", \"averaged\", \"26.7 points per game\"],\n    [\"james\", \"averaged\", \"7.5 rebounds per game\"],\n    [\"james\", \"averaged\", \"7 assists per game\"],\n    [\"james\", \"had shooting percentage of\", \"51 percent\"],\n    [\"james\", \"and his teammates\", \"matched up with\", \"the celtics\"],\n    [\"james\", \"and his teammates\", \"matched up with\", \"the celtics\" \"for the second consecutive year\"],\n    [\"james\", \"played in\", \"conference semifinals\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-9632c6bc7229ace493aed3db278d5585",
+      "original_errors": [
+        "triples: Triple 0 contains a non-string or empty value"
+      ],
+      "assessment": "non_string_triple_values",
+      "repair_outcome": "kept_some",
+      "metadata": {
+        "prompt_tokens": 536,
+        "completion_tokens": 109,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"Michigan\", \"conceded\", null],\n    [\"Michigan\", \"player\", \"Gerald R. Ford\"],\n    [\"Gerald R. Ford\", \"considered\", \"quitting the team\"],\n    [\"Kipke\", \"posted\", \"a 49-26-4 record at Michigan\"],\n    [\"Kipke\", \"won\", \"four conference championships\"],\n    [\"Kipke\", \"won\", \"two national championships\"]\n  ]\n}\n```"
+    },
+    {
+      "chunk_id": "chunk-cf90947ef4c2637cd3382f2f4b178330",
+      "original_errors": [
+        "triples: Invalid triple JSON: Expecting value"
+      ],
+      "assessment": "invalid_json: Expecting value",
+      "repair_outcome": "still_fails_retry: Invalid triple JSON: Expecting value",
+      "metadata": {
+        "prompt_tokens": 585,
+        "completion_tokens": 190,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"athletes\", \"wearing\", \"matching orange and black athletic outfits\"],\n    [\"athletes\", \"wearing\", '\"areva\" on the front'],\n    [\"athletes\", \"appearing to be\", \"celebrating or interacting\"],\n    [\"one individual\", \"holding\", \"a bouquet of flowers\"],\n    [\"setting\", \"includes\", \"a red track with white lane markings\"],\n    [\"background\", \"includes\", \"banners reading \"Aix les Bains\" and \"naturelle\"],\n    [\"athletes\", \"wearing\", \"numbered bibs\"],\n    [\"event\", \"indicated by\", \"numbered bibs\"]\n  ]\n}\n```\n\nIn this JSON representation, I've created relationships based on the information provided in the paragraph, using the named entities \"Aix les Bains\" and \"naturelle\" where appropriate."
+    },
+    {
+      "chunk_id": "chunk-f457d24b8404ccc4bd2683e8df6f8735",
+      "original_errors": [
+        "triples: Triple 0 contains a non-string or empty value"
+      ],
+      "assessment": "invalid_json: Expecting ',' delimiter",
+      "repair_outcome": "still_fails_retry: Invalid triple JSON: Expecting ',' delimiter",
+      "metadata": {
+        "prompt_tokens": 578,
+        "completion_tokens": 237,
+        "finish_reason": "stop"
+      },
+      "response": "```json\n{\n  \"triples\": [\n    [\"wheelchair basketball game\", \"is depicted in\", \"image\"],\n    [\"players\", \"are seated in\", \"wheelchairs\"],\n    [\"players\", \"wearing\", \"green jerseys\"],\n    [\"players\", \"have\", \"Australia\"]的文化团队标识],\n    [\"opposing team\", \"wearing\", \"white jerseys\"],\n    [\"opposing team\", \"have\", \"Korea\"]文化团队标识],\n    [\"court\", \"marked with\", \"standard basketball lines\"],\n    [\"background\", \"shows\", \"audience\"],\n    [\"audience\", \"seated in\", \"stands\"],\n    [\"game\", \"taking place in\", \"indoor sports arena\"]\n  ]\n}\n```\n\nNote: The named entities \"Australia\" and \"Korea\" are directly linked to the jerseys they are wearing, so I've used \"have\" as the predicate to indicate the team affiliation. The term \"文化团队标识\" seems out of context and might be a mistake or a placeholder; it has been left as is in the translation. If you meant to include additional information about the jerseys, please clarify."
+    }
+  ],
+  "note": "Read-only diagnostic; no cache changes applied."
+}
