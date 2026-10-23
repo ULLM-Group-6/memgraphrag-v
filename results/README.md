@@ -51,3 +51,23 @@ python evaluation/extra_metrics.py results/webqa-tuned-v1-test-single/evaluation
 ```
 
 The two `recall_test.json` files are unchanged copies from `main`.
+
+## Build vs test recall
+
+The build-vs-test Document-ID Recall@5 table (MemGraphRAG-V next to the dense baselines, with
+all intervals from `evaluate_webqa.py`'s bootstrap) comes from `evaluation/recall_by_split.py`,
+saved in `recall_build_beta_025.json`, `recall_build_beta_050.json` and `recall_test.json`.
+The two `recall_build.json` files are unchanged copies from `main`. To reproduce:
+
+```bash
+python evaluation/recall_by_split.py results/webqa-full-v1/webqa-tuned-v1-dev-beta-025 \
+  --questions dataset/build_qa.json --test-questions dataset/test_qa.json --data-dir dataset \
+  --baseline run_T=evaluation_results/webqa_run_T/recall_build.json \
+  --baseline run_C=evaluation_results/webqa_run_C/recall_build.json \
+  --output results/recall_build_beta_025.json
+python evaluation/recall_by_split.py results/webqa-tuned-v1-test-single \
+  --questions dataset/test_qa.json --data-dir dataset \
+  --baseline run_T=evaluation_results/webqa_run_T/recall_test.json \
+  --baseline run_C=evaluation_results/webqa_run_C/recall_test.json \
+  --output results/recall_test.json
+```
