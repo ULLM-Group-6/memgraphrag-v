@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-23T20:09:56.875941+00:00",
+  "questions": 120,
+  "environment": {
+    "python": "3.11.3 (main, Aug 30 2024, 23:31:08) [GCC 12.3.0]",
+    "host": "gcn34.local.snellius.surf.nl",
+    "packages": {
+      "torch": "2.7.0+cu126",
+      "transformers": "4.49.0",
+      "numpy": "1.26.0",
+      "pydantic": "2.13.5",
+      "igraph": "0.11.8",
+      "Pillow": "12.3.0"
+    },
+    "gpus": [
+      "NVIDIA A100-SXM4-40GB"
+    ],
+    "repository_commit": "71a221ca1a7b18fadbcc99408a59412dd8be1a4f",
+    "runner_sha256": "b1fb05978eb8a8f604e5803c74237109a66dab2aa599dd95de485bf2e3e81fb5",
+    "slurm_job_id": "28514250"
+  },
+  "run_sha256": "ec7d4f668de45f28d1c01e7dd17721476698290cdf74632698e86dc0bc25561b",
+  "answers_sha256": "359fcba2e4326fa8222a326cd19aac1e0c29b1df0f31b4d805e872be7d2b0cc6",
+  "scoring_performed": false
+}
