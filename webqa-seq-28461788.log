@@ -1,0 +1,7 @@
+2026-10-22T08:52:29+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28461788/01-prepare-auto-w0-c0.log
+2026-10-22T08:53:38+0200 DONE prepare-auto
+2026-10-22T08:53:38+0200 START embed-finalize, worker=0, candidate=0; log=logs/webqa-seq-28461788/02-embed-finalize-w0-c0.log
+2026-10-22T09:06:33+0200 DONE embed-finalize
+2026-10-22T09:06:33+0200 START assemble, worker=0, candidate=0; log=logs/webqa-seq-28461788/03-assemble-w0-c0.log
+2026-10-22T09:19:03+0200 DONE assemble
+2026-10-22T09:19:03+0200 INDEX COMPLETE: finalization and graph assembly succeeded; tuning may start.

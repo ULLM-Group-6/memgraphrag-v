@@ -1,0 +1,980 @@
+2026-10-21T15:55:40+0200 START embedding imports/config
+2026-10-21T15:55:41+0200 DONE embedding imports/config: 1.2s
+2026-10-21T15:55:41+0200 START preparation receipt check
+2026-10-21T15:55:45+0200 DONE preparation receipt check: 3.8s
+2026-10-21T15:55:45+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-21T15:55:46+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-21T15:55:47+0200 Checking image checkpoints: /gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/image
+2026-10-21T15:58:38+0200 Hash cache: 256 files read, 0 hashes reused
+2026-10-21T16:00:49+0200 Hash cache: 512 files read, 0 hashes reused
+2026-10-21T16:04:05+0200 Hash cache: 768 files read, 0 hashes reused
+2026-10-21T16:06:43+0200 Hash cache: 1024 files read, 0 hashes reused
+2026-10-21T16:09:06+0200 Hash cache: 1280 files read, 0 hashes reused
+2026-10-21T16:11:24+0200 Hash cache: 1536 files read, 0 hashes reused
+2026-10-21T16:12:20+0200 Hash cache: 1792 files read, 0 hashes reused
+2026-10-21T16:15:52+0200 Hash cache: 2048 files read, 0 hashes reused
+Reusing complete /gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/image; checked in 1217.4s
+2026-10-21T16:16:04+0200 Checking crop checkpoints: /gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop
+2026-10-21T16:16:45+0200 Reused crop through 128/51985
+2026-10-21T16:16:56+0200 Hash cache: 2304 files read, 0 hashes reused
+2026-10-21T16:17:48+0200 Hash cache: 2560 files read, 0 hashes reused
+2026-10-21T16:19:19+0200 Hash cache: 2816 files read, 0 hashes reused
+2026-10-21T16:20:04+0200 Hash cache: 3072 files read, 0 hashes reused
+2026-10-21T16:21:04+0200 Reused crop through 1152/51985
+2026-10-21T16:21:16+0200 Hash cache: 3328 files read, 0 hashes reused
+2026-10-21T16:22:41+0200 Hash cache: 3584 files read, 0 hashes reused
+2026-10-21T16:24:05+0200 Hash cache: 3840 files read, 0 hashes reused
+2026-10-21T16:25:04+0200 Hash cache: 4096 files read, 0 hashes reused
+2026-10-21T16:25:29+0200 Reused crop through 2176/51985
+2026-10-21T16:25:38+0200 Hash cache: 4352 files read, 0 hashes reused
+2026-10-21T16:26:34+0200 Hash cache: 4608 files read, 0 hashes reused
+2026-10-21T16:27:28+0200 Hash cache: 4864 files read, 0 hashes reused
+2026-10-21T16:28:27+0200 Hash cache: 5120 files read, 0 hashes reused
+2026-10-21T16:29:41+0200 Hash cache: 5376 files read, 0 hashes reused
+2026-10-21T16:29:44+0200 Reused crop through 3200/51985
+2026-10-21T16:30:47+0200 Hash cache: 5632 files read, 0 hashes reused
+2026-10-21T16:31:59+0200 Hash cache: 5888 files read, 0 hashes reused
+2026-10-21T16:34:05+0200 Hash cache: 6144 files read, 0 hashes reused
+2026-10-21T16:34:43+0200 Hash cache: 6400 files read, 0 hashes reused
+2026-10-21T16:34:49+0200 Reused crop through 4224/51985
+2026-10-21T16:36:15+0200 Hash cache: 6656 files read, 0 hashes reused
+2026-10-21T16:37:47+0200 Hash cache: 6912 files read, 0 hashes reused
+2026-10-21T16:38:39+0200 Hash cache: 7168 files read, 0 hashes reused
+2026-10-21T16:39:55+0200 Hash cache: 7424 files read, 0 hashes reused
+2026-10-21T16:39:59+0200 Reused crop through 5248/51985
+2026-10-21T16:40:36+0200 Hash cache: 7680 files read, 0 hashes reused
+2026-10-21T16:41:22+0200 Hash cache: 7936 files read, 0 hashes reused
+2026-10-21T16:43:02+0200 Hash cache: 8192 files read, 0 hashes reused
+2026-10-21T16:44:30+0200 Hash cache: 8448 files read, 0 hashes reused
+2026-10-21T16:44:51+0200 Reused crop through 6272/51985
+2026-10-21T16:45:28+0200 Hash cache: 8704 files read, 0 hashes reused
+2026-10-21T16:46:09+0200 Hash cache: 8960 files read, 0 hashes reused
+2026-10-21T16:47:20+0200 Hash cache: 9216 files read, 0 hashes reused
+2026-10-21T16:48:11+0200 Hash cache: 9472 files read, 0 hashes reused
+2026-10-21T16:48:41+0200 Reused crop through 7296/51985
+2026-10-21T16:49:44+0200 Hash cache: 9728 files read, 0 hashes reused
+2026-10-21T16:50:50+0200 Hash cache: 9984 files read, 0 hashes reused
+2026-10-21T16:51:38+0200 Hash cache: 10240 files read, 0 hashes reused
+2026-10-21T16:52:24+0200 START validate 128 crop inputs
+2026-10-21T16:53:39+0200 DONE validate 128 crop inputs: 74.6s
+2026-10-21T16:53:39+0200 START load EVA once for this job
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [04:32<13:36, 272.22s/it]Loading checkpoint shards:  50%|█████     | 2/4 [08:55<08:54, 267.24s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [13:17<04:24, 264.72s/it]Loading checkpoint shards: 100%|██████████| 4/4 [14:21<00:00, 185.52s/it]Loading checkpoint shards: 100%|██████████| 4/4 [14:21<00:00, 215.45s/it]
+2026-10-21T17:08:35+0200 DONE load EVA once for this job: 896.4s
+2026-10-21T17:08:35+0200 START encode 128 crop inputs
+2026-10-21T17:09:00+0200 DONE encode 128 crop inputs: 25.2s
+Saved crop: 8192/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:09:04+0200 START validate 128 crop inputs
+2026-10-21T17:09:05+0200 Hash cache: 10496 files read, 128 hashes reused
+2026-10-21T17:09:50+0200 DONE validate 128 crop inputs: 45.6s
+2026-10-21T17:09:50+0200 START encode 128 crop inputs
+2026-10-21T17:09:54+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 8320/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:09:54+0200 START validate 128 crop inputs
+2026-10-21T17:10:19+0200 DONE validate 128 crop inputs: 25.5s
+2026-10-21T17:10:19+0200 START encode 128 crop inputs
+2026-10-21T17:10:23+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 8448/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:10:23+0200 START validate 128 crop inputs
+2026-10-21T17:10:23+0200 Hash cache: 10752 files read, 384 hashes reused
+2026-10-21T17:10:50+0200 DONE validate 128 crop inputs: 27.2s
+2026-10-21T17:10:50+0200 START encode 128 crop inputs
+2026-10-21T17:10:53+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 8576/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:10:53+0200 START validate 128 crop inputs
+2026-10-21T17:11:11+0200 DONE validate 128 crop inputs: 17.7s
+2026-10-21T17:11:11+0200 START encode 128 crop inputs
+2026-10-21T17:11:15+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 8704/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:11:15+0200 START validate 128 crop inputs
+2026-10-21T17:11:15+0200 Hash cache: 11008 files read, 640 hashes reused
+2026-10-21T17:11:39+0200 DONE validate 128 crop inputs: 24.1s
+2026-10-21T17:11:39+0200 START encode 128 crop inputs
+2026-10-21T17:11:42+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 8832/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:11:42+0200 START validate 128 crop inputs
+2026-10-21T17:12:04+0200 DONE validate 128 crop inputs: 22.1s
+2026-10-21T17:12:04+0200 START encode 128 crop inputs
+2026-10-21T17:12:08+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 8960/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:12:08+0200 START validate 128 crop inputs
+2026-10-21T17:12:09+0200 Hash cache: 11264 files read, 896 hashes reused
+2026-10-21T17:12:49+0200 DONE validate 128 crop inputs: 41.2s
+2026-10-21T17:12:49+0200 START encode 128 crop inputs
+2026-10-21T17:12:53+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 9088/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:12:53+0200 START validate 128 crop inputs
+2026-10-21T17:13:57+0200 DONE validate 128 crop inputs: 64.6s
+2026-10-21T17:13:57+0200 START encode 128 crop inputs
+2026-10-21T17:14:01+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 9216/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:14:02+0200 START validate 128 crop inputs
+2026-10-21T17:14:02+0200 Hash cache: 11520 files read, 1152 hashes reused
+2026-10-21T17:14:53+0200 DONE validate 128 crop inputs: 51.3s
+2026-10-21T17:14:53+0200 START encode 128 crop inputs
+2026-10-21T17:14:57+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 9344/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:14:57+0200 START validate 128 crop inputs
+2026-10-21T17:15:28+0200 DONE validate 128 crop inputs: 31.4s
+2026-10-21T17:15:28+0200 START encode 128 crop inputs
+2026-10-21T17:15:32+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 9472/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:15:33+0200 START validate 128 crop inputs
+2026-10-21T17:15:33+0200 Hash cache: 11776 files read, 1408 hashes reused
+2026-10-21T17:16:33+0200 DONE validate 128 crop inputs: 60.2s
+2026-10-21T17:16:33+0200 START encode 128 crop inputs
+2026-10-21T17:16:37+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 9600/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:16:37+0200 START validate 128 crop inputs
+2026-10-21T17:17:13+0200 DONE validate 128 crop inputs: 36.3s
+2026-10-21T17:17:13+0200 START encode 128 crop inputs
+2026-10-21T17:17:17+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 9728/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:17:17+0200 START validate 128 crop inputs
+2026-10-21T17:17:17+0200 Hash cache: 12032 files read, 1664 hashes reused
+2026-10-21T17:18:19+0200 DONE validate 128 crop inputs: 62.4s
+2026-10-21T17:18:19+0200 START encode 128 crop inputs
+2026-10-21T17:18:23+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 9856/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:18:23+0200 START validate 128 crop inputs
+2026-10-21T17:19:00+0200 DONE validate 128 crop inputs: 37.2s
+2026-10-21T17:19:00+0200 START encode 128 crop inputs
+2026-10-21T17:19:04+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 9984/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:19:04+0200 START validate 128 crop inputs
+2026-10-21T17:19:06+0200 Hash cache: 12288 files read, 1920 hashes reused
+2026-10-21T17:19:29+0200 DONE validate 128 crop inputs: 24.6s
+2026-10-21T17:19:29+0200 START encode 128 crop inputs
+2026-10-21T17:19:33+0200 DONE encode 128 crop inputs: 4.0s
+Saved crop: 10112/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:19:33+0200 START validate 128 crop inputs
+2026-10-21T17:19:59+0200 DONE validate 128 crop inputs: 25.7s
+2026-10-21T17:19:59+0200 START encode 128 crop inputs
+2026-10-21T17:20:02+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 10240/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:20:02+0200 START validate 128 crop inputs
+2026-10-21T17:20:02+0200 Hash cache: 12544 files read, 2176 hashes reused
+2026-10-21T17:20:21+0200 DONE validate 128 crop inputs: 19.0s
+2026-10-21T17:20:21+0200 START encode 128 crop inputs
+2026-10-21T17:20:25+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 10368/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:20:25+0200 START validate 128 crop inputs
+2026-10-21T17:20:41+0200 DONE validate 128 crop inputs: 16.7s
+2026-10-21T17:20:41+0200 START encode 128 crop inputs
+2026-10-21T17:20:45+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 10496/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:20:45+0200 START validate 128 crop inputs
+2026-10-21T17:20:49+0200 Hash cache: 12800 files read, 2432 hashes reused
+2026-10-21T17:21:30+0200 DONE validate 128 crop inputs: 45.2s
+2026-10-21T17:21:30+0200 START encode 128 crop inputs
+2026-10-21T17:21:34+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 10624/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:21:34+0200 START validate 128 crop inputs
+2026-10-21T17:22:03+0200 DONE validate 128 crop inputs: 29.8s
+2026-10-21T17:22:03+0200 START encode 128 crop inputs
+2026-10-21T17:22:07+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 10752/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:22:07+0200 START validate 128 crop inputs
+2026-10-21T17:22:09+0200 Hash cache: 13056 files read, 2688 hashes reused
+2026-10-21T17:22:18+0200 DONE validate 128 crop inputs: 11.5s
+2026-10-21T17:22:18+0200 START encode 128 crop inputs
+2026-10-21T17:22:22+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 10880/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:22:22+0200 START validate 128 crop inputs
+2026-10-21T17:23:09+0200 DONE validate 128 crop inputs: 46.9s
+2026-10-21T17:23:09+0200 START encode 128 crop inputs
+2026-10-21T17:23:12+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 11008/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:23:12+0200 START validate 128 crop inputs
+2026-10-21T17:23:13+0200 Hash cache: 13312 files read, 2944 hashes reused
+2026-10-21T17:23:43+0200 DONE validate 128 crop inputs: 31.1s
+2026-10-21T17:23:43+0200 START encode 128 crop inputs
+2026-10-21T17:23:47+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 11136/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:23:47+0200 START validate 128 crop inputs
+2026-10-21T17:24:13+0200 DONE validate 128 crop inputs: 25.8s
+2026-10-21T17:24:13+0200 START encode 128 crop inputs
+2026-10-21T17:24:16+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 11264/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:24:16+0200 START validate 128 crop inputs
+2026-10-21T17:24:17+0200 Hash cache: 13568 files read, 3200 hashes reused
+2026-10-21T17:24:41+0200 DONE validate 128 crop inputs: 24.6s
+2026-10-21T17:24:41+0200 START encode 128 crop inputs
+2026-10-21T17:24:45+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 11392/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:24:45+0200 START validate 128 crop inputs
+2026-10-21T17:25:22+0200 DONE validate 128 crop inputs: 37.9s
+2026-10-21T17:25:22+0200 START encode 128 crop inputs
+2026-10-21T17:25:26+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 11520/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:25:26+0200 START validate 128 crop inputs
+2026-10-21T17:25:28+0200 Hash cache: 13824 files read, 3456 hashes reused
+2026-10-21T17:25:54+0200 DONE validate 128 crop inputs: 27.6s
+2026-10-21T17:25:54+0200 START encode 128 crop inputs
+2026-10-21T17:25:57+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 11648/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:25:58+0200 START validate 128 crop inputs
+2026-10-21T17:26:03+0200 DONE validate 128 crop inputs: 5.4s
+2026-10-21T17:26:03+0200 START encode 128 crop inputs
+2026-10-21T17:26:06+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 11776/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:26:06+0200 START validate 128 crop inputs
+2026-10-21T17:26:07+0200 Hash cache: 14080 files read, 3712 hashes reused
+2026-10-21T17:26:17+0200 DONE validate 128 crop inputs: 10.2s
+2026-10-21T17:26:17+0200 START encode 128 crop inputs
+2026-10-21T17:26:20+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 11904/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:26:20+0200 START validate 128 crop inputs
+2026-10-21T17:26:47+0200 DONE validate 128 crop inputs: 27.2s
+2026-10-21T17:26:47+0200 START encode 128 crop inputs
+2026-10-21T17:26:51+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 12032/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:26:51+0200 START validate 128 crop inputs
+2026-10-21T17:26:51+0200 Hash cache: 14336 files read, 3968 hashes reused
+2026-10-21T17:27:40+0200 DONE validate 128 crop inputs: 49.6s
+2026-10-21T17:27:40+0200 START encode 128 crop inputs
+2026-10-21T17:27:44+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 12160/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:27:44+0200 START validate 128 crop inputs
+2026-10-21T17:28:17+0200 DONE validate 128 crop inputs: 33.0s
+2026-10-21T17:28:17+0200 START encode 128 crop inputs
+2026-10-21T17:28:21+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 12288/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:28:21+0200 START validate 128 crop inputs
+2026-10-21T17:28:21+0200 Hash cache: 14592 files read, 4224 hashes reused
+2026-10-21T17:28:46+0200 DONE validate 128 crop inputs: 25.2s
+2026-10-21T17:28:46+0200 START encode 128 crop inputs
+2026-10-21T17:28:50+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 12416/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:28:50+0200 START validate 128 crop inputs
+2026-10-21T17:29:03+0200 DONE validate 128 crop inputs: 12.9s
+2026-10-21T17:29:03+0200 START encode 128 crop inputs
+2026-10-21T17:29:06+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 12544/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:29:06+0200 START validate 128 crop inputs
+2026-10-21T17:29:06+0200 Hash cache: 14848 files read, 4480 hashes reused
+2026-10-21T17:29:34+0200 DONE validate 128 crop inputs: 28.5s
+2026-10-21T17:29:34+0200 START encode 128 crop inputs
+2026-10-21T17:29:38+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 12672/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:29:38+0200 START validate 128 crop inputs
+2026-10-21T17:30:17+0200 DONE validate 128 crop inputs: 38.8s
+2026-10-21T17:30:17+0200 START encode 128 crop inputs
+2026-10-21T17:30:20+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 12800/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:30:20+0200 START validate 128 crop inputs
+2026-10-21T17:30:21+0200 Hash cache: 15104 files read, 4736 hashes reused
+2026-10-21T17:30:48+0200 DONE validate 128 crop inputs: 28.1s
+2026-10-21T17:30:48+0200 START encode 128 crop inputs
+2026-10-21T17:30:52+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 12928/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:30:52+0200 START validate 128 crop inputs
+2026-10-21T17:31:14+0200 DONE validate 128 crop inputs: 22.1s
+2026-10-21T17:31:14+0200 START encode 128 crop inputs
+2026-10-21T17:31:18+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 13056/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:31:18+0200 START validate 128 crop inputs
+2026-10-21T17:31:18+0200 Hash cache: 15360 files read, 4992 hashes reused
+2026-10-21T17:31:35+0200 DONE validate 128 crop inputs: 16.6s
+2026-10-21T17:31:35+0200 START encode 128 crop inputs
+2026-10-21T17:31:39+0200 DONE encode 128 crop inputs: 4.4s
+Saved crop: 13184/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:31:39+0200 START validate 128 crop inputs
+2026-10-21T17:32:34+0200 DONE validate 128 crop inputs: 55.3s
+2026-10-21T17:32:34+0200 START encode 128 crop inputs
+2026-10-21T17:32:53+0200 DONE encode 128 crop inputs: 18.7s
+Saved crop: 13312/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:32:54+0200 START validate 128 crop inputs
+2026-10-21T17:32:54+0200 Hash cache: 15616 files read, 5248 hashes reused
+2026-10-21T17:33:24+0200 DONE validate 128 crop inputs: 29.7s
+2026-10-21T17:33:24+0200 START encode 128 crop inputs
+2026-10-21T17:33:31+0200 DONE encode 128 crop inputs: 7.6s
+Saved crop: 13440/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:33:31+0200 START validate 128 crop inputs
+2026-10-21T17:34:13+0200 DONE validate 128 crop inputs: 41.6s
+2026-10-21T17:34:13+0200 START encode 128 crop inputs
+2026-10-21T17:34:29+0200 DONE encode 128 crop inputs: 16.0s
+Saved crop: 13568/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:34:29+0200 START validate 128 crop inputs
+2026-10-21T17:34:32+0200 Hash cache: 15872 files read, 5504 hashes reused
+2026-10-21T17:35:27+0200 DONE validate 128 crop inputs: 57.9s
+2026-10-21T17:35:27+0200 START encode 128 crop inputs
+2026-10-21T17:35:31+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 13696/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:35:31+0200 START validate 128 crop inputs
+2026-10-21T17:35:58+0200 DONE validate 128 crop inputs: 27.6s
+2026-10-21T17:35:58+0200 START encode 128 crop inputs
+2026-10-21T17:36:02+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 13824/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:36:02+0200 START validate 128 crop inputs
+2026-10-21T17:36:02+0200 Hash cache: 16128 files read, 5760 hashes reused
+2026-10-21T17:36:24+0200 DONE validate 128 crop inputs: 22.5s
+2026-10-21T17:36:24+0200 START encode 128 crop inputs
+2026-10-21T17:36:28+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 13952/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:36:28+0200 START validate 128 crop inputs
+2026-10-21T17:36:48+0200 DONE validate 128 crop inputs: 19.7s
+2026-10-21T17:36:48+0200 START encode 128 crop inputs
+2026-10-21T17:36:51+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 14080/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:36:51+0200 START validate 128 crop inputs
+2026-10-21T17:36:51+0200 Hash cache: 16384 files read, 6016 hashes reused
+2026-10-21T17:37:17+0200 DONE validate 128 crop inputs: 25.7s
+2026-10-21T17:37:17+0200 START encode 128 crop inputs
+2026-10-21T17:37:21+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 14208/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:37:21+0200 START validate 128 crop inputs
+2026-10-21T17:37:47+0200 DONE validate 128 crop inputs: 25.8s
+2026-10-21T17:37:47+0200 START encode 128 crop inputs
+2026-10-21T17:37:50+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 14336/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:37:50+0200 START validate 128 crop inputs
+2026-10-21T17:37:50+0200 Hash cache: 16640 files read, 6272 hashes reused
+2026-10-21T17:38:00+0200 DONE validate 128 crop inputs: 9.6s
+2026-10-21T17:38:00+0200 START encode 128 crop inputs
+2026-10-21T17:38:03+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 14464/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:38:03+0200 START validate 128 crop inputs
+2026-10-21T17:38:39+0200 DONE validate 128 crop inputs: 36.3s
+2026-10-21T17:38:39+0200 START encode 128 crop inputs
+2026-10-21T17:38:43+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 14592/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:38:43+0200 START validate 128 crop inputs
+2026-10-21T17:38:43+0200 Hash cache: 16896 files read, 6528 hashes reused
+2026-10-21T17:39:11+0200 DONE validate 128 crop inputs: 27.5s
+2026-10-21T17:39:11+0200 START encode 128 crop inputs
+2026-10-21T17:39:15+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 14720/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:39:15+0200 START validate 128 crop inputs
+2026-10-21T17:39:33+0200 DONE validate 128 crop inputs: 18.7s
+2026-10-21T17:39:33+0200 START encode 128 crop inputs
+2026-10-21T17:39:37+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 14848/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:39:37+0200 START validate 128 crop inputs
+2026-10-21T17:39:37+0200 Hash cache: 17152 files read, 6784 hashes reused
+2026-10-21T17:40:03+0200 DONE validate 128 crop inputs: 26.4s
+2026-10-21T17:40:03+0200 START encode 128 crop inputs
+2026-10-21T17:40:07+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 14976/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:40:07+0200 START validate 128 crop inputs
+2026-10-21T17:40:33+0200 DONE validate 128 crop inputs: 25.6s
+2026-10-21T17:40:33+0200 START encode 128 crop inputs
+2026-10-21T17:40:37+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 15104/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:40:40+0200 START validate 128 crop inputs
+2026-10-21T17:40:41+0200 Hash cache: 17408 files read, 7040 hashes reused
+2026-10-21T17:41:12+0200 DONE validate 128 crop inputs: 32.4s
+2026-10-21T17:41:12+0200 START encode 128 crop inputs
+2026-10-21T17:41:16+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 15232/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:41:16+0200 START validate 128 crop inputs
+2026-10-21T17:41:27+0200 DONE validate 128 crop inputs: 11.4s
+2026-10-21T17:41:27+0200 START encode 128 crop inputs
+2026-10-21T17:41:30+0200 DONE encode 128 crop inputs: 3.2s
+Saved crop: 15360/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:41:30+0200 START validate 128 crop inputs
+2026-10-21T17:41:30+0200 Hash cache: 17664 files read, 7296 hashes reused
+2026-10-21T17:41:54+0200 DONE validate 128 crop inputs: 23.1s
+2026-10-21T17:41:54+0200 START encode 128 crop inputs
+2026-10-21T17:41:57+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 15488/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:41:57+0200 START validate 128 crop inputs
+2026-10-21T17:42:18+0200 DONE validate 128 crop inputs: 21.4s
+2026-10-21T17:42:18+0200 START encode 128 crop inputs
+2026-10-21T17:42:22+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 15616/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:42:24+0200 START validate 128 crop inputs
+2026-10-21T17:42:25+0200 Hash cache: 17920 files read, 7552 hashes reused
+2026-10-21T17:43:03+0200 DONE validate 128 crop inputs: 39.4s
+2026-10-21T17:43:03+0200 START encode 128 crop inputs
+2026-10-21T17:43:07+0200 DONE encode 128 crop inputs: 4.0s
+Saved crop: 15744/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:43:07+0200 START validate 128 crop inputs
+2026-10-21T17:43:40+0200 DONE validate 128 crop inputs: 32.5s
+2026-10-21T17:43:40+0200 START encode 128 crop inputs
+2026-10-21T17:43:43+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 15872/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:43:43+0200 START validate 128 crop inputs
+2026-10-21T17:43:43+0200 Hash cache: 18176 files read, 7808 hashes reused
+2026-10-21T17:44:07+0200 DONE validate 128 crop inputs: 24.2s
+2026-10-21T17:44:07+0200 START encode 128 crop inputs
+2026-10-21T17:44:11+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 16000/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:44:11+0200 START validate 128 crop inputs
+2026-10-21T17:44:35+0200 DONE validate 128 crop inputs: 24.7s
+2026-10-21T17:44:35+0200 START encode 128 crop inputs
+2026-10-21T17:44:39+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 16128/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:44:39+0200 START validate 128 crop inputs
+2026-10-21T17:44:39+0200 Hash cache: 18432 files read, 8064 hashes reused
+2026-10-21T17:44:56+0200 DONE validate 128 crop inputs: 17.1s
+2026-10-21T17:44:56+0200 START encode 128 crop inputs
+2026-10-21T17:45:00+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 16256/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:45:00+0200 START validate 128 crop inputs
+2026-10-21T17:45:40+0200 DONE validate 128 crop inputs: 40.1s
+2026-10-21T17:45:40+0200 START encode 128 crop inputs
+2026-10-21T17:45:44+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 16384/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:45:44+0200 START validate 128 crop inputs
+2026-10-21T17:45:44+0200 Hash cache: 18688 files read, 8320 hashes reused
+2026-10-21T17:46:20+0200 DONE validate 128 crop inputs: 36.6s
+2026-10-21T17:46:20+0200 START encode 128 crop inputs
+2026-10-21T17:46:24+0200 DONE encode 128 crop inputs: 4.1s
+Saved crop: 16512/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:46:24+0200 START validate 128 crop inputs
+2026-10-21T17:46:52+0200 DONE validate 128 crop inputs: 28.1s
+2026-10-21T17:46:52+0200 START encode 128 crop inputs
+2026-10-21T17:46:56+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 16640/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:46:56+0200 START validate 128 crop inputs
+2026-10-21T17:46:56+0200 Hash cache: 18944 files read, 8576 hashes reused
+2026-10-21T17:47:55+0200 DONE validate 128 crop inputs: 59.1s
+2026-10-21T17:47:55+0200 START encode 128 crop inputs
+2026-10-21T17:47:59+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 16768/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:47:59+0200 START validate 128 crop inputs
+2026-10-21T17:48:37+0200 DONE validate 128 crop inputs: 37.9s
+2026-10-21T17:48:37+0200 START encode 128 crop inputs
+2026-10-21T17:48:41+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 16896/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:48:41+0200 START validate 128 crop inputs
+2026-10-21T17:48:44+0200 Hash cache: 19200 files read, 8832 hashes reused
+2026-10-21T17:49:00+0200 DONE validate 128 crop inputs: 19.2s
+2026-10-21T17:49:00+0200 START encode 128 crop inputs
+2026-10-21T17:49:03+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 17024/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:49:03+0200 START validate 128 crop inputs
+2026-10-21T17:49:18+0200 DONE validate 128 crop inputs: 14.3s
+2026-10-21T17:49:18+0200 START encode 128 crop inputs
+2026-10-21T17:49:21+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 17152/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:49:21+0200 START validate 128 crop inputs
+2026-10-21T17:49:21+0200 Hash cache: 19456 files read, 9088 hashes reused
+2026-10-21T17:49:41+0200 DONE validate 128 crop inputs: 20.2s
+2026-10-21T17:49:41+0200 START encode 128 crop inputs
+2026-10-21T17:49:45+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 17280/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:49:45+0200 START validate 128 crop inputs
+2026-10-21T17:50:19+0200 DONE validate 128 crop inputs: 34.1s
+2026-10-21T17:50:19+0200 START encode 128 crop inputs
+2026-10-21T17:50:23+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 17408/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:50:23+0200 START validate 128 crop inputs
+2026-10-21T17:50:23+0200 Hash cache: 19712 files read, 9344 hashes reused
+2026-10-21T17:50:47+0200 DONE validate 128 crop inputs: 23.9s
+2026-10-21T17:50:47+0200 START encode 128 crop inputs
+2026-10-21T17:50:50+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 17536/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:50:50+0200 START validate 128 crop inputs
+2026-10-21T17:51:08+0200 DONE validate 128 crop inputs: 17.7s
+2026-10-21T17:51:08+0200 START encode 128 crop inputs
+2026-10-21T17:51:11+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 17664/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:51:11+0200 START validate 128 crop inputs
+2026-10-21T17:51:11+0200 Hash cache: 19968 files read, 9600 hashes reused
+2026-10-21T17:51:34+0200 DONE validate 128 crop inputs: 22.7s
+2026-10-21T17:51:34+0200 START encode 128 crop inputs
+2026-10-21T17:51:38+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 17792/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:51:38+0200 START validate 128 crop inputs
+2026-10-21T17:52:15+0200 DONE validate 128 crop inputs: 37.1s
+2026-10-21T17:52:15+0200 START encode 128 crop inputs
+2026-10-21T17:52:19+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 17920/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:52:19+0200 START validate 128 crop inputs
+2026-10-21T17:52:19+0200 Hash cache: 20224 files read, 9856 hashes reused
+2026-10-21T17:52:41+0200 DONE validate 128 crop inputs: 22.2s
+2026-10-21T17:52:41+0200 START encode 128 crop inputs
+2026-10-21T17:52:45+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 18048/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:52:45+0200 START validate 128 crop inputs
+2026-10-21T17:53:17+0200 DONE validate 128 crop inputs: 32.5s
+2026-10-21T17:53:17+0200 START encode 128 crop inputs
+2026-10-21T17:53:21+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 18176/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:53:21+0200 START validate 128 crop inputs
+2026-10-21T17:53:21+0200 Hash cache: 20480 files read, 10112 hashes reused
+2026-10-21T17:53:53+0200 DONE validate 128 crop inputs: 31.8s
+2026-10-21T17:53:53+0200 START encode 128 crop inputs
+2026-10-21T17:53:57+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 18304/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:54:00+0200 START validate 128 crop inputs
+2026-10-21T17:54:41+0200 DONE validate 128 crop inputs: 41.0s
+2026-10-21T17:54:41+0200 START encode 128 crop inputs
+2026-10-21T17:54:45+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 18432/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:54:45+0200 START validate 128 crop inputs
+2026-10-21T17:54:48+0200 Hash cache: 20736 files read, 10368 hashes reused
+2026-10-21T17:55:21+0200 DONE validate 128 crop inputs: 35.9s
+2026-10-21T17:55:21+0200 START encode 128 crop inputs
+2026-10-21T17:55:24+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 18560/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:55:24+0200 START validate 128 crop inputs
+2026-10-21T17:55:52+0200 DONE validate 128 crop inputs: 27.5s
+2026-10-21T17:55:52+0200 START encode 128 crop inputs
+2026-10-21T17:55:55+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 18688/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:55:55+0200 START validate 128 crop inputs
+2026-10-21T17:55:55+0200 Hash cache: 20992 files read, 10624 hashes reused
+2026-10-21T17:56:18+0200 DONE validate 128 crop inputs: 22.9s
+2026-10-21T17:56:18+0200 START encode 128 crop inputs
+2026-10-21T17:56:22+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 18816/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:56:22+0200 START validate 128 crop inputs
+2026-10-21T17:56:42+0200 DONE validate 128 crop inputs: 20.3s
+2026-10-21T17:56:42+0200 START encode 128 crop inputs
+2026-10-21T17:56:46+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 18944/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:56:46+0200 START validate 128 crop inputs
+2026-10-21T17:56:46+0200 Hash cache: 21248 files read, 10880 hashes reused
+2026-10-21T17:57:35+0200 DONE validate 128 crop inputs: 49.6s
+2026-10-21T17:57:35+0200 START encode 128 crop inputs
+2026-10-21T17:57:39+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 19072/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:57:39+0200 START validate 128 crop inputs
+2026-10-21T17:58:10+0200 DONE validate 128 crop inputs: 31.6s
+2026-10-21T17:58:10+0200 START encode 128 crop inputs
+2026-10-21T17:58:14+0200 DONE encode 128 crop inputs: 4.1s
+Saved crop: 19200/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:58:15+0200 START validate 128 crop inputs
+2026-10-21T17:58:20+0200 Hash cache: 21504 files read, 11136 hashes reused
+2026-10-21T17:58:56+0200 DONE validate 128 crop inputs: 41.8s
+2026-10-21T17:58:56+0200 START encode 128 crop inputs
+2026-10-21T17:59:00+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 19328/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:59:00+0200 START validate 128 crop inputs
+2026-10-21T17:59:53+0200 DONE validate 128 crop inputs: 53.1s
+2026-10-21T17:59:53+0200 START encode 128 crop inputs
+2026-10-21T17:59:58+0200 DONE encode 128 crop inputs: 4.4s
+Saved crop: 19456/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T17:59:58+0200 START validate 128 crop inputs
+2026-10-21T17:59:58+0200 Hash cache: 21760 files read, 11392 hashes reused
+2026-10-21T18:00:31+0200 DONE validate 128 crop inputs: 32.9s
+2026-10-21T18:00:31+0200 START encode 128 crop inputs
+2026-10-21T18:00:34+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 19584/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:00:34+0200 START validate 128 crop inputs
+2026-10-21T18:00:45+0200 DONE validate 128 crop inputs: 11.3s
+2026-10-21T18:00:45+0200 START encode 128 crop inputs
+2026-10-21T18:00:49+0200 DONE encode 128 crop inputs: 3.2s
+Saved crop: 19712/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:00:49+0200 START validate 128 crop inputs
+2026-10-21T18:00:49+0200 Hash cache: 22016 files read, 11648 hashes reused
+2026-10-21T18:01:22+0200 DONE validate 128 crop inputs: 33.1s
+2026-10-21T18:01:22+0200 START encode 128 crop inputs
+2026-10-21T18:01:25+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 19840/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:01:25+0200 START validate 128 crop inputs
+2026-10-21T18:01:43+0200 DONE validate 128 crop inputs: 18.0s
+2026-10-21T18:01:43+0200 START encode 128 crop inputs
+2026-10-21T18:01:47+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 19968/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:01:47+0200 START validate 128 crop inputs
+2026-10-21T18:01:47+0200 Hash cache: 22272 files read, 11904 hashes reused
+2026-10-21T18:01:58+0200 DONE validate 128 crop inputs: 10.9s
+2026-10-21T18:01:58+0200 START encode 128 crop inputs
+2026-10-21T18:02:01+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 20096/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:02:01+0200 START validate 128 crop inputs
+2026-10-21T18:02:52+0200 DONE validate 128 crop inputs: 51.1s
+2026-10-21T18:02:52+0200 START encode 128 crop inputs
+2026-10-21T18:02:56+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 20224/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:02:56+0200 START validate 128 crop inputs
+2026-10-21T18:02:56+0200 Hash cache: 22528 files read, 12160 hashes reused
+2026-10-21T18:03:21+0200 DONE validate 128 crop inputs: 25.3s
+2026-10-21T18:03:21+0200 START encode 128 crop inputs
+2026-10-21T18:03:25+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 20352/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:03:25+0200 START validate 128 crop inputs
+2026-10-21T18:03:43+0200 DONE validate 128 crop inputs: 18.5s
+2026-10-21T18:03:43+0200 START encode 128 crop inputs
+2026-10-21T18:03:47+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 20480/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:03:47+0200 START validate 128 crop inputs
+2026-10-21T18:03:47+0200 Hash cache: 22784 files read, 12416 hashes reused
+2026-10-21T18:04:19+0200 DONE validate 128 crop inputs: 31.7s
+2026-10-21T18:04:19+0200 START encode 128 crop inputs
+2026-10-21T18:04:22+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 20608/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:04:22+0200 START validate 128 crop inputs
+2026-10-21T18:04:31+0200 DONE validate 128 crop inputs: 9.0s
+2026-10-21T18:04:31+0200 START encode 128 crop inputs
+2026-10-21T18:04:35+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 20736/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:04:35+0200 START validate 128 crop inputs
+2026-10-21T18:04:35+0200 Hash cache: 23040 files read, 12672 hashes reused
+2026-10-21T18:04:54+0200 DONE validate 128 crop inputs: 19.5s
+2026-10-21T18:04:54+0200 START encode 128 crop inputs
+2026-10-21T18:04:58+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 20864/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:04:58+0200 START validate 128 crop inputs
+2026-10-21T18:05:20+0200 DONE validate 128 crop inputs: 22.6s
+2026-10-21T18:05:20+0200 START encode 128 crop inputs
+2026-10-21T18:05:24+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 20992/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:05:24+0200 START validate 128 crop inputs
+2026-10-21T18:05:24+0200 Hash cache: 23296 files read, 12928 hashes reused
+2026-10-21T18:05:42+0200 DONE validate 128 crop inputs: 17.9s
+2026-10-21T18:05:42+0200 START encode 128 crop inputs
+2026-10-21T18:05:45+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 21120/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:05:45+0200 START validate 128 crop inputs
+2026-10-21T18:06:12+0200 DONE validate 128 crop inputs: 27.0s
+2026-10-21T18:06:12+0200 START encode 128 crop inputs
+2026-10-21T18:06:16+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 21248/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:06:16+0200 START validate 128 crop inputs
+2026-10-21T18:06:18+0200 Hash cache: 23552 files read, 13184 hashes reused
+2026-10-21T18:06:40+0200 DONE validate 128 crop inputs: 23.7s
+2026-10-21T18:06:40+0200 START encode 128 crop inputs
+2026-10-21T18:06:43+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 21376/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:06:43+0200 START validate 128 crop inputs
+2026-10-21T18:07:00+0200 DONE validate 128 crop inputs: 17.1s
+2026-10-21T18:07:00+0200 START encode 128 crop inputs
+2026-10-21T18:07:04+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 21504/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:07:04+0200 START validate 128 crop inputs
+2026-10-21T18:07:04+0200 Hash cache: 23808 files read, 13440 hashes reused
+2026-10-21T18:07:19+0200 DONE validate 128 crop inputs: 14.4s
+2026-10-21T18:07:19+0200 START encode 128 crop inputs
+2026-10-21T18:07:22+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 21632/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:07:22+0200 START validate 128 crop inputs
+2026-10-21T18:07:29+0200 DONE validate 128 crop inputs: 6.6s
+2026-10-21T18:07:29+0200 START encode 128 crop inputs
+2026-10-21T18:07:32+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 21760/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:07:32+0200 START validate 128 crop inputs
+2026-10-21T18:07:32+0200 Hash cache: 24064 files read, 13696 hashes reused
+2026-10-21T18:08:09+0200 DONE validate 128 crop inputs: 36.9s
+2026-10-21T18:08:09+0200 START encode 128 crop inputs
+2026-10-21T18:08:13+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 21888/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:08:13+0200 START validate 128 crop inputs
+2026-10-21T18:08:53+0200 DONE validate 128 crop inputs: 39.6s
+2026-10-21T18:08:53+0200 START encode 128 crop inputs
+2026-10-21T18:08:56+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 22016/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:08:56+0200 START validate 128 crop inputs
+2026-10-21T18:08:56+0200 Hash cache: 24320 files read, 13952 hashes reused
+2026-10-21T18:09:08+0200 DONE validate 128 crop inputs: 12.0s
+2026-10-21T18:09:08+0200 START encode 128 crop inputs
+2026-10-21T18:09:12+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 22144/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:09:12+0200 START validate 128 crop inputs
+2026-10-21T18:10:01+0200 DONE validate 128 crop inputs: 48.8s
+2026-10-21T18:10:01+0200 START encode 128 crop inputs
+2026-10-21T18:10:04+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 22272/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:10:04+0200 START validate 128 crop inputs
+2026-10-21T18:10:04+0200 Hash cache: 24576 files read, 14208 hashes reused
+2026-10-21T18:10:31+0200 DONE validate 128 crop inputs: 26.3s
+2026-10-21T18:10:31+0200 START encode 128 crop inputs
+2026-10-21T18:10:34+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 22400/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:10:34+0200 START validate 128 crop inputs
+2026-10-21T18:10:54+0200 DONE validate 128 crop inputs: 19.6s
+2026-10-21T18:10:54+0200 START encode 128 crop inputs
+2026-10-21T18:10:57+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 22528/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:10:57+0200 START validate 128 crop inputs
+2026-10-21T18:10:57+0200 Hash cache: 24832 files read, 14464 hashes reused
+2026-10-21T18:11:27+0200 DONE validate 128 crop inputs: 29.8s
+2026-10-21T18:11:27+0200 START encode 128 crop inputs
+2026-10-21T18:11:30+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 22656/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:11:30+0200 START validate 128 crop inputs
+2026-10-21T18:11:51+0200 DONE validate 128 crop inputs: 20.2s
+2026-10-21T18:11:51+0200 START encode 128 crop inputs
+2026-10-21T18:11:54+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 22784/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:11:54+0200 START validate 128 crop inputs
+2026-10-21T18:11:54+0200 Hash cache: 25088 files read, 14720 hashes reused
+2026-10-21T18:12:22+0200 DONE validate 128 crop inputs: 27.9s
+2026-10-21T18:12:22+0200 START encode 128 crop inputs
+2026-10-21T18:12:26+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 22912/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:12:26+0200 START validate 128 crop inputs
+2026-10-21T18:13:11+0200 DONE validate 128 crop inputs: 45.0s
+2026-10-21T18:13:11+0200 START encode 128 crop inputs
+2026-10-21T18:13:15+0200 DONE encode 128 crop inputs: 4.0s
+Saved crop: 23040/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:13:15+0200 START validate 128 crop inputs
+2026-10-21T18:13:15+0200 Hash cache: 25344 files read, 14976 hashes reused
+2026-10-21T18:13:50+0200 DONE validate 128 crop inputs: 35.4s
+2026-10-21T18:13:50+0200 START encode 128 crop inputs
+2026-10-21T18:13:54+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 23168/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:13:54+0200 START validate 128 crop inputs
+2026-10-21T18:14:12+0200 DONE validate 128 crop inputs: 17.7s
+2026-10-21T18:14:12+0200 START encode 128 crop inputs
+2026-10-21T18:14:15+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 23296/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:14:15+0200 START validate 128 crop inputs
+2026-10-21T18:14:16+0200 Hash cache: 25600 files read, 15232 hashes reused
+2026-10-21T18:14:57+0200 DONE validate 128 crop inputs: 41.8s
+2026-10-21T18:14:57+0200 START encode 128 crop inputs
+2026-10-21T18:15:01+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 23424/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:15:01+0200 START validate 128 crop inputs
+2026-10-21T18:15:18+0200 DONE validate 128 crop inputs: 17.5s
+2026-10-21T18:15:18+0200 START encode 128 crop inputs
+2026-10-21T18:15:22+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 23552/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:15:22+0200 START validate 128 crop inputs
+2026-10-21T18:15:22+0200 Hash cache: 25856 files read, 15488 hashes reused
+2026-10-21T18:16:02+0200 DONE validate 128 crop inputs: 40.8s
+2026-10-21T18:16:02+0200 START encode 128 crop inputs
+2026-10-21T18:16:06+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 23680/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:16:06+0200 START validate 128 crop inputs
+2026-10-21T18:16:30+0200 DONE validate 128 crop inputs: 23.6s
+2026-10-21T18:16:30+0200 START encode 128 crop inputs
+2026-10-21T18:16:33+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 23808/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:16:33+0200 START validate 128 crop inputs
+2026-10-21T18:16:34+0200 Hash cache: 26112 files read, 15744 hashes reused
+2026-10-21T18:17:16+0200 DONE validate 128 crop inputs: 42.2s
+2026-10-21T18:17:16+0200 START encode 128 crop inputs
+2026-10-21T18:17:19+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 23936/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:17:19+0200 START validate 128 crop inputs
+2026-10-21T18:17:41+0200 DONE validate 128 crop inputs: 21.9s
+2026-10-21T18:17:41+0200 START encode 128 crop inputs
+2026-10-21T18:17:45+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 24064/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:17:46+0200 START validate 128 crop inputs
+2026-10-21T18:17:46+0200 Hash cache: 26368 files read, 16000 hashes reused
+2026-10-21T18:17:58+0200 DONE validate 128 crop inputs: 11.5s
+2026-10-21T18:17:58+0200 START encode 128 crop inputs
+2026-10-21T18:18:01+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 24192/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:18:01+0200 START validate 128 crop inputs
+2026-10-21T18:19:08+0200 DONE validate 128 crop inputs: 67.1s
+2026-10-21T18:19:08+0200 START encode 128 crop inputs
+2026-10-21T18:19:12+0200 DONE encode 128 crop inputs: 4.0s
+Saved crop: 24320/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:19:12+0200 START validate 128 crop inputs
+2026-10-21T18:19:12+0200 Hash cache: 26624 files read, 16256 hashes reused
+2026-10-21T18:19:50+0200 DONE validate 128 crop inputs: 37.4s
+2026-10-21T18:19:50+0200 START encode 128 crop inputs
+2026-10-21T18:19:53+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 24448/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:19:53+0200 START validate 128 crop inputs
+2026-10-21T18:20:18+0200 DONE validate 128 crop inputs: 24.6s
+2026-10-21T18:20:18+0200 START encode 128 crop inputs
+2026-10-21T18:20:21+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 24576/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:20:21+0200 START validate 128 crop inputs
+2026-10-21T18:20:21+0200 Hash cache: 26880 files read, 16512 hashes reused
+2026-10-21T18:20:34+0200 DONE validate 128 crop inputs: 12.5s
+2026-10-21T18:20:34+0200 START encode 128 crop inputs
+2026-10-21T18:20:37+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 24704/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:20:37+0200 START validate 128 crop inputs
+2026-10-21T18:21:00+0200 DONE validate 128 crop inputs: 22.5s
+2026-10-21T18:21:00+0200 START encode 128 crop inputs
+2026-10-21T18:21:03+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 24832/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:21:03+0200 START validate 128 crop inputs
+2026-10-21T18:21:04+0200 Hash cache: 27136 files read, 16768 hashes reused
+2026-10-21T18:21:40+0200 DONE validate 128 crop inputs: 36.8s
+2026-10-21T18:21:40+0200 START encode 128 crop inputs
+2026-10-21T18:21:44+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 24960/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:21:44+0200 START validate 128 crop inputs
+2026-10-21T18:22:00+0200 DONE validate 128 crop inputs: 16.4s
+2026-10-21T18:22:00+0200 START encode 128 crop inputs
+2026-10-21T18:22:04+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 25088/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:22:04+0200 START validate 128 crop inputs
+2026-10-21T18:22:06+0200 Hash cache: 27392 files read, 17024 hashes reused
+2026-10-21T18:22:55+0200 DONE validate 128 crop inputs: 50.8s
+2026-10-21T18:22:55+0200 START encode 128 crop inputs
+2026-10-21T18:22:58+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 25216/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:22:58+0200 START validate 128 crop inputs
+2026-10-21T18:23:39+0200 DONE validate 128 crop inputs: 40.7s
+2026-10-21T18:23:39+0200 START encode 128 crop inputs
+2026-10-21T18:23:43+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 25344/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:23:43+0200 START validate 128 crop inputs
+2026-10-21T18:23:43+0200 Hash cache: 27648 files read, 17280 hashes reused
+2026-10-21T18:24:00+0200 DONE validate 128 crop inputs: 17.7s
+2026-10-21T18:24:00+0200 START encode 128 crop inputs
+2026-10-21T18:24:04+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 25472/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:24:04+0200 START validate 128 crop inputs
+2026-10-21T18:24:38+0200 DONE validate 128 crop inputs: 34.0s
+2026-10-21T18:24:38+0200 START encode 128 crop inputs
+2026-10-21T18:24:42+0200 DONE encode 128 crop inputs: 3.8s
+Saved crop: 25600/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:24:42+0200 START validate 128 crop inputs
+2026-10-21T18:24:42+0200 Hash cache: 27904 files read, 17536 hashes reused
+2026-10-21T18:25:18+0200 DONE validate 128 crop inputs: 36.2s
+2026-10-21T18:25:18+0200 START encode 128 crop inputs
+2026-10-21T18:25:21+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 25728/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:25:21+0200 START validate 128 crop inputs
+2026-10-21T18:25:54+0200 DONE validate 128 crop inputs: 32.6s
+2026-10-21T18:25:54+0200 START encode 128 crop inputs
+2026-10-21T18:25:57+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 25856/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:25:57+0200 START validate 128 crop inputs
+2026-10-21T18:25:57+0200 Hash cache: 28160 files read, 17792 hashes reused
+2026-10-21T18:26:19+0200 DONE validate 128 crop inputs: 21.4s
+2026-10-21T18:26:19+0200 START encode 128 crop inputs
+2026-10-21T18:26:22+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 25984/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:26:23+0200 START validate 128 crop inputs
+2026-10-21T18:26:54+0200 DONE validate 128 crop inputs: 31.5s
+2026-10-21T18:26:54+0200 START encode 128 crop inputs
+2026-10-21T18:26:58+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 26112/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:26:58+0200 START validate 128 crop inputs
+2026-10-21T18:26:58+0200 Hash cache: 28416 files read, 18048 hashes reused
+2026-10-21T18:27:12+0200 DONE validate 128 crop inputs: 13.8s
+2026-10-21T18:27:12+0200 START encode 128 crop inputs
+2026-10-21T18:27:15+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 26240/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:27:15+0200 START validate 128 crop inputs
+2026-10-21T18:27:32+0200 DONE validate 128 crop inputs: 16.8s
+2026-10-21T18:27:32+0200 START encode 128 crop inputs
+2026-10-21T18:27:35+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 26368/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:27:35+0200 START validate 128 crop inputs
+2026-10-21T18:27:36+0200 Hash cache: 28672 files read, 18304 hashes reused
+2026-10-21T18:27:48+0200 DONE validate 128 crop inputs: 12.4s
+2026-10-21T18:27:48+0200 START encode 128 crop inputs
+2026-10-21T18:27:51+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 26496/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:27:51+0200 START validate 128 crop inputs
+2026-10-21T18:28:09+0200 DONE validate 128 crop inputs: 17.6s
+2026-10-21T18:28:09+0200 START encode 128 crop inputs
+2026-10-21T18:28:13+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 26624/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:28:13+0200 START validate 128 crop inputs
+2026-10-21T18:28:13+0200 Hash cache: 28928 files read, 18560 hashes reused
+2026-10-21T18:28:32+0200 DONE validate 128 crop inputs: 19.3s
+2026-10-21T18:28:32+0200 START encode 128 crop inputs
+2026-10-21T18:28:35+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 26752/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:28:35+0200 START validate 128 crop inputs
+2026-10-21T18:29:06+0200 DONE validate 128 crop inputs: 30.6s
+2026-10-21T18:29:06+0200 START encode 128 crop inputs
+2026-10-21T18:29:10+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 26880/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:29:10+0200 START validate 128 crop inputs
+2026-10-21T18:29:11+0200 Hash cache: 29184 files read, 18816 hashes reused
+2026-10-21T18:29:32+0200 DONE validate 128 crop inputs: 22.8s
+2026-10-21T18:29:32+0200 START encode 128 crop inputs
+2026-10-21T18:29:36+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 27008/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:29:36+0200 START validate 128 crop inputs
+2026-10-21T18:29:50+0200 DONE validate 128 crop inputs: 14.2s
+2026-10-21T18:29:50+0200 START encode 128 crop inputs
+2026-10-21T18:29:54+0200 DONE encode 128 crop inputs: 3.3s
+Saved crop: 27136/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:29:54+0200 START validate 128 crop inputs
+2026-10-21T18:29:54+0200 Hash cache: 29440 files read, 19072 hashes reused
+2026-10-21T18:30:09+0200 DONE validate 128 crop inputs: 15.2s
+2026-10-21T18:30:09+0200 START encode 128 crop inputs
+2026-10-21T18:30:12+0200 DONE encode 128 crop inputs: 3.2s
+Saved crop: 27264/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:30:12+0200 START validate 128 crop inputs
+2026-10-21T18:30:36+0200 DONE validate 128 crop inputs: 24.2s
+2026-10-21T18:30:36+0200 START encode 128 crop inputs
+2026-10-21T18:30:40+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 27392/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:30:40+0200 START validate 128 crop inputs
+2026-10-21T18:30:40+0200 Hash cache: 29696 files read, 19328 hashes reused
+2026-10-21T18:30:51+0200 DONE validate 128 crop inputs: 11.6s
+2026-10-21T18:30:51+0200 START encode 128 crop inputs
+2026-10-21T18:30:55+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 27520/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:30:55+0200 START validate 128 crop inputs
+2026-10-21T18:31:19+0200 DONE validate 128 crop inputs: 23.8s
+2026-10-21T18:31:19+0200 START encode 128 crop inputs
+2026-10-21T18:31:22+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 27648/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:31:22+0200 START validate 128 crop inputs
+2026-10-21T18:31:22+0200 Hash cache: 29952 files read, 19584 hashes reused
+2026-10-21T18:31:50+0200 DONE validate 128 crop inputs: 27.3s
+2026-10-21T18:31:50+0200 START encode 128 crop inputs
+2026-10-21T18:31:53+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 27776/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:31:53+0200 START validate 128 crop inputs
+2026-10-21T18:32:12+0200 DONE validate 128 crop inputs: 18.4s
+2026-10-21T18:32:12+0200 START encode 128 crop inputs
+2026-10-21T18:32:15+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 27904/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:32:15+0200 START validate 128 crop inputs
+2026-10-21T18:32:15+0200 Hash cache: 30208 files read, 19840 hashes reused
+2026-10-21T18:32:52+0200 DONE validate 128 crop inputs: 36.7s
+2026-10-21T18:32:52+0200 START encode 128 crop inputs
+2026-10-21T18:32:56+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 28032/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:32:56+0200 START validate 128 crop inputs
+2026-10-21T18:33:11+0200 DONE validate 128 crop inputs: 15.0s
+2026-10-21T18:33:11+0200 START encode 128 crop inputs
+2026-10-21T18:33:14+0200 DONE encode 128 crop inputs: 3.2s
+Saved crop: 28160/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:33:14+0200 START validate 128 crop inputs
+2026-10-21T18:33:14+0200 Hash cache: 30464 files read, 20096 hashes reused
+2026-10-21T18:33:39+0200 DONE validate 128 crop inputs: 24.8s
+2026-10-21T18:33:39+0200 START encode 128 crop inputs
+2026-10-21T18:33:42+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 28288/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:33:43+0200 START validate 128 crop inputs
+2026-10-21T18:34:06+0200 DONE validate 128 crop inputs: 23.9s
+2026-10-21T18:34:06+0200 START encode 128 crop inputs
+2026-10-21T18:34:10+0200 DONE encode 128 crop inputs: 3.7s
+Saved crop: 28416/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:34:10+0200 START validate 128 crop inputs
+2026-10-21T18:34:10+0200 Hash cache: 30720 files read, 20352 hashes reused
+2026-10-21T18:34:25+0200 DONE validate 128 crop inputs: 14.6s
+2026-10-21T18:34:25+0200 START encode 128 crop inputs
+2026-10-21T18:34:28+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 28544/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:34:28+0200 START validate 128 crop inputs
+2026-10-21T18:34:42+0200 DONE validate 128 crop inputs: 13.4s
+2026-10-21T18:34:42+0200 START encode 128 crop inputs
+2026-10-21T18:34:45+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 28672/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:34:45+0200 START validate 128 crop inputs
+2026-10-21T18:34:45+0200 Hash cache: 30976 files read, 20608 hashes reused
+2026-10-21T18:35:15+0200 DONE validate 128 crop inputs: 30.1s
+2026-10-21T18:35:15+0200 START encode 128 crop inputs
+2026-10-21T18:35:19+0200 DONE encode 128 crop inputs: 3.9s
+Saved crop: 28800/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:35:19+0200 START validate 128 crop inputs
+2026-10-21T18:35:28+0200 DONE validate 128 crop inputs: 9.4s
+2026-10-21T18:35:28+0200 START encode 128 crop inputs
+2026-10-21T18:35:32+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 28928/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:35:32+0200 START validate 128 crop inputs
+2026-10-21T18:35:32+0200 Hash cache: 31232 files read, 20864 hashes reused
+2026-10-21T18:35:52+0200 DONE validate 128 crop inputs: 19.7s
+2026-10-21T18:35:52+0200 START encode 128 crop inputs
+2026-10-21T18:35:55+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 29056/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:35:55+0200 START validate 128 crop inputs
+2026-10-21T18:36:12+0200 DONE validate 128 crop inputs: 17.0s
+2026-10-21T18:36:12+0200 START encode 128 crop inputs
+2026-10-21T18:36:16+0200 DONE encode 128 crop inputs: 3.4s
+Saved crop: 29184/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:36:16+0200 START validate 128 crop inputs
+2026-10-21T18:36:16+0200 Hash cache: 31488 files read, 21120 hashes reused
+2026-10-21T18:36:35+0200 DONE validate 128 crop inputs: 19.3s
+2026-10-21T18:36:35+0200 START encode 128 crop inputs
+2026-10-21T18:36:39+0200 DONE encode 128 crop inputs: 3.6s
+Saved crop: 29312/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:36:39+0200 START validate 128 crop inputs
+2026-10-21T18:36:55+0200 DONE validate 128 crop inputs: 15.9s
+2026-10-21T18:36:55+0200 START encode 128 crop inputs
+2026-10-21T18:36:58+0200 DONE encode 128 crop inputs: 3.5s
+Saved crop: 29440/51985 (/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/index/parallel-v2/embeddings/0/crop)
+2026-10-21T18:36:58+0200 Hash cache totals: 31743 files read, 21376 hashes reused
+Embedding slice finished; committed segments will be reused next job

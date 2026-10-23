@@ -1,0 +1,16 @@
+2026-10-22T09:19:53+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28461789/01-prepare-auto-w0-c0.log
+2026-10-22T09:20:22+0200 DONE prepare-auto
+2026-10-22T09:20:22+0200 START dev-retrieve, worker=0, candidate=0; log=logs/webqa-seq-28461789/02-dev-retrieve-w0-c0.log
+2026-10-22T09:58:27+0200 DONE dev-retrieve
+2026-10-22T09:58:27+0200 START dev-retrieve, worker=1, candidate=0; log=logs/webqa-seq-28461789/03-dev-retrieve-w1-c0.log
+2026-10-22T10:38:09+0200 DONE dev-retrieve
+2026-10-22T10:38:09+0200 START dev-collect, worker=0, candidate=0; log=logs/webqa-seq-28461789/04-dev-collect-w0-c0.log
+2026-10-22T10:41:22+0200 DONE dev-collect
+2026-10-22T10:41:22+0200 START dev-retrieve, worker=0, candidate=1; log=logs/webqa-seq-28461789/05-dev-retrieve-w0-c1.log
+2026-10-22T11:24:56+0200 DONE dev-retrieve
+2026-10-22T11:24:56+0200 START dev-retrieve, worker=1, candidate=1; log=logs/webqa-seq-28461789/06-dev-retrieve-w1-c1.log
+2026-10-22T11:54:01+0200 DONE dev-retrieve
+2026-10-22T11:54:01+0200 START dev-collect, worker=0, candidate=1; log=logs/webqa-seq-28461789/07-dev-collect-w0-c1.log
+2026-10-22T11:58:11+0200 DONE dev-collect
+2026-10-22T11:58:11+0200 START dev-retrieve, worker=0, candidate=2; log=logs/webqa-seq-28461789/08-dev-retrieve-w0-c2.log
+[2026-10-22T12:19:49.165] error: *** JOB 28461789 ON gcn60 CANCELLED AT 2026-10-22T12:19:49 DUE TO TIME LIMIT ***

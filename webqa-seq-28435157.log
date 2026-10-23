@@ -1,0 +1,6 @@
+2026-10-21T19:15:56+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28435157/01-prepare-auto-w0-c0.log
+2026-10-21T19:22:58+0200 DONE prepare-auto
+2026-10-21T19:22:58+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28435157/02-embed-checkpointed-w0-c0.log
+srun: error: gcn8: task 0: Exited with exit code 75
+srun: Terminating StepId=28435157.1
+2026-10-21T23:06:15+0200 Embedding stopped at a saved checkpoint before the time limit. Backup embedding attempt will resume; assembly stays blocked.

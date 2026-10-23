@@ -1,0 +1,5 @@
+2026-10-22T02:45:43+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28435159/01-prepare-auto-w0-c0.log
+2026-10-22T02:53:51+0200 DONE prepare-auto
+2026-10-22T02:53:51+0200 START embed-finalize, worker=0, candidate=0; log=logs/webqa-seq-28435159/02-embed-finalize-w0-c0.log
+[2026-10-22T08:45:36.018] error: *** JOB 28435159 ON gcn60 CANCELLED AT 2026-10-22T08:45:36 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

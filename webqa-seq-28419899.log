@@ -1,0 +1,6 @@
+2026-10-21T15:46:44+0200 START prepare-auto, worker=0, candidate=0; log=logs/webqa-seq-28419899/01-prepare-auto-w0-c0.log
+2026-10-21T15:55:40+0200 DONE prepare-auto
+2026-10-21T15:55:40+0200 START embed-checkpointed, worker=0, candidate=0; log=logs/webqa-seq-28419899/02-embed-checkpointed-w0-c0.log
+srun: error: gcn57: task 0: Exited with exit code 75
+srun: Terminating StepId=28419899.1
+2026-10-21T18:37:01+0200 Index slice finished at a checkpoint; next queued indexing job will continue

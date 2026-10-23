@@ -1,0 +1,10 @@
+2026-10-22T11:55:47+0200 START imports/config for dev-collect
+2026-10-22T11:55:48+0200 DONE imports/config for dev-collect: 0.8s
+2026-10-22T11:55:48+0200 START preparation receipt check
+2026-10-22T11:56:35+0200 DONE preparation receipt check: 47.0s
+2026-10-22T11:56:35+0200 START reuse verified preparation (no source/mask/crop byte scan)
+2026-10-22T11:56:36+0200 DONE reuse verified preparation (no source/mask/crop byte scan): 1.2s
+2026-10-22T11:56:36+0200 START dev-collect
+Collected 480 questions in /gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/runs/webqa-tuned-v1-dev-beta-050
+2026-10-22T11:58:10+0200 DONE dev-collect: 94.0s
+2026-10-22T11:58:10+0200 Hash cache totals: 0 files read, 0 hashes reused
