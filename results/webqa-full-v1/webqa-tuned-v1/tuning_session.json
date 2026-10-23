@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "grid": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "eligibility_policy": "exclude_dev_questions_in_preparation_split_overlap",
+  "config_hash": "79d29f98b7221bb2f4a5e92dedb3aa017f67f429d0ee425e38f467fdb4ebafdd",
+  "plan_sha256": "28cf99f0d2899e8ed9ab324c27992438e618ea3ebe7d0d229a7309c81c2760ac",
+  "questions_sha256": "39c612a7079d01eeed337b189a40f17ebd56cba65d2d5fca26a54a70828ebadd",
+  "preparation_sha256": "39e28ab12cf9544058e4956454b762d41af3e4b2e8dc6266bc9c340609bf1f79",
+  "expected_test_questions": 120
+}

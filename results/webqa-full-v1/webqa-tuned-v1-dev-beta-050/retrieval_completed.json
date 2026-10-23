@@ -1,0 +1,15 @@
+{
+  "questions": 480,
+  "scoring_performed": false,
+  "run_sha256": "6cc1b28ad80cae3c35ce5c7769c6c8a211b894b01c15f835601301d9b034da10",
+  "files": {
+    "retrieval.jsonl": "495144310ac4fad6c45371d58214a374fccfa3e7402cdcdfd172abf047511ef9",
+    "diagnostics.jsonl": "2e33ca0892108c60e2a6bd5ab4c31076de2c5c249f3218323b91c4f2acf5586b",
+    "retrieval_details.jsonl": "08b584e27b109d34fed746f0f54f1a5929c0d82ca27ffe1adc41de28d80ccd5d",
+    "labels.jsonl": "e547d9c91098803641ca6e6ee7f930cf4d6ab391937e221a8fe3f0115dbedbf8"
+  },
+  "shards": [
+    "/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/runs/webqa-tuned-v1-dev-beta-050-part-0",
+    "/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/runs/webqa-tuned-v1-dev-beta-050-part-1"
+  ]
+}

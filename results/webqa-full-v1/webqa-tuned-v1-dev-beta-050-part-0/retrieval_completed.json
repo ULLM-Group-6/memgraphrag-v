@@ -1,0 +1,10 @@
+{
+  "questions": 240,
+  "run_sha256": "c02474b64fc0791552f64bd5d28fcecbfa8d8fbdde57762f2a80d2606e0e7b4a",
+  "files": {
+    "retrieval.jsonl": "fe4af00623d441d36c2880965bb1b6440b7cf71672eedabe6bc0b12aca967dac",
+    "diagnostics.jsonl": "a7647f0c717a5029cb55ab661505e93d63f055d2fcd66df0bb9ce82e1448ca4b",
+    "retrieval_details.jsonl": "a30aba9d8630ae58cb5485fff3688bd7559b34ffd3c710432a8d85472daa730c",
+    "labels.jsonl": "652893685a9d9ce74c589b57ab19f517016e3eacdcc4bb3d8b5a267498f44cf0"
+  }
+}

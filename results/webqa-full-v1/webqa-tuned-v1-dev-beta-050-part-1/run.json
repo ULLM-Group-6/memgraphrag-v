@@ -1,0 +1,977 @@
+{
+  "system": "G-augmented",
+  "split": "dev",
+  "partial_run": false,
+  "smoke_only": false,
+  "beta": 0.5,
+  "config_hash": "79d29f98b7221bb2f4a5e92dedb3aa017f67f429d0ee425e38f467fdb4ebafdd",
+  "index_manifest_sha256": "353c4e47644cc52a8cebe11bab6f178b624b9cedaf6ac0c054124034f82167d7",
+  "preparation_sha256": "39e28ab12cf9544058e4956454b762d41af3e4b2e8dc6266bc9c340609bf1f79",
+  "questions": [
+    [
+      "d5c0ed200dba11ecb1e81171463288e9",
+      "Which businesses on Beale Street in Memphis have neon signs with at least part of a guitar shape?"
+    ],
+    [
+      "d5c3efac0dba11ecb1e81171463288e9",
+      "What colors are used in the Gibson Showcase sign on Beale Street?"
+    ],
+    [
+      "d5cba7c40dba11ecb1e81171463288e9",
+      "What are many of the exteriors of the buildings made of on Beale Street in Memphis, TN?"
+    ],
+    [
+      "d5c81fa00dba11ecb1e81171463288e9",
+      "Which sign on Beale Street is more circular: Beale Street Gifts or Johnny Creole Kitchen?"
+    ],
+    [
+      "d5cd994e0dba11ecb1e81171463288e9",
+      "What item appears at the top of the sign for B.B. King's Blues club on Beale Street in Memphis?"
+    ],
+    [
+      "d5ce29900dba11ecb1e81171463288e9",
+      "Does Rodeo Drive in Beverly Hills have legal parking along the entire length of the street?"
+    ],
+    [
+      "d5c523040dba11ecb1e81171463288e9",
+      "Do all the palm trees along Rodeo Drive have small plants growing from their plant boxes?"
+    ],
+    [
+      "d5ca92260dba11ecb1e81171463288e9",
+      "What type of trees are outside the entrance to the Ralph Lauren store on Rodeo Drive?"
+    ],
+    [
+      "d5c47fe40dba11ecb1e81171463288e9",
+      "Does the walkway through the shops on Rodeo Drive have street lamps?"
+    ],
+    [
+      "d5ce48b20dba11ecb1e81171463288e9",
+      "How many garage doors are on the front of the Dixie Greyhound bus lines company on Main Street in Memphis?"
+    ],
+    [
+      "d5cef47e0dba11ecb1e81171463288e9",
+      "Did Artis Gilmore never wear both 2 wristbands, and 2 knee wraps at the same time during a game?"
+    ],
+    [
+      "d5bd661e0dba11ecb1e81171463288e9",
+      "What three letters were present above the jersey number on the front of the jersey that Goran Dragić wore during the game on January 21st, 2011?"
+    ],
+    [
+      "d5ca50cc0dba11ecb1e81171463288e9",
+      "What style of facial hair did LeBron James have when he played against the Nets on February 27th, 2018?"
+    ],
+    [
+      "d5ceb7ca0dba11ecb1e81171463288e9",
+      "What jewelry has LeBron James worn while playing basketball?"
+    ],
+    [
+      "d5c4cbde0dba11ecb1e81171463288e9",
+      "Did LeBron James always wear the same arm accessories during his time with the Cleveland Cavaliers?"
+    ],
+    [
+      "d5c7688a0dba11ecb1e81171463288e9",
+      "When LeBron James played for the Cleveland Cavaliers in 2014, did he wear the same jersey number that Jordan Murphy wore when he was on Minnesota in 2017?"
+    ],
+    [
+      "d5c86e4c0dba11ecb1e81171463288e9",
+      "Who had the higher jersey number when the two played in a Lakers vs Magic game in 2010: Bryant or Howard?"
+    ],
+    [
+      "d5bebf500dba11ecb1e81171463288e9",
+      "How many red wristbands did LeBron James wear during the NBA game on April 6th, 2007?"
+    ],
+    [
+      "d5cc2f460dba11ecb1e81171463288e9",
+      "Did LeBron James play in an NBA game on February 6th, 2017 while wearing more wristbands than he did during an NBA game on April 6th, 2007?"
+    ],
+    [
+      "d5cd0fb00dba11ecb1e81171463288e9",
+      "Did LeBron James always wear the exact same uniform when he played basketball?"
+    ],
+    [
+      "d5cc929c0dba11ecb1e81171463288e9",
+      "Does Lebron James have tattoos on both of his arms?"
+    ],
+    [
+      "d5cf068a0dba11ecb1e81171463288e9",
+      "On which arm did LeBron James wear a red shooting sleeve during the game on February 6th, 2017?"
+    ],
+    [
+      "d5c1a6d40dba11ecb1e81171463288e9",
+      "How many yellow wristbands did LeBron James wear during the game on February 6th, 2017?"
+    ],
+    [
+      "d5bf62980dba11ecb1e81171463288e9",
+      "What headgear did LeBron James wear on April 2, 2009?"
+    ],
+    [
+      "d5ca0f7c0dba11ecb1e81171463288e9",
+      "Has LeBron James ever worn a wristband while playing in an NBA game?"
+    ],
+    [
+      "d5c828740dba11ecb1e81171463288e9",
+      "On which wrist did LeBron James wear a black wrap during the NBA game on February 6th, 2017?"
+    ],
+    [
+      "d5cc25140dba11ecb1e81171463288e9",
+      "Were both the Carrier Classic basketball game and the 2005 Lakers pre-season game at the University of Hawaii held in a closed stadium?"
+    ],
+    [
+      "d5d015ca0dba11ecb1e81171463288e9",
+      "Between the 1994-1995 Kansas City Chiefs and the 1994-1995 Houston Rockets who had a more successful season?"
+    ],
+    [
+      "d5c7280c0dba11ecb1e81171463288e9",
+      "Are both the Bulls logo on Derrick Rose's jersey and the Miami logo on Gary Payton's jersey all black?"
+    ],
+    [
+      "d5d2405c0dba11ecb1e81171463288e9",
+      "What player led the Philadelphia Warriors to a championship in 1946-1947?"
+    ],
+    [
+      "d5cca96c0dba11ecb1e81171463288e9",
+      "What item was Kobe Bryant wearing on his arm during his 61 point game against the New York Knicks?"
+    ],
+    [
+      "d5d1ff660dba11ecb1e81171463288e9",
+      "Who was the second son of Noah that castrated him?"
+    ],
+    [
+      "d5d41c880dba11ecb1e81171463288e9",
+      "What team played in both the 1969 Rose Bowl and the 1985 Rose Bowl games?"
+    ],
+    [
+      "d5d5ac7e0dba11ecb1e81171463288e9",
+      "Does the height of Phoenician civilization intersect with the end of the final Punic War, or are they in separate time frames?"
+    ],
+    [
+      "d5ca833a0dba11ecb1e81171463288e9",
+      "Does Ray Allen of the Celtics have more hair than James Harden of the Rockets?"
+    ],
+    [
+      "d5beed180dba11ecb1e81171463288e9",
+      "Is there more than one professional basketball team with uniforms that are red with wide stripes down the sides?"
+    ],
+    [
+      "d5bf1f040dba11ecb1e81171463288e9",
+      "During the 2011 NBA season, what kind of facial hairstyle can be seen on Kevin Durant?"
+    ],
+    [
+      "d5d271080dba11ecb1e81171463288e9",
+      "How old was Ralph Sampson when he became the first player in NBA history to record at least 30 points, 15 rebounds, 5 assists and 5 steals since the league started recording steals?"
+    ],
+    [
+      "d5c7bd1c0dba11ecb1e81171463288e9",
+      "Do Joe Smith and Goran Dragic shoot with the same hand?"
+    ],
+    [
+      "d5ced19c0dba11ecb1e81171463288e9",
+      "What type of seating can you find on Rodeo Drive?"
+    ],
+    [
+      "d5c2507a0dba11ecb1e81171463288e9",
+      "During his 61-point game against the New York Knicks, what brand of shoe did Kobe Bryant wear?"
+    ],
+    [
+      "d5cbe27a0dba11ecb1e81171463288e9",
+      "Does Dwyane Wade wear flat or textured knee pads?"
+    ],
+    [
+      "d5d16a100dba11ecb1e81171463288e9",
+      "What event happened the earliest, Christopher Wan Turner being a member of the New York Yankees' 2000 World Series championship team that beat the New York Mets or Lisa having her daughter Ashlyn Brooke Iannetta?"
+    ],
+    [
+      "d5c5dccc0dba11ecb1e81171463288e9",
+      "How many knee pads did Dwyane Wade wear during an NBA game on December 30th, 2007?"
+    ],
+    [
+      "d5bf409c0dba11ecb1e81171463288e9",
+      "Did Chris Bosh's Raptors uniform and Pete Maravich's Jazz uniform both have a stripe along the arms and necklines?"
+    ],
+    [
+      "d5cdfb1e0dba11ecb1e81171463288e9",
+      "What color shoelaces did Kobe Bryant have during his 61 point game against the New York Knicks?"
+    ],
+    [
+      "d5c108640dba11ecb1e81171463288e9",
+      "What brand of shoes was Kevin Love (UCLA) wearing when defending Jordan Hill (Arizona), in front of UCLA's Russell Westbrook and Arizona's Jawann McClellan?"
+    ],
+    [
+      "d5d2cfea0dba11ecb1e81171463288e9",
+      "Which NBA team won the NBA Finals the year Wilt Chamberlain scored 100 points in a single game?"
+    ],
+    [
+      "d5d1ea260dba11ecb1e81171463288e9",
+      "During the time of the NFL Championship Game where the Baltimore Colts defeated the New York Giants in sudden death overtime, had the AFL formed yet?"
+    ],
+    [
+      "d5c0784a0dba11ecb1e81171463288e9",
+      "Who had the higher jersey number when they played against each other in a Lakers vs Spurs game in January 2007, Bryant or Bowen?"
+    ],
+    [
+      "d5caafe00dba11ecb1e81171463288e9",
+      "What was inside the letter A on Dwight Howard's USA jersey during the 2008 Olympic Men's Basketball game against China?"
+    ],
+    [
+      "d5ce9c5e0dba11ecb1e81171463288e9",
+      "When Michael Beasley played for the Heat in 2009, did he wear the same jersey number that Luol Deng wore when he played for the Bulls in 2009?"
+    ],
+    [
+      "d5d29f5c0dba11ecb1e81171463288e9",
+      "Why was the city that was burned to ground after the Third Punic War originally created?"
+    ],
+    [
+      "d5ca4b5e0dba11ecb1e81171463288e9",
+      "What color are the OKC Thunder jersey letters?"
+    ],
+    [
+      "d5c7f9a80dba11ecb1e81171463288e9",
+      "Which arm did Chris Bosh and Michael Beasley both wear arm accessories on?"
+    ],
+    [
+      "d5dad8200dba11ecb1e81171463288e9",
+      "Where did the team play home games at that Aaron Rodgers led his 2003 team to a 21-7 halftime lead over?"
+    ],
+    [
+      "d5c154ea0dba11ecb1e81171463288e9",
+      "Do Michael Beasley and Bobby Portis both shoot the basketball with the same primary hand?"
+    ],
+    [
+      "d5d2c2ac0dba11ecb1e81171463288e9",
+      "Between the Chiefs and Dolphins in the 1994-1995 season and the Superbowl between the Steelers and Cowboys in 1979, which game was closer?"
+    ],
+    [
+      "d5c9a58c0dba11ecb1e81171463288e9",
+      "Did Carmelo Anthony, while he played for the New York Knicks, wear the same number as Joe Young did for the Pacers?"
+    ],
+    [
+      "d5d17b220dba11ecb1e81171463288e9",
+      "How old was Jay Michael Gruden when the Washington Redskins had its 51st season in the National Football League?"
+    ],
+    [
+      "d5cc0c3c0dba11ecb1e81171463288e9",
+      "Which side of the OKC Thunder jersey does the NBA logo appear?"
+    ],
+    [
+      "d5c6b99e0dba11ecb1e81171463288e9",
+      "What was the name of the sponsor present on the upper left of the front side of the jersey worn by Kawhi Leonard during Game 2 of the 2019 NBA Finals?"
+    ],
+    [
+      "d5d3cefe0dba11ecb1e81171463288e9",
+      "Which has more teams: The current NBA Eastern Conference or the 1950 NFL league?"
+    ],
+    [
+      "d5cf1aee0dba11ecb1e81171463288e9",
+      "How many elbow braces did Dirk Nowitzki wear when he played against the Suns on April 6th, 2008?"
+    ],
+    [
+      "d5d03f320dba11ecb1e81171463288e9",
+      "Who won the NFL the next season after the 1976 VFL season?"
+    ],
+    [
+      "d5ca94920dba11ecb1e81171463288e9",
+      "When Mike Hart played for the Indianapolis Colts, was his jersey number higher than Bobby Hart's when he played for the Giants?"
+    ],
+    [
+      "d5c0f6da0dba11ecb1e81171463288e9",
+      "What are the sleeve lengths of the jerseys on display at the Pro Football Hall of Fame?"
+    ],
+    [
+      "d5c8d1ca0dba11ecb1e81171463288e9",
+      "During Game 2 of the 2019 NBA Finals, what color was the Nike swoosh on the Raptors' team socks?"
+    ],
+    [
+      "d5c47fbc0dba11ecb1e81171463288e9",
+      "Are both Aaron Rodgers' and Bruce Smith's uniform surrounded by jerseys in the Pro Football Hall of Fame display case?"
+    ],
+    [
+      "d5ca75520dba11ecb1e81171463288e9",
+      "Do the jerseys of Bruce Smith and Adam Vinatieri at the Pro Football Hall of Fame have their numbers outlined in the same color?"
+    ],
+    [
+      "d5d28ce20dba11ecb1e81171463288e9",
+      "Did the Pittsburgh Steelers make or miss the playoffs in the first season since the death of Dan Rooney"
+    ],
+    [
+      "d5c7e3dc0dba11ecb1e81171463288e9",
+      "Does the wood grain create the same pattern on floor at Barclays Center as the pattern on the floor at Fleet Center?"
+    ],
+    [
+      "d5d3fe4c0dba11ecb1e81171463288e9",
+      "What did the Tangerine Bowl that took place in Florida between the Florida Gators and the Miami Redskins have in common with the 1973 Big Ten Conference football season?"
+    ],
+    [
+      "d5c90d660dba11ecb1e81171463288e9",
+      "Was the NBA team that Dirk Nowitzki played for in 2008 the same as the one that Grant Hill played for in 2007?"
+    ],
+    [
+      "d5c746200dba11ecb1e81171463288e9",
+      "Which jersey in the Pro Football Hall of Fame has shorter sleeves: Adam Vinatieri's or Bruce Smith's?"
+    ],
+    [
+      "d5c7fa8e0dba11ecb1e81171463288e9",
+      "Does the Rodgers jersey exhibited in the Pro Football Hall of Fame have the same color pattern as the McCown jersey also being exhibited there?"
+    ],
+    [
+      "d5c747560dba11ecb1e81171463288e9",
+      "What was the sum of the jersey numbers of Dirk Nowitzki and John Wall when they played against each other on February 26th, 2011?"
+    ],
+    [
+      "d5cfed3e0dba11ecb1e81171463288e9",
+      "Was there a wider gap of point differentials during the  1963-64 Los Angeles Basketball Classic game or between the team and its opponents during the 1964 Western Michigan Broncos football season?"
+    ],
+    [
+      "d5c4c35a0dba11ecb1e81171463288e9",
+      "When Jordan Poole played for the Michigan Wolverines men's basketball team in 2018 was his jersey number greater than Jordan Adams' number when he played for UCLA in 2014?"
+    ],
+    [
+      "d5bf36c40dba11ecb1e81171463288e9",
+      "When Vince Carter played for the Phoenix Suns and Gary Payton played for the Miami Heat, did the two wear the same arm sleeves?"
+    ],
+    [
+      "d5cbae540dba11ecb1e81171463288e9",
+      "How many arms did Jason Williams have tattoos on during his stint with the Miami Heat?"
+    ],
+    [
+      "d5c735d60dba11ecb1e81171463288e9",
+      "What number did Gary Payton wear both with the Miami Heat and at the 2010 NBA-Asia Challenge?"
+    ],
+    [
+      "d5c960ae0dba11ecb1e81171463288e9",
+      "How many white stripes are on each shoulder of Adam Vinatieri's jersey?"
+    ],
+    [
+      "d5d196fc0dba11ecb1e81171463288e9",
+      "As of the year 2006, had the Giants or the Browns been playing in the NFL for more seasons?"
+    ],
+    [
+      "d5d034600dba11ecb1e81171463288e9",
+      "Has the Senior Bowl always been played in the same city?"
+    ],
+    [
+      "d5d1071e0dba11ecb1e81171463288e9",
+      "Did Ted Marchibroda coach a Senior Bowl at Gator Bowl Stadium"
+    ],
+    [
+      "d5bc98560dba11ecb1e81171463288e9",
+      "Is the bottom of the canopy at King's Palace Cafe on Beale Street in Memphis, TN flat or scalloped?"
+    ],
+    [
+      "d5c7f93a0dba11ecb1e81171463288e9",
+      "What is displayed at the Football Hall of Fame besides jerseys and helmets?"
+    ],
+    [
+      "d5d075380dba11ecb1e81171463288e9",
+      "Was Three Rivers Stadium replaced as the home of the Pittsburgh Steelers before or after they drafted Benny Snell?"
+    ],
+    [
+      "d5d1681c0dba11ecb1e81171463288e9",
+      "Were Big Ten football teams allowed to play in postseason bowl games during the season where Indiana won its first ever Big Ten Championship?"
+    ],
+    [
+      "d5d10ce60dba11ecb1e81171463288e9",
+      "Why wasn't Nick Collison on the team when Paul George re-signed with the Thunder?"
+    ],
+    [
+      "d5cfd7400dba11ecb1e81171463288e9",
+      "Who won more games in 1967, the Eastern Michigan Hurons or the Michigan State Spartans?"
+    ],
+    [
+      "d5d1b48e0dba11ecb1e81171463288e9",
+      "How old was Jerry Tagge during the 37th Orange Bowl?"
+    ],
+    [
+      "d5d177440dba11ecb1e81171463288e9",
+      "Whose coach was with the team longer at the start of the 1975 season: Eastern Michigan or Western MIchigan?"
+    ],
+    [
+      "d5d444a60dba11ecb1e81171463288e9",
+      "The team associated with what US state traded Elmer Reyes for the first round pick in the Philippine Basketball Association (PBA) rookie draft and also appeared in the championship game of the PBA Third Conference Finals the same year?"
+    ],
+    [
+      "d5c552de0dba11ecb1e81171463288e9",
+      "Does the King's Palace Cafe on Beale Street serve Gumbo?"
+    ],
+    [
+      "d5cc657e0dba11ecb1e81171463288e9",
+      "How many lines of text were on Russell Westbrook's jersey for his team name when he played for the Oklahoma City Thunder?"
+    ],
+    [
+      "d5c4a8200dba11ecb1e81171463288e9",
+      "Whose jerseys displayed in the Football Hall of Fame have blue numbers and blue stripes?"
+    ],
+    [
+      "d5c812620dba11ecb1e81171463288e9",
+      "Is Cris Carter's hall of fame jersey displayed alongside a pair of shoes and a helmet?"
+    ],
+    [
+      "d5be290a0dba11ecb1e81171463288e9",
+      "What number is visible on the awning of the King's Palace Cafe?"
+    ],
+    [
+      "d5d1cf140dba11ecb1e81171463288e9",
+      "In which decade did the 32nd season of Maryland Terrapins as a member of the Southern Conference coincide with the sugar bowl?"
+    ],
+    [
+      "d5c4d5e80dba11ecb1e81171463288e9",
+      "How many lanes of roads does the Rodeo drive in Los Angeles have?"
+    ],
+    [
+      "d5d262a80dba11ecb1e81171463288e9",
+      "By the time that head coach Bill Doolittle had taken over the Western Michigan Broncos football team, how many national championships had the Oregon Ducks Track and Field team won?"
+    ],
+    [
+      "d5d361d00dba11ecb1e81171463288e9",
+      "How many years passed between the the first NCAA ice hockey championship, and the first season of Division II men's hockey?"
+    ],
+    [
+      "d5c6899c0dba11ecb1e81171463288e9",
+      "Did #5 for Duke and #30 for Miami wear the same color shoes during the Miami Hurricane vs Duke Blue Devils game on 2011 - FEB 13?"
+    ],
+    [
+      "d5d244ee0dba11ecb1e81171463288e9",
+      "Were the 2015 Celebration Bowl and the 2015 Sugar Bowl played in the same state?"
+    ],
+    [
+      "d5d996fe0dba11ecb1e81171463288e9",
+      "The capital of the Italian province of Syracuse was founded in what year by Greek settlers?"
+    ],
+    [
+      "d5d420200dba11ecb1e81171463288e9",
+      "What college basketball team were Earl Joseph Watson Jr. and Alcindor involved with?"
+    ],
+    [
+      "d5cd791e0dba11ecb1e81171463288e9",
+      "During the February 13, 2011 game between Miami and Duke, did Mason Plumlee attempt a one handed or two handed dunk?"
+    ],
+    [
+      "d5c0d5c40dba11ecb1e81171463288e9",
+      "What category of business could you have seen advertised on the court during 2014 McDonald's All-American Boys Game?"
+    ],
+    [
+      "d5cdfc5e0dba11ecb1e81171463288e9",
+      "On which hand did Nassir Little wear a thumb brace when he played against Virginia Tech in January 2019?"
+    ],
+    [
+      "d5cb5e2c0dba11ecb1e81171463288e9",
+      "When Mike Hart played for the Indianapolis Colts, did he wear an even or odd jersey number?"
+    ],
+    [
+      "d5cecc2e0dba11ecb1e81171463288e9",
+      "What part of the storefront of Kings Palace Cafe on Beale Street displays the street address number of 162?"
+    ],
+    [
+      "d5d60ffc0dba11ecb1e81171463288e9",
+      "What teams from UCLA play in the same NCAA Division as the sports teams from Michigan State University?"
+    ],
+    [
+      "d5bf6dec0dba11ecb1e81171463288e9",
+      "What shape are the free throw lanes on the Oracle Arena Basketball Court?"
+    ],
+    [
+      "d5d1e5940dba11ecb1e81171463288e9",
+      "Did the Notre Dame football team repeat as national champion under the Dickinson System before or after the NCAA brought up formal allegations against North Carolina football?"
+    ],
+    [
+      "d5ddd3d60dba11ecb1e81171463288e9",
+      "Aiguebelette-le-Lac is a commune in a department whose name is what in Italian?"
+    ],
+    [
+      "d5d2e9e40dba11ecb1e81171463288e9",
+      "Which team had more wins in 1903: Wabash or Ohio State?"
+    ],
+    [
+      "d5d0ce980dba11ecb1e81171463288e9",
+      "Was Marcus Dwayne Wilson an adult when Nikita Wilson was selected by the Portland Trail Blazers in 1987."
+    ],
+    [
+      "d5d410ee0dba11ecb1e81171463288e9",
+      "Which concluded first, the 1982 ECAC Men's Ice Hockey Tournament, or the 1982 NCAA Division II men's ice hockey tournament?"
+    ],
+    [
+      "d5d99f000dba11ecb1e81171463288e9",
+      "What team has involvement with both Capital One Arena and St. Elizabeths East Entertainment and Sports Arena?"
+    ],
+    [
+      "d5df4c700dba11ecb1e81171463288e9",
+      "In shotgun formation, what should the offensive tackles be primarily concerned with upon the snap?"
+    ],
+    [
+      "d5cfacd40dba11ecb1e81171463288e9",
+      "How long after Sicilia was regularly assigned a praetor did the Second Punic War begin?"
+    ],
+    [
+      "d5d720540dba11ecb1e81171463288e9",
+      "Which people, who called an area Magna Graecia since it was so densely inhabited by the Greeks, sacked Lipari?"
+    ],
+    [
+      "d5c85d1c0dba11ecb1e81171463288e9",
+      "What item was Dirk Nowitzki wearing in his hair during the game on October 9, 2009?"
+    ],
+    [
+      "d5d008780dba11ecb1e81171463288e9",
+      "Were the teams that Grier played in present in the 1970 NFL season?"
+    ],
+    [
+      "d5d165100dba11ecb1e81171463288e9",
+      "Which occurred first, the North Carolina Tar Heels first bowl game, or the naming of the rivalry between Clemson and NC State ?"
+    ],
+    [
+      "d5d60ec60dba11ecb1e81171463288e9",
+      "How long is the watershed in the United States consisting of 14 lakes that connects rivers in the U.S. state of Michigan?"
+    ],
+    [
+      "d5c7c87a0dba11ecb1e81171463288e9",
+      "What color were the top parts of the marching band's uniform at the South Florida Bulls vs Pittsburgh Panthers, 20 November 2010 game?"
+    ],
+    [
+      "d5c5377c0dba11ecb1e81171463288e9",
+      "How many times did Bobby Hart's jersey number appear on the front of his Giants' jersey?"
+    ],
+    [
+      "d5d232ba0dba11ecb1e81171463288e9",
+      "Did DaRico Hines play college basketball for the team that Ron Greene coached from 1969-1976?"
+    ],
+    [
+      "d5cfda740dba11ecb1e81171463288e9",
+      "When added together, how many wins did the 1894 Yale Bulldogs football team and the 1899 Harvard Crimson football team achieve?"
+    ],
+    [
+      "d5d05da00dba11ecb1e81171463288e9",
+      "What college football team won the \"Game of the Century\" the same year Cornell began their 24-0 Division I ice hockey season?"
+    ],
+    [
+      "d5cd9c3c0dba11ecb1e81171463288e9",
+      "Where did photographers sit at the 2008 Summer Olympics USA vs. China Mens Basketball game?"
+    ],
+    [
+      "d5bbd9340dba11ecb1e81171463288e9",
+      "Which two colors did the Chinese team wear during the USA vs. China Mens Basketball game at the Beijing 2008 Olympic Games?"
+    ],
+    [
+      "d5d1c7f80dba11ecb1e81171463288e9",
+      "Did Hasdrubal Gisco commit suicide to avoid being lynched by a Carthaginian mob before or after the Battle of Cannae?"
+    ],
+    [
+      "d5c350380dba11ecb1e81171463288e9",
+      "Is Harvard Stadium always set up to play football?"
+    ],
+    [
+      "d5cd2a900dba11ecb1e81171463288e9",
+      "Is Johnny Unitas' uniform at the Pro Football Hall of Fame long sleeve or short sleeve?"
+    ],
+    [
+      "d5db776c0dba11ecb1e81171463288e9",
+      "What is the name of both the team from Washington and Connecticut in the NCAA Division I?"
+    ],
+    [
+      "d5cb99460dba11ecb1e81171463288e9",
+      "Which HOF Jersey has more letters on the name on back, the #8 Cowboys or the #8 49ers jersey?"
+    ],
+    [
+      "d5d231c00dba11ecb1e81171463288e9",
+      "Which team won more games in their conference in 1981, The Iowa State Cyclones basketball team, or the Iowa Hawkeyes football team?"
+    ],
+    [
+      "d5c8a4de0dba11ecb1e81171463288e9",
+      "At the 2008 Olympics, did the Chinese men's basketball team line up by height or sequential jersey order?"
+    ],
+    [
+      "d5d5987e0dba11ecb1e81171463288e9",
+      "What existed as a tribal kingdom of the Berber Mauri people where temple and a sanctuary were dedicated to Saturn in Caesaria?"
+    ],
+    [
+      "d5c44b640dba11ecb1e81171463288e9",
+      "What head accessory did Ben Wallace have on while defending Tim Duncan?"
+    ],
+    [
+      "d5d854ec0dba11ecb1e81171463288e9",
+      "How many years after Rome destroyed Carthage did the Battle of Carthage take place?"
+    ],
+    [
+      "d5cfb33c0dba11ecb1e81171463288e9",
+      "How old was Scipio when Xanthuppus was hired as a Spartan drillmaster by the Carthaginians?"
+    ],
+    [
+      "d5c886b60dba11ecb1e81171463288e9",
+      "Does the bust of Johnny Unitas at the Pro Football Hall of Fame have short hair or long hair?"
+    ],
+    [
+      "d5cae76c0dba11ecb1e81171463288e9",
+      "Must the area beneath the basket on a wheelchair basketball court always be painted the same colour at the Paralympics?"
+    ],
+    [
+      "d5d1c2c60dba11ecb1e81171463288e9",
+      "Were Tyler Hansbrough and Rick Fox born in the same month or in different months?"
+    ],
+    [
+      "d5d764e20dba11ecb1e81171463288e9",
+      "Does The Wells Fargo Center seat more or fewer people than the largest arena in Central New Jersey?"
+    ],
+    [
+      "d5d187200dba11ecb1e81171463288e9",
+      "Between Kimberly Jo Zimmer and Rose, who won awards from a larger number of different sources?"
+    ],
+    [
+      "d5cd1d2a0dba11ecb1e81171463288e9",
+      "Were there more dark-skinned or light-skinned competitors in the 1st heat of the 2nd round of the Women's 100m sprint event at the 2008 Olympics?"
+    ],
+    [
+      "d5c7f1d80dba11ecb1e81171463288e9",
+      "When Sindarius Thornwell played for South Carolina in 2014, did he have the same jersey number as Zion Williamson when he played for Duke in 2018?"
+    ],
+    [
+      "d5c588d00dba11ecb1e81171463288e9",
+      "What color shoes were worn by the wrestler that wore a red singlet in the match between Sharifov and Shengfeng at the 2016 Olympics?"
+    ],
+    [
+      "d5bde0620dba11ecb1e81171463288e9",
+      "In 2013, at the European Acrobatic Championships in Odivelas, Portugal, did a pair of Acrobatic gymnasts have the same outfit?"
+    ],
+    [
+      "d5ce486c0dba11ecb1e81171463288e9",
+      "Are the scoreboard sponsors at Turner Field the exact same every year?"
+    ],
+    [
+      "d5c7d05e0dba11ecb1e81171463288e9",
+      "What are the jersey numbers of the American players who watched as Bosh attempted a dunk during the USA vs China basketball game in the 2008 Olympics?"
+    ],
+    [
+      "d5c5621a0dba11ecb1e81171463288e9",
+      "Did the competitors in the 1st heat of the 2nd round of the Women's 100m sprint event at the 2008 Olympics wear the same type of identification on the front of their uniforms as the ones worn by the competitors in the Women's 5000m event at the 2012 Olympics?"
+    ],
+    [
+      "d5cda3940dba11ecb1e81171463288e9",
+      "Was the same advertiser to the right of the Budweiser ad in Turner Field in both 2006 and 2013?"
+    ],
+    [
+      "d5cf05180dba11ecb1e81171463288e9",
+      "Which color swim cap color did Peaty wear in the 100m Breaststroke Final at the 2016 Summer Olympics?"
+    ],
+    [
+      "d5c223e80dba11ecb1e81171463288e9",
+      "What was worn around the knees of both Stadnik and Tosaka during their wrestling match at the 2016 Olympics?"
+    ],
+    [
+      "d5ca17240dba11ecb1e81171463288e9",
+      "How many wrestlers in the match between Sharifov and Shengfeng in the 2016 Olympics suffered from cauliflower ear in their left ear?"
+    ],
+    [
+      "d5c491be0dba11ecb1e81171463288e9",
+      "How many people were present on the wrestling mat during the Makhov vs Zasyeyev match at the 2016 Olympics?"
+    ],
+    [
+      "d5c08b820dba11ecb1e81171463288e9",
+      "What type of hairstyle was present on the wrestler that wore a single kneepad in the match between Stadnik and Matkowska at the 2016 Olympics?"
+    ],
+    [
+      "d5c4d21e0dba11ecb1e81171463288e9",
+      "What color of seats can you find in the Carioca Arena 2 during the 2016 Summer Olympics wrestling event?"
+    ],
+    [
+      "d5c5aff40dba11ecb1e81171463288e9",
+      "How many kneepads were worn in total between the Aliyev vs Dubov match and the Stadnik vs Tosaka match at the 2016 Summer Olympics?"
+    ],
+    [
+      "d5c3decc0dba11ecb1e81171463288e9",
+      "Did #8 on China's basketball team compete against the United States in the 2008 Olympics while wearing red shoes and a blue jersey?"
+    ],
+    [
+      "d5c6373a0dba11ecb1e81171463288e9",
+      "How many more wrestlers wore red shoes in the match between Sharifov and Shengfeng at the 2016 Olympics compared to in the match between Bayramov and Rodríguez at the 2016 Olympics?"
+    ],
+    [
+      "d5c7f7960dba11ecb1e81171463288e9",
+      "What hairstyles did Stadnik and Bermudez sport during their 2016 Summer Olympics wrestling competition?"
+    ],
+    [
+      "d5c71d8a0dba11ecb1e81171463288e9",
+      "How many more female wrestlers were present in the match between Stadnik and Bermudez at the 2016 Olympics compared to the match between Gazyumov and Ibragimov at the 2016 Olympics?"
+    ],
+    [
+      "d5c827980dba11ecb1e81171463288e9",
+      "Are the rear wheels on the wheelchairs at the 2000 Sydney Paralympic Games straight or angled?"
+    ],
+    [
+      "d5c7ab560dba11ecb1e81171463288e9",
+      "What was the main color of the wrestling singlet worn by the wrestler that wore fewer kneepads in the match between Ratkevich and Renteria at the 2016 Summer Olympics?"
+    ],
+    [
+      "d5bde7ce0dba11ecb1e81171463288e9",
+      "What was the color of the jersey worn by Australian wheelchair racer John Maclean during the 10 km heat  and 10 km final event at the wheelchair race event at the 2000 Sydney Paralympic Games?"
+    ],
+    [
+      "d5cb04c20dba11ecb1e81171463288e9",
+      "Were only female referees used during the female wrestling matches at the 2016 Olympics?"
+    ],
+    [
+      "d5cf14ae0dba11ecb1e81171463288e9",
+      "Is lighting up the Sydney Opera House limited to one design or customizable?"
+    ],
+    [
+      "d5cedbba0dba11ecb1e81171463288e9",
+      "Did Makhov and Zasyeyev both wear red singlets during their wrestling match at the 2016 Olympics?"
+    ],
+    [
+      "d5c4a9c40dba11ecb1e81171463288e9",
+      "How many of the wrestlers in the match between Sharifov and Shengfeng at the 2016 Olympics wore a kneepad on their left knee?"
+    ],
+    [
+      "d5befa060dba11ecb1e81171463288e9",
+      "At the Buenos Aires 2018 Youth Olympics, what color were the rings on the freestyle wrestling mat?"
+    ],
+    [
+      "d5c6c33a0dba11ecb1e81171463288e9",
+      "How many of the wrestlers in the match between Bayramov and Rodríguez at the 2016 Olympics wore tape on their left wrist?"
+    ],
+    [
+      "d5c75a480dba11ecb1e81171463288e9",
+      "Who are some sponsors of Turner Field?"
+    ],
+    [
+      "d5cee3bc0dba11ecb1e81171463288e9",
+      "How many wrestlers in the match between Asgarov and Kvyatkovskyy in the 2016 Olympics had some form of facial hair?"
+    ],
+    [
+      "d5cdd5300dba11ecb1e81171463288e9",
+      "In the first heat of the second round of Women's 100m in the 2008 Olympics, how many runners in lanes two through five have blonde hair?"
+    ],
+    [
+      "d5c53ab00dba11ecb1e81171463288e9",
+      "During the US vs Netherlands 2016 Invictus Game of Wheelchair Basketball did all of the players wear gloves?"
+    ],
+    [
+      "d5c94ede0dba11ecb1e81171463288e9",
+      "How many wrestlers in the finals of the 120-kilogram/264.5-pound Greco-Roman event at the 2009 World Wrestling Championships wore tape on their right wrist?"
+    ],
+    [
+      "d5c579300dba11ecb1e81171463288e9",
+      "Which medalist in the girl's vault event at the 2018 Summer Youth Olympics was taller, the gold or silver medalist?"
+    ],
+    [
+      "d5c539840dba11ecb1e81171463288e9",
+      "Which wrestling match involved more dark-skinned wrestlers: Dremiel Byers vs Mijain Lopez at the 2009 World Wrestling Championships or Ludwig Banach vs Joseph Atiyehof at the 1984 Summer Olympics?"
+    ],
+    [
+      "d5c25b2e0dba11ecb1e81171463288e9",
+      "What was the colour of the jersey of the referees who were in place of the 2016 Summer Olympic Games wrestling matches?"
+    ],
+    [
+      "d5cc4da00dba11ecb1e81171463288e9",
+      "How many of the medalists in the Boys' Artistic Gymnastics – Still rings event at the 2018 Summer Youth Olympics wore a jacket during the victory ceremony that contained the same flag as the one on any of the jackets worn during the victory ceremony by the medalists in the boys' badminton singles event at the same competition?"
+    ],
+    [
+      "d5c4bd380dba11ecb1e81171463288e9",
+      "At the Victory Ceremony of the Girls' lightweight Boxing tournament of the 2018 Summer Youth Olympics how many medalists were holding their medal in their right hand?"
+    ],
+    [
+      "d5bce3ba0dba11ecb1e81171463288e9",
+      "Did boxers Majidov and Arjaoui wear more shoes with white shoelaces during their fight than the fighters for the 91kg fifth place fight at the 2018 Summer Youth Olympics?"
+    ],
+    [
+      "d5ce35fc0dba11ecb1e81171463288e9",
+      "How many of the boxers in the Selimov vs Joyce match at the 2016 Summer Olympics had green boxing gloves?"
+    ],
+    [
+      "d5c6441e0dba11ecb1e81171463288e9",
+      "Is there a body of water next to Rio de Janeiro, Brazil's Olympic Aquatics Stadium?"
+    ],
+    [
+      "d5c50c340dba11ecb1e81171463288e9",
+      "Kahn's Wieners Jim Brown photograph had Jim Brown's name written on it in what font?"
+    ],
+    [
+      "d5c7affc0dba11ecb1e81171463288e9",
+      "The roof of the 2016 Olympic Games Water Sports Center in Rio has how many poles sticking out of it?"
+    ],
+    [
+      "d5cb90900dba11ecb1e81171463288e9",
+      "What did the left-most person on the awards podium do more than once at the 2010 Summer Youth Olympics?"
+    ],
+    [
+      "d5cc08d60dba11ecb1e81171463288e9",
+      "How many more people were on the mixed team normal hill podium for ski jumping at the 2020 Winter Youth Olympics than for the victory ceremony for the floor exercise apparatus final of the boys' artistic gymnastics at the 2018 Summer Youth Olympics in Buenos Aires on 13 October 2018?"
+    ],
+    [
+      "d5cb5f3a0dba11ecb1e81171463288e9",
+      "What is across the lake from the Centro de Esportes Aquáticos building that was built for the 2016 games in Rio?"
+    ],
+    [
+      "d5c016340dba11ecb1e81171463288e9",
+      "Did any country have both a boy and a girl win medals at the 2018 summer youth Olympics?"
+    ],
+    [
+      "d5cd5f7e0dba11ecb1e81171463288e9",
+      "Which beach handball team of Argentina had more members holding mascots during the medal ceremony at the 2018 Summer Youth Olympics: the Boys team or the Girls team?"
+    ],
+    [
+      "d5c46ffe0dba11ecb1e81171463288e9",
+      "How many more women participated in the Mascot Ceremony at the Alpine Skiing Parallel Mixed Team Event at the 2020 Winter Youth Olympics in Lausanne than in the Mascot Ceremony of Ski jumping – Men's Individual?"
+    ],
+    [
+      "d5c965720dba11ecb1e81171463288e9",
+      "What item did Marina Durunda hold during her rhythmic gymnastics performance at the 2016 Summer Olympics?"
+    ],
+    [
+      "d5c7cc1c0dba11ecb1e81171463288e9",
+      "Were the boxing gloves used in the match between Baghirov and Cissokho at the 2016 Olympics a different color than the ones used in the 5th place boxing match in the 91kg division at the 2018 Youth Olympics?"
+    ],
+    [
+      "d5c161ce0dba11ecb1e81171463288e9",
+      "Which medal was won in the boys' pommel horse event at the 2018 Summer Youth Olympics by the athlete that had the lightest hair color out of the three medalists?"
+    ],
+    [
+      "d5c9b69e0dba11ecb1e81171463288e9",
+      "How many of the medalists in the boys' singles badminton event at the 2018 Summer Youth Olympics had brown hair?"
+    ],
+    [
+      "d5c639380dba11ecb1e81171463288e9",
+      "Were events at the 2010 Summer Youth Olympics held only during the day?"
+    ],
+    [
+      "d5ca6cc40dba11ecb1e81171463288e9",
+      "Which medals were won in the girls' singles badminton event at the 2018 Summer Youth Olympics by the medalists that held the mascot in their left hand on the podium?"
+    ],
+    [
+      "d5bceda60dba11ecb1e81171463288e9",
+      "In the Women's Beach handball semifinals of the 2018 Summer Youth Olympics, how many sets of Olympics rings appear on the top of the Argentinian uniform?"
+    ],
+    [
+      "d5ce3fb60dba11ecb1e81171463288e9",
+      "What color did race judges wear at the swimming competitions of the 2010 Summer Youth Olympics?"
+    ],
+    [
+      "d5c212d60dba11ecb1e81171463288e9",
+      "What was the mascot on the shirts of the athletes competing in the Special Olympics events, on Fort Gordon, Ga., Mar. 24 2010?"
+    ],
+    [
+      "d5c23e820dba11ecb1e81171463288e9",
+      "In total, how many of the boxers in the Selimov vs Joyce and Zoltán Harcsa vs Arslanbek Achilov matches at the 2016 Olympics wore headgear?"
+    ],
+    [
+      "d5c116d80dba11ecb1e81171463288e9",
+      "All the swimmers at the 2010 Summer Youth Olympics, held at the Singapore Sports School wore black shorts?"
+    ],
+    [
+      "d5c3bc800dba11ecb1e81171463288e9",
+      "At the Rio 2016 Olympic Artistic Gymnastics men's qualification, were there seats in the building higher than some gymnastic rings?"
+    ],
+    [
+      "d5cc50f20dba11ecb1e81171463288e9",
+      "At the 1984 Summer Olympics, what part of her name did Susan Rapp have on her swim cap?"
+    ],
+    [
+      "d5ca64ae0dba11ecb1e81171463288e9",
+      "How many women participated in the Mascot Ceremony at the Alpine Skiing Parallel Mixed Team Event at the 2020 Winter Youth Olympics in Lausanne?"
+    ],
+    [
+      "d5cbcdc60dba11ecb1e81171463288e9",
+      "Did all swimmers wear full body suits during the 2008 Olympic Modern penthalton?"
+    ],
+    [
+      "d5c99a060dba11ecb1e81171463288e9",
+      "What color shirt and pants did the swimming officials wear at 2010 Summer Youth Olympics?"
+    ],
+    [
+      "d5cb0a940dba11ecb1e81171463288e9",
+      "At the 2018 Youth Olympics medal ceremony for the Boys Singles Badminton event, how many of the medalist had the Olympic rings on the front of their jackets?"
+    ],
+    [
+      "d5ca852e0dba11ecb1e81171463288e9",
+      "Where did the Argentine delegation of the 2014 Summer Youth Olympics pose for a group photo?"
+    ],
+    [
+      "d5cded400dba11ecb1e81171463288e9",
+      "What color shirts were worn by athletes in the 2010 Special Olympics?"
+    ],
+    [
+      "d5c8f5920dba11ecb1e81171463288e9",
+      "Are both players at the Hungary-Argentina Beach handball game at the 2018 Youth Olympics smiling?"
+    ],
+    [
+      "d5c509f00dba11ecb1e81171463288e9",
+      "What did edge wear to his hall of fame induction speech?"
+    ],
+    [
+      "d5c8d0c60dba11ecb1e81171463288e9",
+      "Which color uniforms did race judges wear during swim competitions at the 2008 Summer Olympics?"
+    ],
+    [
+      "d5ce693c0dba11ecb1e81171463288e9",
+      "Was the Olympic logo drawn on both sides of the tennis court at the 2004 Summer Olympics?"
+    ],
+    [
+      "d5bd918e0dba11ecb1e81171463288e9",
+      "How many of the medalists in the 59 kg class of the Girls' karate event at the 2018 Summer Youth Olympics did not smile during the victory ceremony?"
+    ],
+    [
+      "d5cc04800dba11ecb1e81171463288e9",
+      "How many Olympic symbols were displayed on the net at the 2004 Summer Olympics Tennis games?"
+    ],
+    [
+      "d5c4bff40dba11ecb1e81171463288e9",
+      "What uniforms did race judges wear during swim competitions at the 2010 Summer Youth Olympics?"
+    ],
+    [
+      "d5ca8dda0dba11ecb1e81171463288e9",
+      "In the 5,000 and 200 meters events at the Rio Olympic Games, did the athletes wear their country's name across their chest?"
+    ],
+    [
+      "d5c6a9c20dba11ecb1e81171463288e9",
+      "During the 1984 Summer Olympics, what brand did Susan Rapp wear in her swim cap?"
+    ],
+    [
+      "d5c5bf8a0dba11ecb1e81171463288e9",
+      "Which stadium has more blue objects in them: the Engenhão stadium in 2007 or the Maracanã Stadium at the 2016 Summer Olympics?"
+    ],
+    [
+      "d5cc516a0dba11ecb1e81171463288e9",
+      "At the 2010 Summer Youth Olympics in Bishan Stadium, is the scoreboard wider than the white canvas overtop of the crowd's seats?"
+    ],
+    [
+      "d5cb1ae80dba11ecb1e81171463288e9",
+      "What colors were the seats at the Men's 1000m Semifinals for Short Track Speed Skating at the 2014 Winter Olympics?"
+    ],
+    [
+      "d5ceddae0dba11ecb1e81171463288e9",
+      "On which arm did David Lee have more bruises when he played in an NBA game on March 2nd, 2011?"
+    ],
+    [
+      "d5c9fab40dba11ecb1e81171463288e9",
+      "Did the victory ceremonies for the Men's 100m Freestyle swimming and boy's singles tennis events at the 2018 Youth Olympics take place in the same location?"
+    ],
+    [
+      "d5cd68b60dba11ecb1e81171463288e9",
+      "What colors were the seats at the stadium that held speed skating races during the 2014 Winter Olympics?"
+    ],
+    [
+      "d5bfe84e0dba11ecb1e81171463288e9",
+      "Which color is found in the center of both the Pampeloponisiako Olympic Stadium and the London Olympic Stadium?"
+    ],
+    [
+      "d5cd7e780dba11ecb1e81171463288e9",
+      "What colored lane buoys were used for the swimming races at the 1996 Atlanta Paralympics?"
+    ],
+    [
+      "d5c79ddc0dba11ecb1e81171463288e9",
+      "Is the roof that goes around Turner Field the same color as the Riverbank Arenafield hockey venue next to the river in Canary Wharf?"
+    ],
+    [
+      "d5ce53660dba11ecb1e81171463288e9",
+      "Were the winners of the Women’s Gymnastics Vault at the 2010 XIX Commonwealth Games in Delhi, India, and the winners of the Women's individual Uneven bars gymnastics competition at the 2012 London Olympics both given their medals wearing the outfits they wore when they won the competition."
+    ],
+    [
+      "d5c6f0260dba11ecb1e81171463288e9",
+      "On the podium of the 2020 Winter Youth Olympics, what color was the Olympic emblem?"
+    ],
+    [
+      "d5bd262c0dba11ecb1e81171463288e9",
+      "What was the colour of the track at the Rio 2016 Summer Olympics?"
+    ]
+  ],
+  "runner_sha256": "b1fb05978eb8a8f604e5803c74237109a66dab2aa599dd95de485bf2e3e81fb5",
+  "shard": {
+    "index": 1,
+    "count": 2
+  }
+}
