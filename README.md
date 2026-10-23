@@ -56,3 +56,6 @@ docs/
 - **Don't commit** papers' PDFs, model checkpoints, datasets or images — link to them.
 - Tag claims like the audit does: **[V-run]** verified by running, **[V-read]** verified by reading code/paper, **[I]** inferred.
 - Ask the group before large downloads (> a few GB) or paid API runs; the cost/size table is in [audit §3.3](docs/audit/audit-report.md#33-download-and-cost-plan-waiting-for-your-go-ahead).
+
+## Dataset
+The dataset folder contains the extracted text manifest, image manifest, and caption manifest, which provides visual descriptions of the images. The TSV file containing all the images has been uploaded to https://drive.google.com/file/d/1Nq5QOP6h8vP2Bdb4bC8sktdcHM1KYqmY. The extracted dataset is a subset of the original dataset https://github.com/WebQnA/WebQA 
