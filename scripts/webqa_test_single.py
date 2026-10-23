@@ -16,7 +16,7 @@ def commands(args, selected_path, beta, root, scripts, env):
         ("retrieve", [env["MGRV_TEXT_PYTHON"], str(scripts / "webqa_test_single.py"),
                       "retrieve", *common, "--base-config", args.config,
                       "--base-run-id", args.run_id]),
-        ("read", [env["MGRV_READER_PYTHON"], runner, "read", *common,
+        ("read", [env["MGRV_READER_PYTHON"], str(scripts / "webqa_read_lowmem.py"), "read", *common,
                   "--reader-model", env["MGRV_READER_MODEL"]]),
     ]
 
