@@ -35,3 +35,19 @@ tar xzf webqa-tuned-v1-test-single-large-files.tar.gz
 ```
 
 The evaluator needs only the files in git.
+
+## Extra numbers in the paper
+
+The short-answer match (28.33%), the abstention rate (50%) and the paired comparison with the
+dense-retrieval baselines (+26.25 and +8.33 points) come from `evaluation/extra_metrics.py`,
+saved in `webqa-tuned-v1-test-single/evaluation_report/extra_metrics.json`. To reproduce, from
+the repository root:
+
+```bash
+python evaluation/extra_metrics.py results/webqa-tuned-v1-test-single/evaluation_report \
+  --questions dataset/test_qa.json \
+  --baseline run_T=evaluation_results/webqa_run_T/recall_test.json \
+  --baseline run_C=evaluation_results/webqa_run_C/recall_test.json
+```
+
+The two `recall_test.json` files are unchanged copies from `main`.
