@@ -13,3 +13,7 @@ __pycache__/
 .pytest_cache/
 checkpoints/
 external/
+.DS_Store
+/logs/
+/webqa-*.log
+/slurm-*.out
