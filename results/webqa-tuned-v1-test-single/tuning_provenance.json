@@ -1,0 +1,9 @@
+{
+  "tuning_summary": "/gpfs/scratch1/shared/scur0465/mgrv-webqa-full-v1/runs/webqa-tuned-v1/tuning_summary.json",
+  "tuning_summary_sha256": "92b53a89b3a55a237069ecf57b7e06e46df3328e52ae6923052b13e2b8bd208f",
+  "selected_beta": 0.25,
+  "test_config_sha256": "3aab116afec6ff0d93bf60b8587bbda5e4b86b0f5eed1747f86b41ca2ef0f3db",
+  "single_worker_launcher_sha256": "eac9bb7a3d2f38fa0060714763c73b3a7019af7f68f431dc4a3b092f6a69bb35",
+  "workers": 1,
+  "questions": 120
+}
